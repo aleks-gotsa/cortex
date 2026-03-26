@@ -1,0 +1,23 @@
+[project]
+name = "cortex"
+version = "0.1.0"
+description = "Deep research engine — search, verify, remember."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "httpx",
+    "anthropic",
+    "python-dotenv",
+    "pydantic",
+    "pydantic-settings",
+    "sentence-transformers",
+    "qdrant-client",
+    "crawl4ai",
+    "aiosqlite",
+    "click",
+    "rich",
+]
+
+[project.scripts]
+cortex = "cli.cortex_cli:cli"

@@ -9,3 +9,5 @@ sentence-transformers
 qdrant-client
 crawl4ai
 aiosqlite
+click
+rich
