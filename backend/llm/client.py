@@ -19,6 +19,7 @@ class LLMClient:
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0
+        self._per_model: dict[str, dict[str, int]] = {}
 
     # ── Public API ───────────────────────────────────────────────────────
 
@@ -53,17 +54,25 @@ class LLMClient:
 
         return self._parse_json(text)  # raises on second failure
 
-    def get_usage(self) -> dict:
+    def get_usage(self) -> dict[str, int]:
         return {
             "input_tokens": self._input_tokens,
             "output_tokens": self._output_tokens,
             "calls": self._calls,
         }
 
+    def get_usage_by_model(self) -> dict[str, dict[str, int]]:
+        """Return per-model token usage. Returns a fresh dict (safe to diff)."""
+        return {
+            model: counters.copy()
+            for model, counters in self._per_model.items()
+        }
+
     def reset_usage(self) -> None:
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0
+        self._per_model = {}
 
     async def call_text(
         self,
@@ -110,6 +119,13 @@ class LLMClient:
         self._input_tokens += usage.input_tokens
         self._output_tokens += usage.output_tokens
         self._calls += 1
+
+        if model not in self._per_model:
+            self._per_model[model] = {"input_tokens": 0, "output_tokens": 0, "calls": 0}
+        self._per_model[model]["input_tokens"] += usage.input_tokens
+        self._per_model[model]["output_tokens"] += usage.output_tokens
+        self._per_model[model]["calls"] += 1
+
         logger.info(
             "LLM call: model=%s input_tokens=%d output_tokens=%d",
             model,
