@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+anthropic
+python-dotenv
+pydantic
+pydantic-settings
+sentence-transformers
+qdrant-client
+crawl4ai
+aiosqlite
