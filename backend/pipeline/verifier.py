@@ -82,7 +82,12 @@ async def verify(
 
     try:
         summary_raw = data["summary"]
-        details = [VerificationDetail(**d) for d in summary_raw.get("details", [])]
+        # Normalise verdict values — LLM sometimes returns "removed" instead of "unsupported".
+        _VERDICT_MAP = {"removed": "unsupported"}
+        raw_details = summary_raw.get("details", [])
+        for d in raw_details:
+            d["verdict"] = _VERDICT_MAP.get(d.get("verdict", ""), d.get("verdict", ""))
+        details = [VerificationDetail(**d) for d in raw_details]
         summary = VerificationSummary(
             confirmed=summary_raw["confirmed"],
             weakened=summary_raw["weakened"],

@@ -4,12 +4,13 @@ import json
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from backend.models import ResearchRequest
 from backend.pipeline.orchestrator import run_research
+from backend.storage import db
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +30,10 @@ app.add_middleware(
 @app.on_event("startup")
 async def _startup() -> None:
     Path("data").mkdir(exist_ok=True)
+    await db.init_db()
+
+
+# ── SSE research endpoint ────────────────────────────────────────────────
 
 
 async def _sse_stream(request: ResearchRequest):
@@ -45,3 +50,20 @@ async def research(request: ResearchRequest) -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+# ── History / retrieval endpoints ────────────────────────────────────────
+
+
+@app.get("/research/history")
+async def research_history(limit: int = 50) -> list[dict]:
+    return await db.list_runs(limit=limit)
+
+
+@app.get("/research/{research_id}")
+async def research_detail(research_id: str) -> dict:
+    run = await db.get_run(research_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Research run not found")
+    result = await db.get_result(research_id)
+    return {"run": run, "result": result}
