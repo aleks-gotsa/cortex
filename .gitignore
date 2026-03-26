@@ -1,6 +1,12 @@
 .env
 __pycache__/
 *.pyc
+node_modules/
+.next/
+data/*.db
 data/
 .DS_Store
-node_modules/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
