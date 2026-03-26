@@ -155,7 +155,7 @@ export function ResearchInput({ onComplete }: ResearchInputProps) {
         abortRef.current = null;
       }
     },
-    [query, depth, onComplete]
+    [query, depth, isRunning, onComplete]
   );
 
   return (

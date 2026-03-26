@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Uses Next.js rewrite proxy: /api/* → http://localhost:8000/*
 
 interface HistoryRun {
   id: string;
@@ -61,7 +61,7 @@ export default function HistoryList({
 
   const fetchHistory = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/research/history`);
+      const res = await fetch("/api/research/history");
       if (!res.ok) return;
       const data: HistoryRun[] = await res.json();
       setRuns(data);
@@ -82,7 +82,7 @@ export default function HistoryList({
       setLoadingId(runId);
 
       try {
-        const res = await fetch(`${API_URL}/research/${runId}`);
+        const res = await fetch(`/api/research/${runId}`);
         if (!res.ok) return;
         const detail: HistoryDetail = await res.json();
 
