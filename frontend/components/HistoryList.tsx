@@ -63,8 +63,10 @@ export default function HistoryList({
     try {
       const res = await fetch("/api/research/history");
       if (!res.ok) return;
-      const data: HistoryRun[] = await res.json();
-      setRuns(data);
+      const data: unknown = await res.json();
+      if (Array.isArray(data)) {
+        setRuns(data as HistoryRun[]);
+      }
     } catch {
       // silently fail — history is non-critical
     } finally {
@@ -84,11 +86,21 @@ export default function HistoryList({
       try {
         const res = await fetch(`/api/research/${runId}`);
         if (!res.ok) return;
-        const detail: HistoryDetail = await res.json();
+        const detail: unknown = await res.json();
+        const d = detail as Record<string, unknown>;
 
-        if (detail.result?.document_md) {
-          const query = detail.run.query;
-          onSelect(detail.result.document_md, query);
+        if (
+          d &&
+          typeof d === "object" &&
+          d.result &&
+          typeof (d.result as Record<string, unknown>).document_md === "string" &&
+          d.run &&
+          typeof (d.run as Record<string, unknown>).query === "string"
+        ) {
+          onSelect(
+            (d.result as Record<string, unknown>).document_md as string,
+            (d.run as Record<string, unknown>).query as string
+          );
         }
       } catch {
         // silently fail

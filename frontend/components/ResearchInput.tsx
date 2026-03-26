@@ -134,17 +134,21 @@ export function ResearchInput({ onComplete }: ResearchInputProps) {
           }
         }
 
-        // Stream ended without a complete event — surface error.
+        // Stream ended — check if we got a complete event.
+        // Use a ref-like approach: read current stages via a resolved updater.
+        let sawComplete = false;
         setStages((prev) => {
-          const hasComplete = prev.some((s) => s.stage === "complete");
-          if (!hasComplete && prev.length > 0) {
-            setError("Research stream ended unexpectedly.");
+          sawComplete = prev.some((s) => s.stage === "complete");
+          if (!sawComplete) {
             return prev.map((s) =>
               s.status === "active" ? { ...s, status: "done" as const } : s
             );
           }
           return prev;
         });
+        if (!sawComplete) {
+          setError("Research stream ended unexpectedly.");
+        }
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return;
         const msg =
