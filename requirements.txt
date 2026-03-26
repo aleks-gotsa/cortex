@@ -11,3 +11,4 @@ crawl4ai
 aiosqlite
 click
 rich
+pyfiglet
