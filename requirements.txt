@@ -11,3 +11,23 @@ crawl4ai
 aiosqlite
 click
 rich
+
+Add pyfiglet ASCII art header to the CLI. In print_header() function, 
+replace the Panel with:
+
+1. pyfiglet.figlet_format("cortex", font="ANSI Shadow") rendered in #3b82f6 (BLUE)
+2. Below it: "Deep research engine — search, verify, remember." in #71717a (dim)
+3. Thin separator line after
+
+Use rich.text.Text to color the ASCII art. No Panel, no box border — 
+just the raw ASCII letters floating on the terminal background.
+
+It should look like:
+
+ ██████╗ ██████╗ ██████╗ ████████╗███████╗██╗  ██╗
+██╔════╝██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝╚██╗██╔╝
+██║     ██║   ██║██████╔╝   ██║   █████╗   ╚███╔╝ 
+██║     ██║   ██║██╔══██╗   ██║   ██╔══╝   ██╔██╗ 
+╚██████╗╚██████╔╝██║  ██║   ██║   ███████╗██╔╝ ╚██╗
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+ Deep research engine — search, verify, remember.
