@@ -120,9 +120,9 @@ export default function ProgressStream({ stages }: ProgressStreamProps) {
 
   return (
     <div className="w-full max-w-2xl space-y-1">
-      {stages.map((s, i) => (
+      {stages.map((s) => (
         <div
-          key={`${s.stage}-${i}`}
+          key={`${s.stage}-${s.displayName}`}
           className={`flex items-center gap-3 rounded-md px-3 py-2 animate-fade-in ${
             s.status === "active"
               ? "border-l-2 border-blue-500 bg-white/[0.03]"

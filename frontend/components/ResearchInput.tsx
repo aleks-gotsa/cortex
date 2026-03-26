@@ -14,6 +14,10 @@ interface ParsedSSEEvent {
   data: Record<string, unknown>;
 }
 
+interface ResearchInputProps {
+  onComplete: (markdown: string, query: string) => void;
+}
+
 function parseSSEChunk(chunk: string): ParsedSSEEvent | null {
   let event = "";
   let dataLine = "";
@@ -22,7 +26,7 @@ function parseSSEChunk(chunk: string): ParsedSSEEvent | null {
     if (line.startsWith("event: ")) {
       event = line.slice(7).trim();
     } else if (line.startsWith("data: ")) {
-      dataLine = line.slice(6);
+      dataLine = dataLine ? dataLine + "\n" + line.slice(6) : line.slice(6);
     }
   }
 
@@ -35,12 +39,11 @@ function parseSSEChunk(chunk: string): ParsedSSEEvent | null {
   }
 }
 
-export function ResearchInput() {
+export function ResearchInput({ onComplete }: ResearchInputProps) {
   const [query, setQuery] = useState("");
   const [depth, setDepth] = useState<Depth>("standard");
   const [isRunning, setIsRunning] = useState(false);
   const [stages, setStages] = useState<StageInfo[]>([]);
-  const [document, setDocument] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -51,7 +54,6 @@ export function ResearchInput() {
       if (!trimmed || isRunning) return;
 
       setStages([]);
-      setDocument(null);
       setError(null);
       setIsRunning(true);
 
@@ -107,10 +109,11 @@ export function ResearchInput() {
               });
 
               if (typeof data.document === "string") {
-                setDocument(data.document);
+                onComplete(data.document, trimmed);
               }
               setIsRunning(false);
-              continue;
+              reader.cancel();
+              break;
             }
 
             const newStage: StageInfo = {
@@ -130,6 +133,18 @@ export function ResearchInput() {
             });
           }
         }
+
+        // Stream ended without a complete event — surface error.
+        setStages((prev) => {
+          const hasComplete = prev.some((s) => s.stage === "complete");
+          if (!hasComplete && prev.length > 0) {
+            setError("Research stream ended unexpectedly.");
+            return prev.map((s) =>
+              s.status === "active" ? { ...s, status: "done" as const } : s
+            );
+          }
+          return prev;
+        });
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return;
         const msg =
@@ -140,7 +155,7 @@ export function ResearchInput() {
         abortRef.current = null;
       }
     },
-    [query, depth, isRunning]
+    [query, depth, onComplete]
   );
 
   return (
@@ -186,14 +201,6 @@ export function ResearchInput() {
       )}
 
       <ProgressStream stages={stages} />
-
-      {document && (
-        <div className="rounded-md border border-zinc-800 bg-zinc-900/50 px-6 py-5">
-          <pre className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
-            {document}
-          </pre>
-        </div>
-      )}
     </div>
   );
 }
