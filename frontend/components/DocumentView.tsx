@@ -117,14 +117,15 @@ export default function DocumentView({ markdown }: DocumentViewProps) {
           </h2>
         );
       },
-      a({ href, children, ...props }) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      a({ href, children, node, target, rel, ...safeProps }) {
         return (
           <a
+            {...safeProps}
             href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
-            {...props}
           >
             {children}
           </a>

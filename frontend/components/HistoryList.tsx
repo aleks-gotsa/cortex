@@ -14,16 +14,6 @@ interface HistoryRun {
   completed_at: string | null;
 }
 
-interface HistoryResult {
-  document_md: string | null;
-  sources_json: unknown;
-}
-
-interface HistoryDetail {
-  run: HistoryRun;
-  result: HistoryResult | null;
-}
-
 interface HistoryListProps {
   onSelect: (markdown: string, query: string) => void;
   refreshTrigger: number;
