@@ -1,106 +1,234 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { ResearchInput } from "@/components/ResearchInput";
-import DocumentView from "@/components/DocumentView";
+import { useState, useCallback, useEffect, useRef } from "react";
+import type { Depth, ResearchResult } from "@/lib/research";
+import { useResearch } from "@/hooks/useResearch";
+import { useHistory } from "@/hooks/useHistory";
+import SearchInput from "@/components/SearchInput";
+import PipelineProgress from "@/components/PipelineProgress";
+import ResearchDocument from "@/components/ResearchDocument";
+import TopBar from "@/components/TopBar";
 import HistoryList from "@/components/HistoryList";
+import ThemeToggle from "@/components/ThemeToggle";
+
+type Phase = "idle" | "researching" | "complete";
 
 export default function Home() {
-  const [documentMd, setDocumentMd] = useState<string | null>(null);
-  const [activeQuery, setActiveQuery] = useState<string | null>(null);
-  const [historyRefresh, setHistoryRefresh] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const handleResearchComplete = useCallback(
-    (markdown: string, query: string) => {
-      setDocumentMd(markdown);
-      setActiveQuery(query);
-      setHistoryRefresh((n) => n + 1);
-    },
-    []
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [exiting, setExiting] = useState(false);
+  const [query, setQuery] = useState("");
+  const [depth, setDepth] = useState<Depth>("standard");
+  const [displayResult, setDisplayResult] = useState<ResearchResult | null>(
+    null
   );
+  const [activeQuery, setActiveQuery] = useState("");
 
+  const {
+    start: startResearch,
+    cancel: cancelResearch,
+    isRunning,
+    stages,
+    result: researchResult,
+    error: researchError,
+    reset: resetResearch,
+  } = useResearch();
+
+  const {
+    runs: historyRuns,
+    loading: historyLoading,
+    loadingId,
+    loadDocument,
+    refresh: refreshHistory,
+  } = useHistory();
+
+  const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const completionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Transition helper ──────────────────────────────────
+  const transitionTo = useCallback((newPhase: Phase, delay = 400) => {
+    if (transitionRef.current) clearTimeout(transitionRef.current);
+    setExiting(true);
+    transitionRef.current = setTimeout(() => {
+      transitionRef.current = null;
+      setExiting(false);
+      setPhase(newPhase);
+      window.scrollTo(0, 0);
+    }, delay);
+  }, []);
+
+  // ── Start research ─────────────────────────────────────
+  const handleSubmit = useCallback(() => {
+    const trimmed = query.trim();
+    if (!trimmed || isRunning) return;
+    setActiveQuery(trimmed);
+    startResearch(trimmed, depth);
+    transitionTo("researching");
+  }, [query, depth, isRunning, startResearch, transitionTo]);
+
+  // ── Watch for completion ───────────────────────────────
+  useEffect(() => {
+    if (researchResult && phase === "researching") {
+      completionRef.current = setTimeout(() => {
+        completionRef.current = null;
+        setDisplayResult(researchResult);
+        transitionTo("complete", 500);
+      }, 800);
+      return () => {
+        if (completionRef.current) {
+          clearTimeout(completionRef.current);
+          completionRef.current = null;
+        }
+      };
+    }
+  }, [researchResult, phase, transitionTo]);
+
+  // ── Watch for errors during research ───────────────────
+  useEffect(() => {
+    if (researchError && phase === "researching") {
+      transitionTo("idle");
+    }
+  }, [researchError, phase, transitionTo]);
+
+  // ── Return to idle ─────────────────────────────────────
+  const handleNewResearch = useCallback(() => {
+    resetResearch();
+    setDisplayResult(null);
+    setQuery("");
+    setActiveQuery("");
+    transitionTo("idle");
+  }, [resetResearch, transitionTo]);
+
+  // ── History selection ──────────────────────────────────
   const handleHistorySelect = useCallback(
-    (markdown: string, query: string) => {
-      setDocumentMd(markdown);
-      setActiveQuery(query);
-      setSidebarOpen(false);
+    async (id: string) => {
+      const doc = await loadDocument(id);
+      if (doc) {
+        setDisplayResult({
+          document: doc.markdown,
+          query: doc.query,
+          costUsd: doc.costUsd,
+          sourcesCount: 0,
+          passCount: 0,
+          researchId: id,
+        });
+        setActiveQuery(doc.query);
+        transitionTo("complete");
+      }
     },
-    []
+    [loadDocument, transitionTo]
   );
+
+  // ── Keyboard ───────────────────────────────────────────
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (phase === "complete") handleNewResearch();
+        else if (phase === "researching") {
+          cancelResearch();
+          transitionTo("idle");
+        }
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [phase, handleNewResearch, cancelResearch, transitionTo]);
+
+  // ── Refresh history on idle entry ──────────────────────
+  useEffect(() => {
+    if (phase === "idle") refreshHistory();
+  }, [phase, refreshHistory]);
+
+  // ── Render ─────────────────────────────────────────────
+  const anim = exiting ? "animate-fade-out-up" : "animate-fade-in";
 
   return (
-    <div className="min-h-screen flex">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
+    <>
+      {/* ── IDLE ──────────────────────────────────────── */}
+      {phase === "idle" && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-72 border-r border-zinc-800 bg-zinc-950 flex-shrink-0 transition-transform lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <HistoryList
-          onSelect={handleHistorySelect}
-          refreshTrigger={historyRefresh}
-        />
-      </aside>
-
-      {/* Main content */}
-      <main className="flex-1 min-w-0 px-4 py-16">
-        <div className="mx-auto max-w-[800px]">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-2">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-1 -ml-1 text-zinc-400 hover:text-zinc-200"
-              aria-label="Open history"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
-              Cortex
-            </h1>
-          </div>
-          <p className="mb-10 text-sm text-gray-500">
-            Deep research engine — search, verify, remember.
+          className={`min-h-screen flex flex-col items-center px-6 pb-20 ${anim}`}
+          style={{ paddingTop: "38vh" }}
+        >
+          <h1
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: 36,
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              color: "var(--fg)",
+              marginBottom: 4,
+            }}
+          >
+            Cortex
+          </h1>
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 13,
+              fontWeight: 400,
+              letterSpacing: "0.04em",
+              color: "var(--fg-muted)",
+              textTransform: "uppercase",
+              marginBottom: 48,
+            }}
+          >
+            Search, verify, remember.
           </p>
 
-          {/* Research input + progress */}
-          <ResearchInput onComplete={handleResearchComplete} />
+          <SearchInput
+            query={query}
+            onQueryChange={setQuery}
+            depth={depth}
+            onDepthChange={setDepth}
+            onSubmit={handleSubmit}
+            disabled={isRunning}
+          />
 
-          {/* Document view */}
-          {documentMd && (
-            <div className="mt-10">
-              {activeQuery && (
-                <h2 className="text-lg font-semibold text-zinc-200 mb-4">
-                  {activeQuery}
-                </h2>
-              )}
-              <div className="rounded-md border border-zinc-800 bg-zinc-900/50 px-6 py-5">
-                <DocumentView markdown={documentMd} />
-              </div>
-            </div>
+          {researchError && (
+            <p
+              className="mt-6 text-center"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 12,
+                color: "#c53030",
+                maxWidth: 520,
+              }}
+            >
+              {researchError}
+            </p>
           )}
+
+          <div className="mt-20 w-full" style={{ maxWidth: 520 }}>
+            <HistoryList
+              runs={historyRuns}
+              loading={historyLoading}
+              loadingId={loadingId}
+              onSelect={handleHistorySelect}
+            />
+          </div>
         </div>
-      </main>
-    </div>
+      )}
+
+      {/* ── RESEARCHING ───────────────────────────────── */}
+      {phase === "researching" && (
+        <div
+          className={`min-h-screen flex items-center justify-center px-6 ${anim}`}
+        >
+          <PipelineProgress query={activeQuery} stages={stages} />
+        </div>
+      )}
+
+      {/* ── COMPLETE ──────────────────────────────────── */}
+      {phase === "complete" && displayResult && (
+        <div className={anim}>
+          <TopBar result={displayResult} onNewResearch={handleNewResearch} />
+          <main className="max-w-3xl mx-auto px-6 pt-10 pb-24">
+            <ResearchDocument markdown={displayResult.document} />
+          </main>
+        </div>
+      )}
+
+      <ThemeToggle />
+    </>
   );
 }
