@@ -183,6 +183,43 @@ cortex/
 └── .env.example
 ```
 
+## MCP Server
+
+Use Cortex as a tool from Claude Desktop, claude.ai, or any MCP client.
+
+### Run
+
+```bash
+python mcp_server.py
+# or
+fastmcp run mcp_server.py
+```
+
+### Claude Desktop config
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cortex": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "cwd": "/absolute/path/to/cortex"
+    }
+  }
+}
+```
+
+### Available tools
+
+| Tool | Description | Params |
+|------|-------------|--------|
+| `research` | Run full research pipeline (30-90s) | `query` (str), `depth` ("quick"\|"standard"\|"deep"), `use_memory` (bool) |
+| `recall` | Search Qdrant memory for prior research | `query` (str), `top_k` (int) |
+| `history` | List past research runs | `limit` (int) |
+| `get_research` | Retrieve a specific past result | `research_id` (str) |
+
 ## License
 
 MIT

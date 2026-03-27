@@ -12,3 +12,4 @@ aiosqlite
 click
 rich
 pyfiglet
+fastmcp
