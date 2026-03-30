@@ -147,7 +147,7 @@ export default function Home() {
       {phase === "idle" && (
         <div
           className={`min-h-screen flex flex-col items-center px-6 pb-20 ${anim}`}
-          style={{ paddingTop: "38vh" }}
+          style={{ paddingTop: "38vh", paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
         >
           <h1
             style={{

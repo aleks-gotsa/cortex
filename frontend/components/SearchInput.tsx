@@ -81,7 +81,7 @@ export default function SearchInput({
         {DEPTHS.map((d, i) => (
           <span key={d.value} className="flex items-center">
             {i > 0 && (
-              <span style={{ color: "var(--fg-faint)", margin: "0 8px" }} className="select-none">
+              <span style={{ color: "var(--fg-faint)", margin: "0 4px" }} className="select-none">
                 &middot;
               </span>
             )}
@@ -99,7 +99,8 @@ export default function SearchInput({
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                padding: 0,
+                padding: "8px 12px",
+                minHeight: 44,
               }}
               className="disabled:opacity-40 transition-colors"
             >

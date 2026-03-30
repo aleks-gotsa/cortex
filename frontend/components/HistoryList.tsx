@@ -20,7 +20,7 @@ export default function HistoryList({
 
   if (loading) {
     return (
-      <p className="font-mono text-[11px] text-[var(--fg-faint)]">
+      <p className="meta-text text-[var(--fg-faint)]">
         Loading&hellip;
       </p>
     );
@@ -35,13 +35,13 @@ export default function HistoryList({
           key={run.id}
           onClick={() => onSelect(run.id)}
           disabled={loadingId === run.id}
-          className="w-full text-left py-2.5 group transition-colors disabled:opacity-40 border-b border-transparent hover:border-[var(--border)]"
+          className="w-full text-left py-3.5 group transition-colors disabled:opacity-40 border-b border-transparent hover:border-[var(--border)]"
         >
           <div className="flex items-baseline justify-between gap-4">
             <span className="font-serif text-sm text-[var(--fg-muted)] group-hover:text-[var(--fg)] transition-colors leading-snug truncate">
               {loadingId === run.id ? "Loading\u2026" : run.query}
             </span>
-            <span className="font-mono text-[11px] text-[var(--fg-faint)] flex-shrink-0 whitespace-nowrap">
+            <span className="meta-text text-[var(--fg-faint)] flex-shrink-0 whitespace-nowrap">
               {run.cost_usd != null && (
                 <span className="mr-2">${run.cost_usd.toFixed(4)}</span>
               )}

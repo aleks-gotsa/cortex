@@ -15,7 +15,8 @@ export default function TopBar({ result, onNewResearch }: TopBarProps) {
   if (result.costUsd !== null) meta.push(`$${result.costUsd.toFixed(4)}`);
 
   return (
-    <div className="sticky top-0 z-10 bg-[var(--bg)] border-b border-[var(--border)] animate-slide-down">
+    <div className="sticky top-0 z-10 bg-[var(--bg)] border-b border-[var(--border)] animate-slide-down"
+         style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <div className="max-w-3xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
         <span className="font-serif text-sm text-[var(--fg)] truncate min-w-0">
           {result.query}
@@ -23,13 +24,13 @@ export default function TopBar({ result, onNewResearch }: TopBarProps) {
 
         <div className="flex items-center gap-4 flex-shrink-0">
           {meta.length > 0 && (
-            <span className="font-mono text-[11px] text-[var(--fg-muted)] hidden sm:inline">
+            <span className="meta-text text-[var(--fg-muted)] hidden sm:inline">
               {meta.join(" \u00b7 ")}
             </span>
           )}
           <button
             onClick={onNewResearch}
-            className="font-mono text-[11px] text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors underline underline-offset-2"
+            className="meta-text text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors underline underline-offset-2"
           >
             New research
           </button>

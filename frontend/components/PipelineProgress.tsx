@@ -31,11 +31,11 @@ export default function PipelineProgress({
                   : "bg-[var(--fg-muted)]"
               }`}
             />
-            <span className="font-mono text-[11px] tracking-widest text-[var(--fg)] min-w-[130px]">
+            <span className="meta-text tracking-widest text-[var(--fg)] min-w-[130px]">
               {s.displayName}
             </span>
             {s.metric && (
-              <span className="font-mono text-[11px] text-[var(--fg-muted)]">
+              <span className="meta-text text-[var(--fg-muted)]">
                 {s.metric}
               </span>
             )}

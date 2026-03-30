@@ -32,6 +32,7 @@ const STAGE_LABELS: Record<string, string> = {
   gap_detection: "GAP DETECTION",
   synthesizing: "SYNTHESIZING",
   synthesis: "SYNTHESIZING",
+  reranking: "RERANKING",
   verifying: "VERIFYING",
   memory: "MEMORY",
   complete: "COMPLETE",
@@ -44,6 +45,9 @@ export function getStageName(
   if (stage === "gathering") {
     const pass = data.pass as number | undefined;
     return pass ? `GATHERING \u00b7 PASS ${pass}` : "GATHERING";
+  }
+  if (stage === "reranking") {
+    return "RERANKING";
   }
   return STAGE_LABELS[stage] ?? stage.toUpperCase();
 }
@@ -67,6 +71,17 @@ export function getStageMetric(
         return gaps.length === 0
           ? "no gaps detected"
           : `${gaps.length} gap${gaps.length > 1 ? "s" : ""} detected`;
+      }
+      return "";
+    }
+    case "reranking": {
+      const top = data.top_sources;
+      const dropped = data.dropped;
+      if (typeof top === "number" && typeof dropped === "number") {
+        return `${top} kept, ${dropped} dropped`;
+      }
+      if (typeof top === "number") {
+        return `${top} sources reranked`;
       }
       return "";
     }
