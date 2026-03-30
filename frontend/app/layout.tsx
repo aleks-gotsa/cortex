@@ -2,8 +2,20 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cortex \u2014 Deep Research Engine",
-  description: "Search, verify, remember.",
+  title: "Cortex — Deep Research Engine",
+  description: "Multi-pass research with gap detection, source verification, and cumulative memory. Cheaper than Perplexity. Gets smarter with each use.",
+  metadataBase: new URL("https://cortex.example.com"), // placeholder — update when deployed
+  openGraph: {
+    title: "Cortex — Deep Research Engine",
+    description: "Search, verify, remember. Open-source deep research at ~10x lower cost.",
+    type: "website",
+    siteName: "Cortex",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cortex — Deep Research Engine",
+    description: "Search, verify, remember. Open-source deep research at ~10x lower cost.",
+  },
 };
 
 export default function RootLayout({

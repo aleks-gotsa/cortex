@@ -37,6 +37,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
+      data-no-print
       className="fixed z-50 cursor-pointer meta-text"
       style={{
         bottom: "calc(4px + env(safe-area-inset-bottom))",

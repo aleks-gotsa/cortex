@@ -10,6 +10,8 @@ import ResearchDocument from "@/components/ResearchDocument";
 import TopBar from "@/components/TopBar";
 import HistoryList from "@/components/HistoryList";
 import ThemeToggle from "@/components/ThemeToggle";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import ScrollToTop from "@/components/ScrollToTop";
 
 type Phase = "idle" | "researching" | "complete";
 
@@ -147,7 +149,7 @@ export default function Home() {
       {phase === "idle" && (
         <div
           className={`min-h-screen flex flex-col items-center px-6 pb-20 ${anim}`}
-          style={{ paddingTop: "38vh", paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
+          style={{ paddingTop: "clamp(80px, 30vh, 38vh)", paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
         >
           <h1
             style={{
@@ -223,8 +225,15 @@ export default function Home() {
         <div className={anim}>
           <TopBar result={displayResult} onNewResearch={handleNewResearch} />
           <main className="max-w-3xl mx-auto px-6 pt-10 pb-24">
-            <ResearchDocument markdown={displayResult.document} />
+            <ErrorBoundary onReset={handleNewResearch}>
+              <div className="print-header hidden" style={{ display: "none" }}>
+                Cortex Research — {displayResult.query}
+                {displayResult.costUsd !== null && ` — $${displayResult.costUsd.toFixed(4)}`}
+              </div>
+              <ResearchDocument markdown={displayResult.document} />
+            </ErrorBoundary>
           </main>
+          <ScrollToTop />
         </div>
       )}
 

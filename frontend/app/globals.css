@@ -286,3 +286,85 @@ html.dark .prose-editorial tbody tr:hover {
   background: var(--accent);
   color: #fff;
 }
+
+/* ── Print ───────────────────────────────────────────── */
+
+@media print {
+  /* Hide all UI chrome */
+  .no-print,
+  button,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Reset backgrounds */
+  body {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    padding: 0 !important;
+  }
+
+  /* Document fills the page */
+  .prose-editorial {
+    max-width: 100% !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+    color: #1a1a1a !important;
+  }
+
+  .prose-editorial h1 {
+    font-size: 18pt !important;
+    page-break-after: avoid;
+  }
+
+  .prose-editorial h2 {
+    font-size: 14pt !important;
+    page-break-after: avoid;
+  }
+
+  .prose-editorial h3 {
+    font-size: 12pt !important;
+    page-break-after: avoid;
+  }
+
+  .prose-editorial p,
+  .prose-editorial li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .prose-editorial blockquote {
+    border-left-color: #888 !important;
+  }
+
+  .prose-editorial a {
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+  }
+
+  .prose-editorial a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    font-family: var(--font-mono);
+  }
+
+  .citation-link::after {
+    content: "" !important;
+  }
+
+  .prose-editorial table {
+    page-break-inside: avoid;
+  }
+
+  /* Print header: show query at top */
+  .print-header {
+    display: block !important;
+    font-family: var(--font-mono);
+    font-size: 9pt;
+    color: #888;
+    border-bottom: 0.5px solid #ccc;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+  }
+}
