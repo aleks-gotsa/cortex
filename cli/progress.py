@@ -147,6 +147,12 @@ class ProgressDisplay:
         label = _format_label(event_name, data)
         metric = _extract_metric(event_name, data)
 
+        # Deduplicate: if the last stage has the same label, update it instead.
+        if self._stages and self._stages[-1].label == label:
+            self._stages[-1].metric = metric
+            self._refresh()
+            return
+
         stage = _Stage(label=label)
         self._stages.append(stage)
         self._refresh()

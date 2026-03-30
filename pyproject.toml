@@ -17,7 +17,11 @@ dependencies = [
     "aiosqlite",
     "click",
     "rich",
+    "pyfiglet",
 ]
+
+[tool.setuptools.packages.find]
+include = ["cli*", "backend*"]
 
 [project.scripts]
 cortex = "cli.cortex_cli:cli"

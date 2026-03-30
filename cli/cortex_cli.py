@@ -7,8 +7,9 @@ import os
 import time
 
 import click
+import httpx
+import pyfiglet
 from rich.console import Console
-from rich.panel import Panel
 from rich.rule import Rule
 from rich.table import Table
 from rich.text import Text
@@ -33,18 +34,55 @@ console = Console()
 # ── Branding ─────────────────────────────────────────────────────────────────
 
 
-def print_header(subtitle: str | None = None) -> None:
-    """Print the Cortex header panel."""
-    width = min(console.width, 60)
-    title = Text("◈  Cortex", style=f"bold {BLUE}")
-    sub = Text(
-        subtitle or "Deep research engine — search, verify, remember.",
-        style=DIM,
-    )
-    content = Text.assemble(title, "\n", sub)
-    console.print(
-        Panel(content, border_style=f"bold {NAVY}", padding=(0, 2), width=width)
-    )
+async def print_header() -> None:
+    """Print the Cortex ASCII art header with system info."""
+    console.print()
+
+    art = pyfiglet.figlet_format("cortex", font="ansi_shadow").rstrip("\n")
+    console.print(Text(art, style=BLUE))
+
+    # Subtitle left + version right on one line.
+    left = " Deep research engine — search, verify, remember."
+    right = "v0.1.0"
+    width = console.width
+    pad = max(1, width - len(left) - len(right))
+    line = Text()
+    line.append(left, style=DIM)
+    line.append(" " * pad)
+    line.append(right, style=DIM)
+    console.print(line)
+
+    console.print(Rule(style="#1e3a5f"))
+
+    # Ping backend for status + research count.
+    connected = False
+    research_count = "unknown"
+    try:
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            resp = await client.get(f"{BACKEND_URL}/research/history")
+            if resp.status_code == 200:
+                connected = True
+                history = resp.json()
+                research_count = str(len(history))
+    except (httpx.ConnectError, httpx.TimeoutException, OSError):
+        pass
+
+    def _info(label: str, parts: list[tuple[str, str]]) -> Text:
+        t = Text()
+        t.append(f"  {label:<12}", style=LIGHT_BLUE)
+        for text, style in parts:
+            t.append(text, style=style)
+        return t
+
+    status_text = "connected" if connected else "offline"
+    status_style = GREEN if connected else "red"
+    console.print(_info("backend", [("localhost:8000 · ", DIM), (status_text, status_style)]))
+    console.print(_info("search", [("serper + brave", DIM)]))
+    console.print(_info("memory", [(f"qdrant · {research_count} researches", DIM)]))
+    console.print(_info("models", [("mistral-small (plan) · sonnet (synth/verify)", DIM)]))
+
+    console.print(Rule(style="#1e3a5f"))
+    console.print()
 
 
 def print_separator() -> None:
@@ -72,8 +110,7 @@ async def _do_research(
     t0 = time.monotonic()
 
     if show_header:
-        print_header()
-        console.print()
+        await print_header()
 
     if not await check_backend(backend_url):
         console.print(
@@ -142,8 +179,7 @@ def _repl(
     output_dir: str,
 ) -> None:
     """Interactive REPL mode."""
-    print_header("Type a query or 'exit' to quit.")
-    console.print()
+    asyncio.run(print_header())
 
     research_count = 0
 
@@ -296,7 +332,7 @@ async def _show_detail(research_id: str, backend_url: str) -> None:
         console.print(f"  [{DIM}]No document found for this research.[/{DIM}]")
         return
 
-    print_header()
+    await print_header()
     console.print(
         f"  [{DIM}]Query: {run.get('query', '')}[/{DIM}]"
     )
