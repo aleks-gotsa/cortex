@@ -260,6 +260,21 @@ html.dark .prose-editorial tbody tr:hover {
   }
 }
 
+/* ── Skeleton ────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--border) 25%, transparent 50%, var(--border) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
 /* ── Scrollbar ───────────────────────────────────────── */
 
 ::-webkit-scrollbar {
@@ -366,5 +381,18 @@ html.dark .prose-editorial tbody tr:hover {
     border-bottom: 0.5px solid #ccc;
     padding-bottom: 8px;
     margin-bottom: 24px;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

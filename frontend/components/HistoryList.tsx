@@ -42,8 +42,18 @@ export default function HistoryList({
               {loadingId === run.id ? "Loading\u2026" : run.query}
             </span>
             <span className="meta-text text-[var(--fg-faint)] flex-shrink-0 whitespace-nowrap">
+              {run.depth && (
+                <span
+                  style={{
+                    marginRight: 6,
+                    opacity: 0.7,
+                  }}
+                >
+                  {run.depth === "quick" ? "Q" : run.depth === "deep" ? "D" : "S"}
+                </span>
+              )}
               {run.cost_usd != null && (
-                <span className="mr-2">${run.cost_usd.toFixed(4)}</span>
+                <span style={{ marginRight: 8 }}>${run.cost_usd.toFixed(4)}</span>
               )}
               {formatRelativeTime(run.created_at)}
             </span>

@@ -12,6 +12,32 @@ import HistoryList from "@/components/HistoryList";
 import ThemeToggle from "@/components/ThemeToggle";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ScrollToTop from "@/components/ScrollToTop";
+import ReadingProgress from "@/components/ReadingProgress";
+
+function DocumentSkeleton() {
+  return (
+    <div className="max-w-3xl mx-auto px-6 pt-16 pb-24 animate-fade-in">
+      {/* Title skeleton */}
+      <div className="skeleton-line" style={{ width: "60%", height: 28, marginBottom: 32 }} />
+      {/* Paragraph skeletons */}
+      <div className="skeleton-line" style={{ width: "100%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "95%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "88%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "92%", marginBottom: 24 }} />
+      {/* Second paragraph */}
+      <div className="skeleton-line" style={{ width: "100%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "85%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "90%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "70%", marginBottom: 32 }} />
+      {/* Section heading */}
+      <div className="skeleton-line" style={{ width: "40%", height: 22, marginBottom: 20 }} />
+      {/* More lines */}
+      <div className="skeleton-line" style={{ width: "100%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "93%", marginBottom: 10 }} />
+      <div className="skeleton-line" style={{ width: "87%", marginBottom: 10 }} />
+    </div>
+  );
+}
 
 type Phase = "idle" | "researching" | "complete";
 
@@ -24,6 +50,7 @@ export default function Home() {
     null
   );
   const [activeQuery, setActiveQuery] = useState("");
+  const [loadingSkeleton, setLoadingSkeleton] = useState(false);
 
   const {
     start: startResearch,
@@ -73,6 +100,9 @@ export default function Home() {
       completionRef.current = setTimeout(() => {
         completionRef.current = null;
         setDisplayResult(researchResult);
+        if (researchResult.researchId) {
+          window.history.replaceState(null, "", `/research/${researchResult.researchId}`);
+        }
         transitionTo("complete", 500);
       }, 800);
       return () => {
@@ -97,12 +127,16 @@ export default function Home() {
     setDisplayResult(null);
     setQuery("");
     setActiveQuery("");
+    window.history.replaceState(null, "", "/");
     transitionTo("idle");
   }, [resetResearch, transitionTo]);
 
   // ── History selection ──────────────────────────────────
   const handleHistorySelect = useCallback(
     async (id: string) => {
+      setLoadingSkeleton(true);
+      transitionTo("complete");
+
       const doc = await loadDocument(id);
       if (doc) {
         setDisplayResult({
@@ -114,8 +148,11 @@ export default function Home() {
           researchId: id,
         });
         setActiveQuery(doc.query);
-        transitionTo("complete");
+        window.history.replaceState(null, "", `/research/${id}`);
+      } else {
+        transitionTo("idle");
       }
+      setLoadingSkeleton(false);
     },
     [loadDocument, transitionTo]
   );
@@ -217,23 +254,58 @@ export default function Home() {
           className={`min-h-screen flex items-center justify-center px-6 ${anim}`}
         >
           <PipelineProgress query={activeQuery} stages={stages} />
+          <p
+            className="meta-text hidden sm:block"
+            style={{
+              position: "fixed",
+              bottom: 24,
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "var(--fg-faint)",
+            }}
+            data-no-print
+          >
+            esc to cancel
+          </p>
         </div>
       )}
 
       {/* ── COMPLETE ──────────────────────────────────── */}
-      {phase === "complete" && displayResult && (
+      {phase === "complete" && (
         <div className={anim}>
-          <TopBar result={displayResult} onNewResearch={handleNewResearch} />
+          <ReadingProgress />
+          {!loadingSkeleton && displayResult && (
+            <TopBar result={displayResult} onNewResearch={handleNewResearch} />
+          )}
           <main className="max-w-3xl mx-auto px-6 pt-10 pb-24">
-            <ErrorBoundary onReset={handleNewResearch}>
-              <div className="print-header hidden" style={{ display: "none" }}>
-                Cortex Research — {displayResult.query}
-                {displayResult.costUsd !== null && ` — $${displayResult.costUsd.toFixed(4)}`}
-              </div>
-              <ResearchDocument markdown={displayResult.document} />
-            </ErrorBoundary>
+            {loadingSkeleton ? (
+              <DocumentSkeleton />
+            ) : (
+              displayResult && (
+                <ErrorBoundary onReset={handleNewResearch}>
+                  <div className="print-header hidden" style={{ display: "none" }}>
+                    Cortex Research — {displayResult.query}
+                    {displayResult.costUsd !== null && ` — $${displayResult.costUsd.toFixed(4)}`}
+                  </div>
+                  <ResearchDocument markdown={displayResult.document} />
+                </ErrorBoundary>
+              )
+            )}
           </main>
-          <ScrollToTop />
+          {!loadingSkeleton && <ScrollToTop />}
+          <p
+            className="meta-text hidden sm:block"
+            style={{
+              position: "fixed",
+              bottom: 24,
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "var(--fg-faint)",
+            }}
+            data-no-print
+          >
+            esc to return
+          </p>
         </div>
       )}
 
