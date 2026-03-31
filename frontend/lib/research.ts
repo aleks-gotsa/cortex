@@ -13,6 +13,12 @@ export interface StageInfo {
   status: "active" | "done";
 }
 
+export interface SourceInfo {
+  url: string;
+  title: string;
+  snippet: string;
+}
+
 export interface ResearchResult {
   document: string;
   query: string;
@@ -20,6 +26,7 @@ export interface ResearchResult {
   sourcesCount: number;
   passCount: number;
   researchId: string | null;
+  sources: SourceInfo[] | null;
 }
 
 export interface HistoryRun {

@@ -118,7 +118,14 @@ export function useResearch(): UseResearchReturn {
                 typeof data.document === "string" ? data.document : "";
               const costUsd =
                 typeof data.cost_usd === "number" ? data.cost_usd : null;
-              const sources = Array.isArray(data.sources) ? data.sources : [];
+              const rawSources = Array.isArray(data.sources)
+                ? (data.sources as Record<string, unknown>[])
+                : [];
+              const sources = rawSources.map((s) => ({
+                url: typeof s.url === "string" ? s.url : "",
+                title: typeof s.title === "string" ? s.title : "",
+                snippet: typeof s.snippet === "string" ? s.snippet : "",
+              }));
               const researchId =
                 typeof data.research_id === "string"
                   ? data.research_id
@@ -131,6 +138,7 @@ export function useResearch(): UseResearchReturn {
                 sourcesCount: sources.length || totalSources,
                 passCount: gatheringCount,
                 researchId,
+                sources: sources.length > 0 ? sources : null,
               });
 
               setIsRunning(false);

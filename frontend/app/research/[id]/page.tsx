@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { type ResearchResult, apiUrl } from "@/lib/research";
+import { type ResearchResult, type SourceInfo, apiUrl } from "@/lib/research";
 import TopBar from "@/components/TopBar";
 import ResearchDocument from "@/components/ResearchDocument";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -38,13 +38,29 @@ export default function ResearchPage() {
         ) {
           const run = d.run as Record<string, unknown>;
           const r = d.result as Record<string, unknown>;
+
+          let parsedSources: SourceInfo[] | null = null;
+          if (typeof r.sources_json === "string") {
+            try {
+              const arr = JSON.parse(r.sources_json);
+              if (Array.isArray(arr)) {
+                parsedSources = (arr as Record<string, unknown>[]).map((s) => ({
+                  url: typeof s.url === "string" ? s.url : "",
+                  title: typeof s.title === "string" ? s.title : "",
+                  snippet: typeof s.snippet === "string" ? s.snippet : "",
+                }));
+              }
+            } catch { /* fallback to null */ }
+          }
+
           setResult({
             document: r.document_md as string,
             query: run.query as string,
             costUsd: typeof run.cost_usd === "number" ? run.cost_usd : null,
-            sourcesCount: 0,
+            sourcesCount: parsedSources?.length ?? 0,
             passCount: 0,
             researchId: id,
+            sources: parsedSources,
           });
         } else {
           setError("Invalid research data.");
@@ -143,7 +159,7 @@ export default function ResearchPage() {
             Cortex Research — {result.query}
             {result.costUsd !== null && ` — $${result.costUsd.toFixed(4)}`}
           </div>
-          <ResearchDocument markdown={result.document} />
+          <ResearchDocument markdown={result.document} sources={result.sources} />
         </ErrorBoundary>
       </main>
       <ScrollToTop />

@@ -147,6 +147,7 @@ export default function Home() {
           sourcesCount: 0,
           passCount: 0,
           researchId: id,
+          sources: null,
         });
         setActiveQuery(doc.query);
         window.history.replaceState(null, "", `/research/${id}`);
@@ -289,7 +290,7 @@ export default function Home() {
                     Cortex Research — {displayResult.query}
                     {displayResult.costUsd !== null && ` — $${displayResult.costUsd.toFixed(4)}`}
                   </div>
-                  <ResearchDocument markdown={displayResult.document} />
+                  <ResearchDocument markdown={displayResult.document} sources={displayResult.sources} />
                 </ErrorBoundary>
               )
             )}
