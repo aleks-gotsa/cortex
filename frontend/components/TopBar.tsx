@@ -34,11 +34,11 @@ export default function TopBar({ result, onNewResearch }: TopBarProps) {
   }, []);
 
   return (
-    <div className="sticky top-0 z-10 bg-[var(--bg)] border-b border-[var(--border)] animate-slide-down"
+    <div className="fixed top-0 left-0 right-0 z-10 bg-[var(--bg)] border-b border-[var(--border)] animate-slide-down"
          style={{ paddingTop: "env(safe-area-inset-top)" }}
          data-no-print>
       <div className="max-w-3xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
-        <span className="font-serif text-sm text-[var(--fg)] truncate min-w-0">
+        <span className="meta-text text-[var(--fg)] truncate min-w-0">
           {result.query}
         </span>
 

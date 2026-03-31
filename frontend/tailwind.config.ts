@@ -23,7 +23,7 @@ const config: Config = {
         },
         fadeOutUp: {
           "0%": { opacity: "1", transform: "translateY(0)" },
-          "100%": { opacity: "0", transform: "translateY(-12px)" },
+          "100%": { opacity: "0", transform: "translateY(-16px)" },
         },
         pulseDot: {
           "0%, 100%": { opacity: "1" },

@@ -277,7 +277,7 @@ export default function Home() {
           {!loadingSkeleton && displayResult && (
             <TopBar result={displayResult} onNewResearch={handleNewResearch} />
           )}
-          <main className="max-w-3xl mx-auto px-6 pt-10 pb-24">
+          <main className="max-w-3xl mx-auto px-6 pt-16 pb-24">
             {loadingSkeleton ? (
               <DocumentSkeleton />
             ) : (

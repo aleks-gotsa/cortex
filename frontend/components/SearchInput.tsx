@@ -34,7 +34,7 @@ export default function SearchInput({
 
   return (
     <div style={{ width: "100%", maxWidth: 520 }}>
-      <div className="flex items-center" style={{ borderBottom: "1.5px solid var(--fg)" }}>
+      <div className="flex items-center" style={{ borderBottom: "1px solid var(--border)" }}>
         <input
           type="text"
           value={query}
@@ -77,7 +77,7 @@ export default function SearchInput({
         </button>
       </div>
 
-      <div className="flex items-center gap-1 mt-4" style={{ fontFamily: "var(--font-sans)", fontSize: 13 }}>
+      <div className="flex items-center gap-1 mt-4" style={{ fontFamily: "var(--font-mono)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em" }}>
         {DEPTHS.map((d, i) => (
           <span key={d.value} className="flex items-center">
             {i > 0 && (
@@ -90,14 +90,15 @@ export default function SearchInput({
               onClick={() => onDepthChange(d.value)}
               disabled={disabled}
               style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: 13,
+                fontFamily: "var(--font-mono)",
+                fontSize: 12,
                 fontWeight: depth === d.value ? 500 : 400,
                 color: depth === d.value ? "var(--fg)" : "var(--fg-muted)",
-                textDecoration: depth === d.value ? "underline" : "none",
-                textUnderlineOffset: 3,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
                 background: "none",
                 border: "none",
+                borderBottom: depth === d.value ? "1px solid var(--fg)" : "1px solid transparent",
                 cursor: "pointer",
                 padding: "8px 12px",
                 minHeight: 44,
