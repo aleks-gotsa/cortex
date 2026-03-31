@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # --- Qdrant ---
     QDRANT_URL: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")
     QDRANT_COLLECTION: str = Field(default="cortex_research", validation_alias="QDRANT_COLLECTION")
+    QDRANT_API_KEY: str = Field(default="", validation_alias="QDRANT_API_KEY")
 
     # --- SQLite ---
     DATABASE_PATH: str = Field(default="./data/cortex.db", validation_alias="DATABASE_PATH")

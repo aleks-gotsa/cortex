@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 # ── Module-level singletons ──────────────────────────────────────────────────
 
 _embed_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-_qdrant = AsyncQdrantClient(url=settings.QDRANT_URL)
+_qdrant = AsyncQdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY or None)
 
 
 # ── Collection management ────────────────────────────────────────────────────
