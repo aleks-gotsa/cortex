@@ -266,12 +266,11 @@ export default function ResearchDocument({
   const popoverStyle = useMemo((): React.CSSProperties | null => {
     if (!activeCitation) return null;
     const { rect } = activeCitation;
-    const ESTIMATE = 140;
-    const above = rect.bottom + ESTIMATE + 16 > window.innerHeight;
     const left = Math.max(16, Math.min(rect.left, window.innerWidth - 336));
 
-    const base: React.CSSProperties = {
-      position: "fixed",
+    return {
+      position: "fixed" as const,
+      top: rect.bottom + 8,
       left,
       background: "var(--bg)",
       border: "1px solid var(--border)",
@@ -280,10 +279,6 @@ export default function ResearchDocument({
       maxWidth: 320,
       zIndex: 1000,
     };
-
-    return above
-      ? { ...base, bottom: window.innerHeight - rect.top + 8 }
-      : { ...base, top: rect.bottom + 8 };
   }, [activeCitation]);
 
   const components: Components = useMemo(
