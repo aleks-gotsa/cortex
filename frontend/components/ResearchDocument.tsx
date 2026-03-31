@@ -18,9 +18,21 @@ interface ActiveCitation {
 
 /* ── Markdown helpers ──────────────────────────────────── */
 
-function processCitations(text: string): (string | JSX.Element)[] {
+function getDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace("www.", "");
+  } catch {
+    return url;
+  }
+}
+
+function processCitations(
+  text: string,
+  sources?: readonly SourceInfo[] | null
+): (string | JSX.Element)[] {
   const parts: (string | JSX.Element)[] = [];
-  const regex = /\[(\d+)\]/g;
+  // Match groups of consecutive [N][M]... citations
+  const regex = /(\[\d+\])(?:\[\d+\])*/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
@@ -28,27 +40,63 @@ function processCitations(text: string): (string | JSX.Element)[] {
     if (match.index > lastIndex) {
       parts.push(text.slice(lastIndex, match.index));
     }
-    const num = match[1];
-    parts.push(
-      <a
-        key={`${match.index}-${num}`}
-        href={`#source-${num}`}
-        data-citation={num}
-        className="citation-link"
-        style={{
-          fontSize: "0.75em",
-          verticalAlign: "super",
-          lineHeight: 0,
-          color: "var(--accent)",
-          opacity: 0.7,
-          textDecoration: "none",
-          cursor: "pointer",
-          padding: "0 1px",
-        }}
-      >
-        {num}
-      </a>
+
+    const groupText = match[0];
+    const nums = [...groupText.matchAll(/\[(\d+)\]/g)].map((m) =>
+      parseInt(m[1], 10)
     );
+    const firstNum = nums[0];
+    const firstSource = sources?.[firstNum - 1];
+
+    if (firstSource) {
+      const domain = getDomain(firstSource.url);
+      parts.push(
+        <span
+          key={`${match.index}-pill`}
+          data-citation={String(firstNum)}
+          className="citation-link"
+          style={{
+            background: "var(--border)",
+            color: "var(--fg-muted)",
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 11,
+            padding: "2px 6px",
+            borderRadius: 4,
+            display: "inline",
+            margin: "0 2px",
+            cursor: "pointer",
+          }}
+        >
+          {domain}
+          {nums.length > 1 ? ` +${nums.length - 1}` : ""}
+        </span>
+      );
+    } else {
+      // Fallback: plain superscript numbers
+      for (const num of nums) {
+        parts.push(
+          <a
+            key={`${match.index}-${num}`}
+            href={`#source-${num}`}
+            data-citation={String(num)}
+            className="citation-link"
+            style={{
+              fontSize: "0.75em",
+              verticalAlign: "super",
+              lineHeight: 0,
+              color: "var(--accent)",
+              opacity: 0.7,
+              textDecoration: "none",
+              cursor: "pointer",
+              padding: "0 1px",
+            }}
+          >
+            {num}
+          </a>
+        );
+      }
+    }
+
     lastIndex = regex.lastIndex;
   }
 
@@ -80,9 +128,12 @@ function processSourceLine(
   return null;
 }
 
-function processChildren(children: React.ReactNode): React.ReactNode {
+function processChildren(
+  children: React.ReactNode,
+  sources?: readonly SourceInfo[] | null
+): React.ReactNode {
   if (typeof children === "string") {
-    const parts = processCitations(children);
+    const parts = processCitations(children, sources);
     return parts.length === 1 && typeof parts[0] === "string"
       ? parts[0]
       : parts;
@@ -91,7 +142,7 @@ function processChildren(children: React.ReactNode): React.ReactNode {
   if (Array.isArray(children)) {
     return children.map((child, i) => {
       if (typeof child === "string") {
-        const parts = processCitations(child);
+        const parts = processCitations(child, sources);
         return parts.length === 1 && typeof parts[0] === "string" ? (
           parts[0]
         ) : (
@@ -238,7 +289,7 @@ export default function ResearchDocument({
   const components: Components = useMemo(
     () => ({
       p({ children, ...props }) {
-        return <p {...props}>{processChildren(children)}</p>;
+        return <p {...props}>{processChildren(children, sources)}</p>;
       },
       li({ children, ...props }) {
         if (!hasSources) {
@@ -265,13 +316,13 @@ export default function ResearchDocument({
             );
           }
         }
-        return <li {...props}>{processChildren(children)}</li>;
+        return <li {...props}>{processChildren(children, sources)}</li>;
       },
       strong({ children, ...props }) {
-        return <strong {...props}>{processChildren(children)}</strong>;
+        return <strong {...props}>{processChildren(children, sources)}</strong>;
       },
       em({ children, ...props }) {
-        return <em {...props}>{processChildren(children)}</em>;
+        return <em {...props}>{processChildren(children, sources)}</em>;
       },
       h2({ children, ...props }) {
         const text = extractText(children);
@@ -294,7 +345,7 @@ export default function ResearchDocument({
         );
       },
     }),
-    [hasSources]
+    [hasSources, sources]
   );
 
   return (
