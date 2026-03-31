@@ -103,6 +103,24 @@ curl http://localhost:8000/research/history
 curl http://localhost:8000/research/{research_id}
 ```
 
+## CLI
+
+Run research from your terminal:
+
+```bash
+pip install -e .
+cortex "What is retrieval-augmented generation?"
+cortex --depth deep "How do transformers work?"
+cortex history
+cortex view <research_id>
+```
+
+Or launch the interactive REPL:
+
+```bash
+cortex
+```
+
 ## API
 
 | Method | Path | Description |

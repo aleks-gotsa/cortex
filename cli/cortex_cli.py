@@ -76,10 +76,11 @@ async def print_header() -> None:
 
     status_text = "connected" if connected else "offline"
     status_style = GREEN if connected else "red"
-    console.print(_info("backend", [("localhost:8000 · ", DIM), (status_text, status_style)]))
+    display_url = BACKEND_URL.removeprefix("http://").removeprefix("https://")
+    console.print(_info("backend", [(f"{display_url} · ", DIM), (status_text, status_style)]))
     console.print(_info("search", [("serper + tavily", DIM)]))
     console.print(_info("memory", [(f"qdrant · {research_count} researches", DIM)]))
-    console.print(_info("models", [("mistral-small (plan) · sonnet (synth/verify)", DIM)]))
+    console.print(_info("models", [("haiku (plan) · sonnet (synth/verify)", DIM)]))
 
     console.print(Rule(style="#1e3a5f"))
     console.print()
