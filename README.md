@@ -21,7 +21,7 @@ Search -> find gaps -> search again -> verify every claim -> remember everything
 ```mermaid
 graph TD
     Q[User Query] --> P[Planner<br/>Haiku]
-    P --> G1[Gatherer Pass 1<br/>Serper + Brave + crawl4ai]
+    P --> G1[Gatherer Pass 1<br/>Serper + Tavily + crawl4ai]
     G1 --> R[Reranker<br/>cross-encoder local]
     R --> GD{Gap Detector<br/>Sonnet}
     GD -->|Gaps found| G2[Gatherer Pass 2..N<br/>targeted queries]
@@ -51,7 +51,7 @@ Edit `.env` with your API keys:
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 SERPER_API_KEY=...
-BRAVE_API_KEY=...          # optional — Serper alone works fine
+TAVILY_API_KEY=...         # optional — Serper alone works fine
 ```
 
 ### 2. Start Qdrant (vector memory)
@@ -131,7 +131,7 @@ The `/research` endpoint streams these events in order:
 |-------|-----------|
 | Backend | FastAPI, Python 3.12+, async everywhere |
 | LLM | Anthropic Claude (Haiku for planning, Sonnet for synthesis/verification) |
-| Search | Serper.dev + Brave Search API |
+| Search | Serper.dev + Tavily Search API |
 | Scraping | crawl4ai (Playwright-based, JS rendering) |
 | Reranking | cross-encoder/ms-marco-MiniLM-L-6-v2 (local) |
 | Embeddings | BAAI/bge-small-en-v1.5 (local) |
@@ -168,7 +168,7 @@ cortex/
 │   │   └── memory.py        # Qdrant read/write
 │   ├── search/
 │   │   ├── serper.py        # Serper.dev client
-│   │   ├── brave.py         # Brave Search client
+│   │   ├── tavily.py        # Tavily Search client
 │   │   └── scraper.py       # crawl4ai wrapper
 │   ├── llm/
 │   │   ├── client.py        # Anthropic SDK wrapper

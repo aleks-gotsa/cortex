@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { ResearchResult } from "@/lib/research";
+import { type ResearchResult, apiUrl } from "@/lib/research";
 import TopBar from "@/components/TopBar";
 import ResearchDocument from "@/components/ResearchDocument";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -22,7 +22,7 @@ export default function ResearchPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/research/${id}`);
+        const res = await fetch(apiUrl(`/research/${id}`));
         if (!res.ok) {
           setError(res.status === 404 ? "Research not found." : "Failed to load research.");
           return;

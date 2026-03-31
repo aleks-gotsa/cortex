@@ -77,7 +77,7 @@ async def print_header() -> None:
     status_text = "connected" if connected else "offline"
     status_style = GREEN if connected else "red"
     console.print(_info("backend", [("localhost:8000 · ", DIM), (status_text, status_style)]))
-    console.print(_info("search", [("serper + brave", DIM)]))
+    console.print(_info("search", [("serper + tavily", DIM)]))
     console.print(_info("memory", [(f"qdrant · {research_count} researches", DIM)]))
     console.print(_info("models", [("mistral-small (plan) · sonnet (synth/verify)", DIM)]))
 

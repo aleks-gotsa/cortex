@@ -10,14 +10,14 @@ Cheaper than Perplexity. Deeper than Feynman. Gets smarter with each use.
 </project>
 
 <core_loop>
-Query → Planner (Haiku) → Gatherer Pass 1 (Serper + Brave + crawl4ai + Qdrant) → Reranker (local cross-encoder) → Gap Detector (Sonnet) → Gatherer Pass 2..N (targeted) → Synthesizer (Sonnet) → Verifier (Sonnet) → Memory Writer (Qdrant) → Final Document
+Query → Planner (Haiku) → Gatherer Pass 1 (Serper + Tavily + crawl4ai + Qdrant) → Reranker (local cross-encoder) → Gap Detector (Sonnet) → Gatherer Pass 2..N (targeted) → Synthesizer (Sonnet) → Verifier (Sonnet) → Memory Writer (Qdrant) → Final Document
 
 Max 3 gathering passes. Stop early if no gaps found.
 </core_loop>
 
 <stack>
 <backend>FastAPI, Python 3.12, async everywhere</backend>
-<search>Serper.dev API + Brave Search API (both, for redundancy and different result sets)</search>
+<search>Serper.dev API + Tavily Search API (both, for redundancy and different result sets)</search>
 <scraping>crawl4ai (async, JS rendering capable)</scraping>
 <reranking>cross-encoder/ms-marco-MiniLM-L-6-v2 (local, sentence-transformers)</reranking>
 <vector_db>Qdrant (Docker, binary quantization, cosine similarity)</vector_db>
@@ -50,7 +50,7 @@ cortex/
 │   ├── search/
 │   │   ├── __init__.py
 │   │   ├── serper.py           # Serper.dev async client
-│   │   ├── brave.py            # Brave Search async client
+│   │   ├── tavily.py           # Tavily Search async client
 │   │   └── scraper.py          # crawl4ai wrapper
 │   ├── llm/
 │   │   ├── __init__.py
@@ -155,7 +155,7 @@ Respond ONLY with valid JSON, no markdown fences, no preamble:
 <logic>
 1. For each sub-question's search terms:
    a. Run Serper.dev search (async) — top 10 results
-   b. Run Brave Search (async) — top 10 results
+   b. Run Tavily Search (async) — top 10 results
    c. Run both in parallel with asyncio.gather
 2. Merge all results, deduplicate by URL
 3. Take top 8 per sub-question by initial relevance
@@ -172,7 +172,7 @@ class Source(BaseModel):
     full_content: str | None
     relevance_score: float       # from cross-encoder, 0.0-1.0
     sub_question_id: str
-    search_engine: str           # "serper" | "brave" | "qdrant"
+    search_engine: str           # "serper" | "tavily" | "qdrant"
 </source_model>
 </component>
 
@@ -318,13 +318,12 @@ Body: {"q": query, "num": num_results}
 Parse: organic results → SearchResult(url, title, snippet, search_engine="serper")
 </serper>
 
-<brave file="search/brave.py">
+<tavily file="search/tavily.py">
 async function search(query: str, num_results: int = 10) → list[SearchResult]
-GET https://api.search.brave.com/res/v1/web/search
-Headers: X-Subscription-Token from config
-Params: q=query, count=num_results
-Parse: web.results → SearchResult(url, title, snippet, search_engine="brave")
-</brave>
+POST https://api.tavily.com/search
+Body: {api_key, query, max_results, search_depth: "basic"}
+Parse: results → SearchResult(url, title, snippet, search_engine="tavily")
+</tavily>
 </search_clients>
 
 <scraper file="search/scraper.py">
@@ -433,7 +432,7 @@ volumes:
 <env_example>
 ANTHROPIC_API_KEY=
 SERPER_API_KEY=
-BRAVE_API_KEY=
+TAVILY_API_KEY=
 QDRANT_URL=http://localhost:6333
 QDRANT_COLLECTION=cortex_research
 DATABASE_PATH=./data/cortex.db
@@ -444,7 +443,7 @@ Build and test each piece in this EXACT order. Do not skip ahead. Each step must
 
 1. config.py + models.py + main.py (empty SSE endpoint skeleton)
 2. llm/client.py + llm/router.py → test: Haiku responds with JSON
-3. search/serper.py + search/brave.py → test: both return search results
+3. search/serper.py + search/tavily.py → test: both return search results
 4. search/scraper.py → test: scrapes 3 URLs successfully
 5. pipeline/planner.py → test: query → sub-questions JSON
 6. pipeline/gatherer.py → test: sub-questions → ranked sources with content

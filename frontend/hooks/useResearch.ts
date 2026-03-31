@@ -8,6 +8,7 @@ import {
   parseSSEChunk,
   getStageName,
   getStageMetric,
+  apiUrl,
 } from "@/lib/research";
 
 interface UseResearchReturn {
@@ -65,7 +66,7 @@ export function useResearch(): UseResearchReturn {
       let completed = false;
 
       try {
-        const res = await fetch("/api/research", {
+        const res = await fetch(apiUrl("/research"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: trimmed, depth, use_memory: true }),

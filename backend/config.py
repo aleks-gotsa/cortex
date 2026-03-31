@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # --- API Keys (required) ---
     ANTHROPIC_API_KEY: str = Field(validation_alias="ANTHROPIC_API_KEY")
     SERPER_API_KEY: str = Field(validation_alias="SERPER_API_KEY")
-    BRAVE_API_KEY: str = Field(validation_alias="BRAVE_API_KEY")
+    TAVILY_API_KEY: str = Field(validation_alias="TAVILY_API_KEY")
 
     # --- Qdrant ---
     QDRANT_URL: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")

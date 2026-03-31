@@ -6,7 +6,7 @@ import logging
 from sentence_transformers import CrossEncoder
 
 from backend.models import SearchResult, Source, SubQuestion
-from backend.search import serper, brave
+from backend.search import serper, tavily
 from backend.search.scraper import scrape_many
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,11 @@ def _get_reranker() -> CrossEncoder:
 
 
 async def _search_for_question(sq: SubQuestion) -> list[SearchResult]:
-    """Run Serper (+ Brave when available) for every search term in parallel."""
+    """Run Serper (+ Tavily when available) for every search term in parallel."""
     tasks = []
     for term in sq.search_terms:
         tasks.append(serper.search(term, num_results=10))
-        tasks.append(brave.search(term, num_results=10))
+        tasks.append(tavily.search(term, num_results=10))
     results = await asyncio.gather(*tasks)
     flat: list[SearchResult] = []
     for batch in results:

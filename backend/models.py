@@ -58,7 +58,7 @@ class SearchResult(BaseModel):
     url: str
     title: str
     snippet: str
-    search_engine: str  # "serper" | "brave"
+    search_engine: str  # "serper" | "tavily"
 
 
 class Source(BaseModel):
@@ -68,7 +68,7 @@ class Source(BaseModel):
     full_content: str | None = None
     relevance_score: float = Field(default=0.0, ge=0.0, le=1.0)
     sub_question_id: str
-    search_engine: str  # "serper" | "brave" | "qdrant"
+    search_engine: str  # "serper" | "tavily" | "qdrant"
 
 
 # ── Gap Detector ─────────────────────────────────────────────────────────────

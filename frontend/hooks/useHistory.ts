@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { HistoryRun } from "@/lib/research";
+import { type HistoryRun, apiUrl } from "@/lib/research";
 
 interface LoadedDocument {
   markdown: string;
@@ -25,7 +25,7 @@ export function useHistory(): UseHistoryReturn {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/research/history");
+      const res = await fetch(apiUrl("/research/history"));
       if (!res.ok) return;
       const data: unknown = await res.json();
       if (Array.isArray(data)) {
@@ -49,7 +49,7 @@ export function useHistory(): UseHistoryReturn {
       setLoadingId(id);
 
       try {
-        const res = await fetch(`/api/research/${id}`);
+        const res = await fetch(apiUrl(`/research/${id}`));
         if (!res.ok) return null;
         const detail: unknown = await res.json();
         const d = detail as Record<string, unknown>;
