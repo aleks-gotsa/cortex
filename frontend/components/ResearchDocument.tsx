@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
@@ -35,8 +35,18 @@ function processCitations(text: string): (string | JSX.Element)[] {
         href={`#source-${num}`}
         data-citation={num}
         className="citation-link"
+        style={{
+          fontSize: "0.75em",
+          verticalAlign: "super",
+          lineHeight: 0,
+          color: "var(--accent)",
+          opacity: 0.7,
+          textDecoration: "none",
+          cursor: "pointer",
+          padding: "0 1px",
+        }}
       >
-        [{num}]
+        {num}
       </a>
     );
     lastIndex = regex.lastIndex;
@@ -139,6 +149,33 @@ export default function ResearchDocument({
     [markdown, hasSources]
   );
 
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showCitation = useCallback(
+    (num: number, rect: DOMRect) => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
+      }
+      setActiveCitation({ num, rect });
+    },
+    []
+  );
+
+  const scheduleDismiss = useCallback(() => {
+    hideTimeoutRef.current = setTimeout(() => {
+      setActiveCitation(null);
+      hideTimeoutRef.current = null;
+    }, 150);
+  }, []);
+
+  const cancelDismiss = useCallback(() => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  }, []);
+
   // Close popover on scroll
   useEffect(() => {
     if (!activeCitation) return;
@@ -147,47 +184,28 @@ export default function ResearchDocument({
     return () => window.removeEventListener("scroll", onScroll);
   }, [activeCitation]);
 
-  // Close popover on click outside
-  useEffect(() => {
-    if (!activeCitation) return;
-    function onMouseDown(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      if (
-        target.closest(".citation-popover") ||
-        target.closest("[data-citation]")
-      )
-        return;
-      setActiveCitation(null);
-    }
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
-  }, [activeCitation]);
-
-  // Citation click via event delegation
-  const handleContainerClick = useCallback(
+  // Hover via event delegation on container
+  const handleMouseOver = useCallback(
     (e: React.MouseEvent) => {
       const target = e.target as HTMLElement;
-      const citationEl = target.closest(
-        "[data-citation]"
-      ) as HTMLElement | null;
+      const citationEl = target.closest("[data-citation]") as HTMLElement | null;
       if (!citationEl) return;
 
       const num = parseInt(citationEl.getAttribute("data-citation")!, 10);
-
       if (hasSources && sources![num - 1]) {
-        e.preventDefault();
-        if (activeCitation?.num === num) {
-          setActiveCitation(null);
-        } else {
-          setActiveCitation({
-            num,
-            rect: citationEl.getBoundingClientRect(),
-          });
-        }
+        showCitation(num, citationEl.getBoundingClientRect());
       }
-      // else: default anchor scroll to #source-N
     },
-    [hasSources, sources, activeCitation]
+    [hasSources, sources, showCitation]
+  );
+
+  const handleMouseOut = useCallback(
+    (e: React.MouseEvent) => {
+      const target = e.relatedTarget as HTMLElement | null;
+      if (target?.closest?.(".citation-popover") || target?.closest?.("[data-citation]")) return;
+      scheduleDismiss();
+    },
+    [scheduleDismiss]
   );
 
   const activeSource = activeCitation
@@ -281,7 +299,7 @@ export default function ResearchDocument({
 
   return (
     <>
-      <div className="prose-editorial" onClick={handleContainerClick}>
+      <div className="prose-editorial" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
         <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
           {displayMarkdown}
         </ReactMarkdown>
@@ -289,7 +307,7 @@ export default function ResearchDocument({
 
       {/* ── Citation popover ───────────────────────────── */}
       {activeCitation && activeSource && popoverStyle && (
-        <div className="citation-popover" style={popoverStyle}>
+        <div className="citation-popover" style={popoverStyle} onMouseEnter={cancelDismiss} onMouseLeave={scheduleDismiss}>
           <div
             style={{
               fontFamily: "var(--font-mono)",
