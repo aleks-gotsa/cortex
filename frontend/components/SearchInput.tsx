@@ -26,6 +26,9 @@ export default function SearchInput({
   disabled,
 }: SearchInputProps) {
   function handleKeyDown(e: React.KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      onSubmit();
+    }
     if (e.key === "Enter" && query.trim() && !disabled) {
       e.preventDefault();
       onSubmit();
