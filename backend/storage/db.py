@@ -123,6 +123,16 @@ async def get_result(research_id: str) -> dict | None:
         return result
 
 
+async def delete_run(run_id: str) -> bool:
+    """Delete a research run and its associated results and events."""
+    async with aiosqlite.connect(_db_path()) as conn:
+        await conn.execute("DELETE FROM research_events WHERE research_id = ?", (run_id,))
+        await conn.execute("DELETE FROM research_results WHERE research_id = ?", (run_id,))
+        cursor = await conn.execute("DELETE FROM research_runs WHERE id = ?", (run_id,))
+        await conn.commit()
+        return cursor.rowcount > 0
+
+
 async def list_runs(limit: int = 50) -> list[dict]:
     async with aiosqlite.connect(_db_path()) as db:
         db.row_factory = aiosqlite.Row

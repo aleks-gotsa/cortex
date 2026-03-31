@@ -41,10 +41,22 @@ function processCitations(text: string): (string | JSX.Element)[] {
 
 function processSourceLine(
   text: string
-): { num: string; url: string; rest: string } | null {
-  const match = text.match(/^(\d+)\.\s+(https?:\/\/\S+)(.*)/);
+): { num: string; url: string; title: string } | null {
+  // Match "1. https://..." or "[1] https://..." formats
+  const match = text.match(/^(?:\[(\d+)\]|(\d+)\.)\s+(https?:\/\/\S+)(.*)/);
   if (match) {
-    return { num: match[1], url: match[2], rest: match[3] };
+    const num = match[1] || match[2];
+    const url = match[3];
+    const rest = (match[4] || "").trim().replace(/^[-–—:]\s*/, "");
+    let title = rest;
+    if (!title) {
+      try {
+        title = new URL(url).hostname.replace(/^www\./, "");
+      } catch {
+        title = url;
+      }
+    }
+    return { num, url, title };
   }
   return null;
 }
@@ -116,13 +128,8 @@ export default function ResearchDocument({ markdown }: ResearchDocumentProps) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {sourceLine.url}
+                {sourceLine.title}
               </a>
-              {sourceLine.rest && (
-                <span className="text-[var(--fg-muted)]">
-                  {sourceLine.rest}
-                </span>
-              )}
             </li>
           );
         }

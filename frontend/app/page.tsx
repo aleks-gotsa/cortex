@@ -67,6 +67,7 @@ export default function Home() {
     loading: historyLoading,
     loadingId,
     loadDocument,
+    deleteRun,
     refresh: refreshHistory,
   } = useHistory();
 
@@ -243,6 +244,7 @@ export default function Home() {
               loading={historyLoading}
               loadingId={loadingId}
               onSelect={handleHistorySelect}
+              onDelete={deleteRun}
             />
           </div>
         </div>

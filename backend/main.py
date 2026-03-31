@@ -60,6 +60,14 @@ async def research_history(limit: int = 50) -> list[dict]:
     return await db.list_runs(limit=limit)
 
 
+@app.delete("/research/{research_id}")
+async def research_delete(research_id: str) -> dict:
+    deleted = await db.delete_run(research_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Research run not found")
+    return {"deleted": True}
+
+
 @app.get("/research/{research_id}")
 async def research_detail(research_id: str) -> dict:
     run = await db.get_run(research_id)

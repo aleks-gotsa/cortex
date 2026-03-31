@@ -14,6 +14,7 @@ interface UseHistoryReturn {
   loading: boolean;
   loadingId: string | null;
   loadDocument: (id: string) => Promise<LoadedDocument | null>;
+  deleteRun: (id: string) => Promise<void>;
   refresh: () => void;
 }
 
@@ -83,5 +84,17 @@ export function useHistory(): UseHistoryReturn {
     []
   );
 
-  return { runs, loading, loadingId, loadDocument, refresh };
+  const deleteRun = useCallback(
+    async (id: string): Promise<void> => {
+      try {
+        await fetch(apiUrl(`/research/${id}`), { method: "DELETE" });
+      } catch {
+        // deletion is best-effort
+      }
+      setRuns((prev) => prev.filter((r) => r.id !== id));
+    },
+    []
+  );
+
+  return { runs, loading, loadingId, loadDocument, deleteRun, refresh };
 }
