@@ -64,6 +64,15 @@ TAVILY_API_KEY=...         # optional — Serper alone works fine
 docker-compose up -d
 ```
 
+### Python version
+
+This project requires Python 3.12. If you have pyenv:
+
+```bash
+pyenv install 3.12.7
+pyenv local 3.12.7
+```
+
 ### 3. Install and run backend
 
 ```bash
