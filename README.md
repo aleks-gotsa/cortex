@@ -1,20 +1,24 @@
 # Cortex
 
+![Python](https://img.shields.io/badge/python-3.12+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Model](https://img.shields.io/badge/model-Claude%20Sonnet-orange)
+
 Multi-layer research engine with cumulative memory and cost-efficient model routing.
 
 Search -> find gaps -> search again -> verify every claim -> remember everything for next time.
 
 ## What Makes It Different
 
-| Feature | Perplexity | Feynman | Cortex |
-|---------|-----------|---------|--------|
-| Search depth | Single pass | Single pass | Up to 3 iterative passes |
-| Gap detection | No | No | Automatic coverage scoring + targeted follow-up |
-| Claim verification | No | No | Every citation checked against its source |
-| Memory | No | No | Qdrant vector DB recalls prior research |
-| Cost control | Opaque | Opaque | Model routing: Haiku for planning, Sonnet for synthesis |
-| Source transparency | Partial | Yes | Full inline citations with verification verdicts |
-| Self-hosted | No | No | Yes, fully open-source |
+| Feature | Standard AI Search | Cortex |
+|---------|-------------------|--------|
+| Search depth | Single pass | Up to 3 iterative passes |
+| Gap detection | No | Automatic coverage scoring + targeted follow-up |
+| Claim verification | No | Every citation checked against its source |
+| Memory | No | Qdrant vector DB recalls prior research |
+| Cost control | Opaque | Model routing: Haiku for planning, Sonnet for synthesis |
+| Source transparency | Partial | Full inline citations with verification verdicts |
+| Self-hosted | No | Yes, fully open-source |
 
 ## Architecture
 
@@ -193,9 +197,19 @@ cortex/
 │   │   └── router.py        # Model selection + cost tracking
 │   └── storage/
 │       └── db.py            # SQLite persistence
+├── cli/
+│   ├── cortex_cli.py        # CLI entrypoint, REPL, commands
+│   ├── connection.py        # SSE stream client
+│   ├── progress.py          # Live stage progress display
+│   ├── output.py            # File saving and stats footer
+│   └── renderer.py          # Terminal markdown renderer
 ├── frontend/
 │   ├── app/                 # Next.js App Router
-│   └── components/          # React components
+│   └── components/
+│       ├── SearchInput.tsx       # Query field + depth selector
+│       ├── PipelineProgress.tsx  # Real-time SSE progress display
+│       ├── ResearchDocument.tsx  # Rendered markdown with citations
+│       └── HistoryList.tsx       # Past researches sidebar
 ├── docker-compose.yml       # Qdrant service
 ├── requirements.txt
 └── .env.example
