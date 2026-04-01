@@ -9,3 +9,6 @@ requires-python = ">=3.12"
 
 [project.scripts]
 cortex = "cli.cortex_cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["cli*"]

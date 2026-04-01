@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from dataclasses import dataclass
 from typing import Any
 
@@ -47,6 +48,13 @@ async def stream_research(
     """POST /research and yield SSEEvent objects as they arrive."""
     timeout = httpx.Timeout(connect=10.0, read=300.0, write=10.0, pool=10.0)
     body = {"query": query, "depth": depth, "use_memory": use_memory}
+
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        body["anthropic_api_key"] = os.environ["ANTHROPIC_API_KEY"]
+    if os.environ.get("SERPER_API_KEY"):
+        body["serper_api_key"] = os.environ["SERPER_API_KEY"]
+    if os.environ.get("TAVILY_API_KEY"):
+        body["tavily_api_key"] = os.environ["TAVILY_API_KEY"]
 
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
