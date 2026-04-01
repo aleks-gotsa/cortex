@@ -10,3 +10,5 @@ data/
 dist/
 build/
 .pytest_cache/
+Prompts/
+CLAUDE.md
