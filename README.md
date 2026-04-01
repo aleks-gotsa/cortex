@@ -20,6 +20,10 @@ Search -> find gaps -> search again -> verify every claim -> remember everything
 | Source transparency | Partial | Full inline citations with verification verdicts |
 | Self-hosted | No | Yes, fully open-source |
 
+<img width="1920" height="1049" alt="Screenshot 2026-04-01 at 1 36 39 PM" src="https://github.com/user-attachments/assets/ecded3a3-8f92-4dd3-b70b-cea1254c09ae" />
+<img width="1920" height="1049" alt="Screenshot 2026-04-01 at 1 35 44 PM" src="https://github.com/user-attachments/assets/fffc4d46-d250-4224-8dfe-8a080a266700" />
+
+
 ## Architecture
 
 ```mermaid
