@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
+from backend.config import settings
 from backend.models import ResearchRequest
 from backend.pipeline.orchestrator import run_research
 from backend.storage import db
@@ -45,6 +46,21 @@ async def _sse_stream(request: ResearchRequest):
 
 @app.post("/research")
 async def research(request: ResearchRequest) -> StreamingResponse:
+    anthropic_key = request.anthropic_api_key or settings.ANTHROPIC_API_KEY
+    serper_key = request.serper_api_key or settings.SERPER_API_KEY
+    tavily_key = request.tavily_api_key or settings.TAVILY_API_KEY
+
+    if not anthropic_key or not serper_key or not tavily_key:
+        raise HTTPException(
+            status_code=400,
+            detail="API keys required. Provide anthropic_api_key, serper_api_key, and tavily_api_key in the request body.",
+        )
+
+    # Write resolved keys back so the pipeline always reads from request
+    request.anthropic_api_key = anthropic_key
+    request.serper_api_key = serper_key
+    request.tavily_api_key = tavily_key
+
     return StreamingResponse(
         _sse_stream(request),
         media_type="text/event-stream",

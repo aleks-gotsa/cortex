@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { Depth, ResearchResult } from "@/lib/research";
+import { hasKeys } from "@/lib/keys";
 import { useResearch } from "@/hooks/useResearch";
 import { useHistory } from "@/hooks/useHistory";
 import SearchInput from "@/components/SearchInput";
@@ -51,6 +52,7 @@ export default function Home() {
   );
   const [activeQuery, setActiveQuery] = useState("");
   const [loadingSkeleton, setLoadingSkeleton] = useState(false);
+  const [keysReady, setKeysReady] = useState(true);
 
   const {
     start: startResearch,
@@ -174,6 +176,16 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [phase, handleNewResearch, cancelResearch, transitionTo]);
 
+  // ── Check API keys on mount + storage changes ──────────
+  useEffect(() => {
+    setKeysReady(hasKeys());
+    function onStorage() {
+      setKeysReady(hasKeys());
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   // ── Refresh history on idle entry ──────────────────────
   useEffect(() => {
     if (phase === "idle") refreshHistory();
@@ -215,6 +227,12 @@ export default function Home() {
           >
             Search, verify, remember.
           </p>
+
+          {!keysReady && (
+            <p style={{ fontFamily: "monospace", fontSize: 12, color: "#888", marginBottom: 8 }}>
+              No API keys set — open Settings to add your keys before researching.
+            </p>
+          )}
 
           <SearchInput
             query={query}

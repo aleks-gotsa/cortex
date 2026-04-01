@@ -12,13 +12,14 @@ logger = logging.getLogger(__name__)
 _SERPER_URL = "https://google.serper.dev/search"
 
 
-async def search(query: str, num_results: int = 10) -> list[SearchResult]:
+async def search(query: str, num_results: int = 10, api_key: str | None = None) -> list[SearchResult]:
     """Run a web search via Serper.dev and return unified SearchResult list."""
+    resolved_key = api_key or settings.SERPER_API_KEY
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 _SERPER_URL,
-                headers={"X-API-KEY": settings.SERPER_API_KEY},
+                headers={"X-API-KEY": resolved_key},
                 json={"q": query, "num": num_results},
             )
             response.raise_for_status()

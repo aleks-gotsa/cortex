@@ -35,6 +35,10 @@ class ResearchRequest(BaseModel):
     query: str
     depth: Depth = Depth.standard
     use_memory: bool = True
+    # BYOK — override env vars when provided
+    anthropic_api_key: str | None = None
+    serper_api_key: str | None = None
+    tavily_api_key: str | None = None
 
 
 # ── Planner ──────────────────────────────────────────────────────────────────

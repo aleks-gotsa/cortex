@@ -53,9 +53,11 @@ async def run_research(
 ) -> AsyncGenerator[ResearchEvent, None]:
     """Execute the full Cortex pipeline, yielding events for each stage."""
     research_id = uuid.uuid4().hex[:12]
-    client = LLMClient()
+    client = LLMClient(api_key=request.anthropic_api_key)
     client.reset_usage()
     max_passes = _MAX_PASSES[request.depth]
+    serper_key = request.serper_api_key
+    tavily_key = request.tavily_api_key
 
     # Persist the run.
     await db.create_run(research_id, request.query, request.depth.value)
@@ -88,7 +90,12 @@ async def run_research(
     current_questions = research_plan.sub_questions
 
     for pass_num in range(1, max_passes + 1):
-        sources = await gather(current_questions, pass_number=pass_num)
+        sources = await gather(
+            current_questions,
+            pass_number=pass_num,
+            serper_api_key=serper_key,
+            tavily_api_key=tavily_key,
+        )
         all_sources.extend(sources)
 
         yield await _emit(

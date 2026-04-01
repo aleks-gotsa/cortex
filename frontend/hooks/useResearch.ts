@@ -10,6 +10,7 @@ import {
   getStageMetric,
   apiUrl,
 } from "@/lib/research";
+import { getKeys } from "@/lib/keys";
 
 interface UseResearchReturn {
   start: (query: string, depth: Depth) => void;
@@ -66,10 +67,18 @@ export function useResearch(): UseResearchReturn {
       let completed = false;
 
       try {
+        const keys = getKeys();
         const res = await fetch(apiUrl("/research"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: trimmed, depth, use_memory: true }),
+          body: JSON.stringify({
+            query: trimmed,
+            depth,
+            use_memory: true,
+            anthropic_api_key: keys?.anthropicApiKey ?? null,
+            serper_api_key: keys?.serperApiKey ?? null,
+            tavily_api_key: keys?.tavilyApiKey ?? null,
+          }),
           signal: controller.signal,
         });
 

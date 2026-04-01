@@ -14,8 +14,9 @@ logger = logging.getLogger(__name__)
 class LLMClient:
     """Calls Claude models and tracks cumulative token usage."""
 
-    def __init__(self) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+    def __init__(self, api_key: str | None = None) -> None:
+        resolved_key = api_key or settings.ANTHROPIC_API_KEY
+        self._client = anthropic.AsyncAnthropic(api_key=resolved_key)
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0

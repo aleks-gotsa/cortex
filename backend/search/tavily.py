@@ -12,14 +12,15 @@ logger = logging.getLogger(__name__)
 _TAVILY_URL = "https://api.tavily.com/search"
 
 
-async def search(query: str, num_results: int = 10) -> list[SearchResult]:
+async def search(query: str, num_results: int = 10, api_key: str | None = None) -> list[SearchResult]:
     """Run a web search via Tavily Search API and return unified SearchResult list."""
+    resolved_key = api_key or settings.TAVILY_API_KEY
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 _TAVILY_URL,
                 json={
-                    "api_key": settings.TAVILY_API_KEY,
+                    "api_key": resolved_key,
                     "query": query,
                     "max_results": num_results,
                     "search_depth": "basic",

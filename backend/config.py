@@ -7,10 +7,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """All configuration is loaded from .env or environment variables."""
 
-    # --- API Keys (required) ---
-    ANTHROPIC_API_KEY: str = Field(validation_alias="ANTHROPIC_API_KEY")
-    SERPER_API_KEY: str = Field(validation_alias="SERPER_API_KEY")
-    TAVILY_API_KEY: str = Field(validation_alias="TAVILY_API_KEY")
+    # --- API Keys (optional — BYOK users provide keys per-request) ---
+    ANTHROPIC_API_KEY: str = Field(default="", validation_alias="ANTHROPIC_API_KEY")
+    SERPER_API_KEY: str = Field(default="", validation_alias="SERPER_API_KEY")
+    TAVILY_API_KEY: str = Field(default="", validation_alias="TAVILY_API_KEY")
 
     # --- Qdrant ---
     QDRANT_URL: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")

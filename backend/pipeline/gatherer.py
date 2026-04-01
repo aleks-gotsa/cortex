@@ -23,12 +23,16 @@ def _get_reranker() -> CrossEncoder:
     return _reranker
 
 
-async def _search_for_question(sq: SubQuestion) -> list[SearchResult]:
+async def _search_for_question(
+    sq: SubQuestion,
+    serper_api_key: str | None = None,
+    tavily_api_key: str | None = None,
+) -> list[SearchResult]:
     """Run Serper (+ Tavily when available) for every search term in parallel."""
     tasks = []
     for term in sq.search_terms:
-        tasks.append(serper.search(term, num_results=10))
-        tasks.append(tavily.search(term, num_results=10))
+        tasks.append(serper.search(term, num_results=10, api_key=serper_api_key))
+        tasks.append(tavily.search(term, num_results=10, api_key=tavily_api_key))
     results = await asyncio.gather(*tasks)
     flat: list[SearchResult] = []
     for batch in results:
@@ -75,11 +79,16 @@ def _rerank(question: str, sources: list[Source]) -> list[Source]:
 async def gather(
     sub_questions: list[SubQuestion],
     pass_number: int = 1,
+    serper_api_key: str | None = None,
+    tavily_api_key: str | None = None,
 ) -> list[Source]:
     """Run the full search → scrape → rerank pipeline for one gathering pass."""
 
     # 1. Search in parallel for all sub-questions.
-    search_tasks = [_search_for_question(sq) for sq in sub_questions]
+    search_tasks = [
+        _search_for_question(sq, serper_api_key=serper_api_key, tavily_api_key=tavily_api_key)
+        for sq in sub_questions
+    ]
     per_sq_results: list[list[SearchResult]] = await asyncio.gather(*search_tasks)
 
     # 2. Dedupe + cap per sub-question, build Source shells.
