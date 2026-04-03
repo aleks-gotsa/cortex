@@ -23,3 +23,19 @@ def calculate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     """Return estimated USD cost for the given token counts."""
     prices = PRICING_PER_MILLION[model]
     return (input_tokens * prices["input"] + output_tokens * prices["output"]) / 1_000_000
+
+
+# Worker type mapping for Dynamo disaggregated inference
+# prefill = compute-heavy prompt processing, short output
+# decode  = long token generation
+TASK_WORKER_TYPE: dict[str, str] = {
+    "planning": "prefill",       # Haiku: short JSON output
+    "gap_detection": "prefill",  # Sonnet: reads sources, short JSON
+    "synthesis": "decode",       # Sonnet: generates long document
+    "verification": "decode",    # Sonnet: generates corrected document
+}
+
+
+def get_worker_type(task_type: str) -> str:
+    """Return 'prefill' or 'decode' for the given pipeline task."""
+    return TASK_WORKER_TYPE.get(task_type, "decode")
