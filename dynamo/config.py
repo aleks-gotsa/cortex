@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class DynamoSettings(BaseSettings):
     DYNAMO_ENABLED: bool = False
+    DYNAMO_MODE: str = "mock"  # "mock" | "real"
     DYNAMO_PREFILL_URL: str = "http://localhost:8001/v1"
     DYNAMO_DECODE_URL: str = "http://localhost:8002/v1"
     DYNAMO_TRITON_URL: str = "http://localhost:8003"

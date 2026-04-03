@@ -1,0 +1,42 @@
+# Single-GPU setup for NVIDIA 3060 Ti (8GB VRAM)
+# Uses Llama 3.1 8B with INT4 quantization
+# Both prefill and decode on the same worker (single GPU mode)
+# For multi-GPU disaggregated setup, see docker/docker-compose.dynamo-cloud.yml
+#
+# Prerequisites:
+#   1. WSL2 with CUDA drivers installed
+#   2. Docker Desktop with GPU support
+#   3. nvidia-container-toolkit installed
+#   4. HuggingFace account + HUGGING_FACE_HUB_TOKEN env var
+#   5. Access to meta-llama/Llama-3.1-8B-Instruct (request on HF Hub)
+#
+# Run:
+#   HUGGING_FACE_HUB_TOKEN=hf_xxx docker compose -f docker/docker-compose.dynamo-local.yml up
+#   Then: DYNAMO_ENABLED=true DYNAMO_MODE=real uvicorn backend.main:app --reload
+
+services:
+  dynamo-worker:
+    image: nvcr.io/nvidia/dynamo:latest
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - MODEL_NAME=meta-llama/Llama-3.1-8B-Instruct
+      - TENSOR_PARALLEL_SIZE=1
+      - MAX_MODEL_LEN=8192
+      - GPU_MEMORY_UTILIZATION=0.85
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
+    ports:
+      - "8001:8000"   # prefill endpoint
+      - "8002:8000"   # Note: same container, both ports forward to it
+    volumes:
+      - huggingface_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  huggingface_cache:
