@@ -8,7 +8,7 @@ from pathlib import Path
 from rich.console import Console
 from rich.text import Text
 
-from .cortex_cli import DIM, GREEN, LIGHT_BLUE
+from .theme import DIM, GREEN, LIGHT_BLUE
 
 
 def save_document(query: str, document: str, output_dir: str) -> str:

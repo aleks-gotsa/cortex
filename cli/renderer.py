@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.theme import Theme
 
-from .cortex_cli import BLUE, DIM, LIGHT_BLUE, WHITE
+from .theme import BLUE, DIM, LIGHT_BLUE, WHITE
 
 _THEME = Theme(
     {

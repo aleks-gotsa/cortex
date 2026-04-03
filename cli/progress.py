@@ -11,7 +11,7 @@ from rich.live import Live
 from rich.spinner import Spinner
 from rich.text import Text
 
-from .cortex_cli import BLUE, DIM, GREEN
+from .theme import BLUE, DIM, GREEN
 
 # ── Stage metadata ───────────────────────────────────────────────────────────
 

@@ -9,26 +9,16 @@ import time
 import click
 import httpx
 import pyfiglet
-from rich.console import Console
 from rich.rule import Rule
 from rich.table import Table
 from rich.text import Text
 
-# ── Color theme ──────────────────────────────────────────────────────────────
-
-NAVY = "#1e3a5f"
-BLUE = "#3b82f6"
-LIGHT_BLUE = "#60a5fa"
-GREEN = "#22c55e"
-DIM = "#6b7280"
-WHITE = "#f9fafb"
+from .theme import BLUE, DIM, GREEN, LIGHT_BLUE, NAVY, WHITE, console, print_separator
 
 # ── Config ───────────────────────────────────────────────────────────────────
 
 BACKEND_URL = os.environ.get("CORTEX_BACKEND_URL", "http://localhost:8000")
 OUTPUT_DIR = os.environ.get("CORTEX_OUTPUT_DIR", "./cortex_output")
-
-console = Console()
 
 
 # ── Branding ─────────────────────────────────────────────────────────────────
@@ -57,9 +47,10 @@ async def print_header() -> None:
     # Ping backend for status + research count.
     connected = False
     research_count = "unknown"
+    backend_url = BACKEND_URL
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
-            resp = await client.get(f"{BACKEND_URL}/research/history")
+            resp = await client.get(f"{backend_url}/research/history")
             if resp.status_code == 200:
                 connected = True
                 history = resp.json()
@@ -76,7 +67,7 @@ async def print_header() -> None:
 
     status_text = "connected" if connected else "offline"
     status_style = GREEN if connected else "red"
-    display_url = BACKEND_URL.removeprefix("http://").removeprefix("https://")
+    display_url = backend_url.removeprefix("http://").removeprefix("https://")
     console.print(_info("backend", [(f"{display_url} · ", DIM), (status_text, status_style)]))
     console.print(_info("search", [("serper + tavily", DIM)]))
     console.print(_info("memory", [(f"qdrant · {research_count} researches", DIM)]))
@@ -84,11 +75,6 @@ async def print_header() -> None:
 
     console.print(Rule(style="#1e3a5f"))
     console.print()
-
-
-def print_separator() -> None:
-    """Print a thin navy separator line."""
-    console.print(Rule(style=NAVY))
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -115,7 +101,7 @@ async def _do_research(
 
     if not await check_backend(backend_url):
         console.print(
-            f"  [{DIM}]✗[/{DIM}] [red]Cannot connect to backend at[/red] "
+            f"  [{DIM}]\u2717[/{DIM}] [red]Cannot connect to backend at[/red] "
             f"[{LIGHT_BLUE}]{backend_url}[/{LIGHT_BLUE}]"
         )
         console.print(
@@ -134,12 +120,12 @@ async def _do_research(
             progress.handle_event(event.event, event.data)
     except ConnectionError:
         progress.stop()
-        console.print(f"  [red]✗ Connection lost to {backend_url}[/red]")
+        console.print(f"  [red]\u2717 Connection lost to {backend_url}[/red]")
         return
     except StreamError as exc:
         progress.stop()
         err_msg = str(exc)
-        console.print(f"  [red]✗ {err_msg}[/red]")
+        console.print(f"  [red]\u2717 {err_msg}[/red]")
         if "Timed out" in err_msg:
             console.print(f"    [{DIM}]Try --depth quick for faster results.[/{DIM}]")
         else:
@@ -153,7 +139,7 @@ async def _do_research(
         progress.stop()
 
     if not complete_data:
-        console.print(f"  [red]✗ Research ended without a result.[/red]")
+        console.print(f"  [red]\u2717 Research ended without a result.[/red]")
         return
 
     elapsed = time.monotonic() - t0
@@ -186,7 +172,7 @@ def _repl(
 
     while True:
         try:
-            query = console.input(f"  [{BLUE}]❯[/{BLUE}] ").strip()
+            query = console.input(f"  [{BLUE}]\u276f[/{BLUE}] ").strip()
         except (KeyboardInterrupt, EOFError):
             console.print()
             break
@@ -221,25 +207,16 @@ def _repl(
 # ── CLI ──────────────────────────────────────────────────────────────────────
 
 
-@click.command(
-    context_settings={"ignore_unknown_options": True, "allow_extra_args": True},
-)
-@click.option(
-    "--depth",
-    default="standard",
-    type=click.Choice(["quick", "standard", "deep"]),
-    help="Research depth (default: standard)",
-)
-@click.option("--no-memory", is_flag=True, default=False, help="Don't use/store memory")
+@click.group(invoke_without_command=True)
 @click.option("--backend", default=None, help="Backend URL override")
+@click.option("--no-memory", is_flag=True, default=False, help="Don't use/store memory")
 @click.option("--output", default=None, help="Output directory override")
 @click.option("--version", is_flag=True, help="Show version")
 @click.pass_context
 def cli(
     ctx: click.Context,
-    depth: str,
-    no_memory: bool,
     backend: str | None,
+    no_memory: bool,
     output: str | None,
     version: bool,
 ) -> None:
@@ -248,30 +225,59 @@ def cli(
         console.print("cortex 0.1.0")
         return
 
-    backend_url = backend or BACKEND_URL
-    output_dir = output or OUTPUT_DIR
-    use_memory = not no_memory
+    ctx.ensure_object(dict)
+    ctx.obj["backend_url"] = backend or BACKEND_URL
+    ctx.obj["output_dir"] = output or OUTPUT_DIR
+    ctx.obj["use_memory"] = not no_memory
 
-    args = ctx.args
-    if not args:
-        _repl(depth, use_memory, backend_url, output_dir)
-        return
+    if ctx.invoked_subcommand is None:
+        _repl(
+            depth="standard",
+            use_memory=ctx.obj["use_memory"],
+            backend_url=ctx.obj["backend_url"],
+            output_dir=ctx.obj["output_dir"],
+        )
 
-    # Route subcommands manually.
-    cmd = args[0]
-    if cmd == "history":
-        asyncio.run(_show_history(backend_url))
-        return
-    if cmd == "view":
-        if len(args) < 2:
-            console.print(f"[red]Usage: cortex view <research_id>[/red]")
-            return
-        asyncio.run(_show_detail(args[1], backend_url))
-        return
 
-    # Everything else is a research query.
-    query = " ".join(args)
-    asyncio.run(_do_research(query, depth, use_memory, backend_url, output_dir))
+@cli.command()
+@click.argument("query", nargs=-1, required=True)
+@click.option(
+    "--depth",
+    default="standard",
+    type=click.Choice(["quick", "standard", "deep"]),
+    help="Research depth (default: standard)",
+)
+@click.pass_context
+def research(ctx: click.Context, query: tuple[str, ...], depth: str) -> None:
+    """Run a single research query."""
+    query_str = " ".join(query)
+    asyncio.run(
+        _do_research(
+            query_str,
+            depth,
+            ctx.obj["use_memory"],
+            ctx.obj["backend_url"],
+            ctx.obj["output_dir"],
+        )
+    )
+
+
+@cli.command()
+@click.pass_context
+def history(ctx: click.Context) -> None:
+    """Show research history."""
+    asyncio.run(_show_history(ctx.obj["backend_url"]))
+
+
+@cli.command()
+@click.argument("research_id")
+@click.pass_context
+def view(ctx: click.Context, research_id: str) -> None:
+    """View a past research by ID."""
+    asyncio.run(_show_detail(research_id, ctx.obj["backend_url"]))
+
+
+# ── History / Detail ─────────────────────────────────────────────────────────
 
 
 async def _show_history(backend_url: str) -> None:
@@ -280,7 +286,7 @@ async def _show_history(backend_url: str) -> None:
     try:
         runs = await fetch_history(backend_url)
     except Exception:
-        console.print(f"  [red]✗ Cannot connect to backend at {backend_url}[/red]")
+        console.print(f"  [red]\u2717 Cannot connect to backend at {backend_url}[/red]")
         return
 
     if not runs:
@@ -318,7 +324,7 @@ async def _show_detail(research_id: str, backend_url: str) -> None:
     try:
         detail = await fetch_detail(backend_url, research_id)
     except Exception:
-        console.print(f"  [red]✗ Cannot connect to backend at {backend_url}[/red]")
+        console.print(f"  [red]\u2717 Cannot connect to backend at {backend_url}[/red]")
         return
 
     if detail is None:
