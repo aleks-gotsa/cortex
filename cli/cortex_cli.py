@@ -209,25 +209,33 @@ def _repl(
 
 @click.group(invoke_without_command=True)
 @click.version_option("0.1.0", prog_name="cortex")
+@click.option(
+    "--depth",
+    default="standard",
+    type=click.Choice(["quick", "standard", "deep"]),
+    help="Research depth (default: standard)",
+)
 @click.option("--backend", default=None, help="Backend URL override")
 @click.option("--no-memory", is_flag=True, default=False, help="Don't use/store memory")
 @click.option("--output", default=None, help="Output directory override")
 @click.pass_context
 def cli(
     ctx: click.Context,
+    depth: str,
     backend: str | None,
     no_memory: bool,
     output: str | None,
 ) -> None:
     """Deep research engine — search, verify, remember."""
     ctx.ensure_object(dict)
+    ctx.obj["depth"] = depth
     ctx.obj["backend_url"] = backend or BACKEND_URL
     ctx.obj["output_dir"] = output or OUTPUT_DIR
     ctx.obj["use_memory"] = not no_memory
 
     if ctx.invoked_subcommand is None:
         _repl(
-            depth="standard",
+            depth=ctx.obj["depth"],
             use_memory=ctx.obj["use_memory"],
             backend_url=ctx.obj["backend_url"],
             output_dir=ctx.obj["output_dir"],
@@ -238,18 +246,18 @@ def cli(
 @click.argument("query", nargs=-1, required=True)
 @click.option(
     "--depth",
-    default="standard",
+    default=None,
     type=click.Choice(["quick", "standard", "deep"]),
-    help="Research depth (default: standard)",
+    help="Research depth (overrides group-level --depth)",
 )
 @click.pass_context
-def research(ctx: click.Context, query: tuple[str, ...], depth: str) -> None:
+def research(ctx: click.Context, query: tuple[str, ...], depth: str | None) -> None:
     """Run a single research query."""
     query_str = " ".join(query)
     asyncio.run(
         _do_research(
             query_str,
-            depth,
+            depth or ctx.obj["depth"],
             ctx.obj["use_memory"],
             ctx.obj["backend_url"],
             ctx.obj["output_dir"],
