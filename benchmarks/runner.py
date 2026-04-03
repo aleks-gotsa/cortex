@@ -13,6 +13,7 @@ from pathlib import Path
 
 import click
 import httpx
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 
@@ -20,6 +21,8 @@ from benchmarks.queries import QUERIES
 from benchmarks.report import generate
 
 console = Console()
+
+load_dotenv()
 
 
 def _select_queries(n: int, depth: str) -> list[dict[str, str]]:
@@ -113,7 +116,7 @@ async def _run_single_query(
 
                         if current_event == "complete":
                             total_time = round(elapsed, 4)
-                            cost_usd = event_data.get("total_cost_usd")
+                            cost_usd = event_data.get("cost_usd")
                             research_id = event_data.get("research_id")
 
                     current_event = None
