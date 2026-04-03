@@ -7,15 +7,22 @@ from datetime import datetime, timezone
 
 from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
-from sentence_transformers import SentenceTransformer
 
 from backend.config import settings
+from dynamo.triton_embeddings import get_embedding_model as _get_embed_factory
 
 logger = logging.getLogger(__name__)
 
 # ── Module-level singletons ──────────────────────────────────────────────────
 
-_embed_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+_embed_model = None  # lazy init
+
+
+def _get_model():
+    global _embed_model
+    if _embed_model is None:
+        _embed_model = _get_embed_factory()
+    return _embed_model
 _qdrant = AsyncQdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY or None)
 
 
@@ -100,7 +107,7 @@ async def store_research(research_id: str, query: str, document: str) -> int:
     if not chunks:
         return 0
 
-    embeddings = _embed_model.encode(chunks, normalize_embeddings=True).tolist()
+    embeddings = _get_model().encode(chunks, normalize_embeddings=True).tolist()
     now = datetime.now(timezone.utc).isoformat()
 
     points = [
@@ -135,7 +142,7 @@ async def recall(query: str, top_k: int = 5) -> list[str]:
     """Return the *top_k* most relevant prior-research chunks for *query*."""
     await ensure_collection()
 
-    vector = _embed_model.encode(query, normalize_embeddings=True).tolist()
+    vector = _get_model().encode(query, normalize_embeddings=True).tolist()
 
     response = await _qdrant.query_points(
         collection_name=settings.QDRANT_COLLECTION,

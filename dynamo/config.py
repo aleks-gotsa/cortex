@@ -11,6 +11,7 @@ class DynamoSettings(BaseSettings):
     DYNAMO_TRITON_URL: str = "http://localhost:8003"
     DYNAMO_PREFILL_MODEL: str = "meta-llama/Llama-3.1-8B-Instruct"
     DYNAMO_DECODE_MODEL: str = "meta-llama/Llama-3.1-70B-Instruct"
+    DYNAMO_KVCACHE_ENABLED: bool = False
 
     model_config = SettingsConfigDict(
         env_file=".env",
