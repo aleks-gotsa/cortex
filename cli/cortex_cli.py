@@ -208,23 +208,18 @@ def _repl(
 
 
 @click.group(invoke_without_command=True)
+@click.version_option("0.1.0", prog_name="cortex")
 @click.option("--backend", default=None, help="Backend URL override")
 @click.option("--no-memory", is_flag=True, default=False, help="Don't use/store memory")
 @click.option("--output", default=None, help="Output directory override")
-@click.option("--version", is_flag=True, help="Show version")
 @click.pass_context
 def cli(
     ctx: click.Context,
     backend: str | None,
     no_memory: bool,
     output: str | None,
-    version: bool,
 ) -> None:
     """Deep research engine — search, verify, remember."""
-    if version:
-        console.print("cortex 0.1.0")
-        return
-
     ctx.ensure_object(dict)
     ctx.obj["backend_url"] = backend or BACKEND_URL
     ctx.obj["output_dir"] = output or OUTPUT_DIR
