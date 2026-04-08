@@ -166,7 +166,17 @@ def _repl(
     output_dir: str,
 ) -> None:
     """Interactive REPL mode."""
-    asyncio.run(print_header())
+    asyncio.run(_repl_async(depth, use_memory, backend_url, output_dir))
+
+
+async def _repl_async(
+    depth: str,
+    use_memory: bool,
+    backend_url: str,
+    output_dir: str,
+) -> None:
+    """Async REPL loop — single event loop for the entire session."""
+    await print_header()
 
     research_count = 0
 
@@ -181,16 +191,14 @@ def _repl(
             break
 
         if query == "history":
-            asyncio.run(_show_history(backend_url))
+            await _show_history(backend_url)
             console.print()
             continue
 
         try:
-            asyncio.run(
-                _do_research(
-                    query, depth, use_memory, backend_url, output_dir,
-                    show_header=False,
-                )
+            await _do_research(
+                query, depth, use_memory, backend_url, output_dir,
+                show_header=False,
             )
             research_count += 1
         except KeyboardInterrupt:
@@ -209,6 +217,7 @@ def _repl(
 
 @click.group(invoke_without_command=True)
 @click.version_option("0.1.0", prog_name="cortex")
+@click.argument("query", nargs=-1)
 @click.option(
     "--depth",
     default="standard",
@@ -221,6 +230,7 @@ def _repl(
 @click.pass_context
 def cli(
     ctx: click.Context,
+    query: tuple[str, ...],
     depth: str,
     backend: str | None,
     no_memory: bool,
@@ -233,7 +243,23 @@ def cli(
     ctx.obj["output_dir"] = output or OUTPUT_DIR
     ctx.obj["use_memory"] = not no_memory
 
-    if ctx.invoked_subcommand is None:
+    if ctx.invoked_subcommand is not None:
+        return
+
+    if query:
+        # Direct query mode: cortex "What is RAG?"
+        query_str = " ".join(query)
+        asyncio.run(
+            _do_research(
+                query_str,
+                ctx.obj["depth"],
+                ctx.obj["use_memory"],
+                ctx.obj["backend_url"],
+                ctx.obj["output_dir"],
+            )
+        )
+    else:
+        # No query, no subcommand → REPL
         _repl(
             depth=ctx.obj["depth"],
             use_memory=ctx.obj["use_memory"],

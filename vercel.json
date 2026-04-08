@@ -11,7 +11,11 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/(research.*)",
+      "src": "/health",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/research(.*)",
       "dest": "api/index.py"
     }
   ]
