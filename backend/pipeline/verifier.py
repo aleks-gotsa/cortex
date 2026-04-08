@@ -44,7 +44,7 @@ Respond ONLY with valid JSON, no markdown fences, no preamble:
 def _build_user_message(document: str, sources: list[Source]) -> str:
     """Format the document and sources for verification."""
     # Sort by relevance (highest first) to match the numbering used by synthesizer.
-    ranked = sorted(sources, key=lambda s: s.relevance_score, reverse=True)
+    ranked = sorted(sources, key=lambda s: (-s.relevance_score, s.url))
 
     parts: list[str] = [
         "Document to verify:",

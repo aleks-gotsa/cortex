@@ -11,6 +11,7 @@ from fastapi.responses import StreamingResponse
 
 from backend.config import settings
 from backend.models import ResearchRequest
+from backend.pipeline.gatherer import preload_reranker
 from backend.pipeline.orchestrator import run_research
 from backend.storage import db
 
@@ -25,6 +26,7 @@ async def lifespan(app: FastAPI):
     # Startup
     Path("data").mkdir(exist_ok=True)
     await db.init_db()
+    preload_reranker()
     yield
     # Shutdown (nothing needed)
 
@@ -37,6 +39,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health")
+async def health() -> dict:
+    return {"status": "ok"}
 
 
 # ── SSE research endpoint ────────────────────────────────────────────────

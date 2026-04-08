@@ -62,204 +62,217 @@ async def run_research(
     # Persist the run.
     await db.create_run(research_id, request.query, request.depth.value)
 
-    # ── 0. RECALL prior context ──────────────────────────────────────────
-    prior_context: list[str] | None = None
-    if request.use_memory:
-        prior_context = await recall(request.query)
-        if prior_context:
-            logger.info("Recalled %d chunks from prior research", len(prior_context))
+    try:
+        # ── 0. RECALL prior context ──────────────────────────────────────
+        prior_context: list[str] | None = None
+        if request.use_memory:
+            prior_context = await recall(request.query)
+            if prior_context:
+                logger.info("Recalled %d chunks from prior research", len(prior_context))
 
-    # ── 1. PLAN ──────────────────────────────────────────────────────────
-    _before = client.get_usage()
-    research_plan = await plan(request.query, prior_context=prior_context, client=client)
-    _plan_tokens = _token_diff(_before, client.get_usage())
-    yield await _emit(
-        research_id,
-        ResearchEvent(
-            stage="planning",
-            data={
-                "sub_questions": [sq.question for sq in research_plan.sub_questions],
-                "strategy": research_plan.strategy_notes,
-                "tokens": _plan_tokens,
-            },
-        ),
-    )
-
-    # ── 2. GATHER (iterative) ────────────────────────────────────────────
-    all_sources = []
-    current_questions = research_plan.sub_questions
-
-    for pass_num in range(1, max_passes + 1):
-        sources = await gather(
-            current_questions,
-            pass_number=pass_num,
-            serper_api_key=serper_key,
-            tavily_api_key=tavily_key,
-        )
-        all_sources.extend(sources)
-
+        # ── 1. PLAN ──────────────────────────────────────────────────────
+        _before = client.get_usage()
+        research_plan = await plan(request.query, prior_context=prior_context, client=client)
+        _plan_tokens = _token_diff(_before, client.get_usage())
         yield await _emit(
             research_id,
             ResearchEvent(
-                stage="gathering",
+                stage="planning",
                 data={
-                    "pass": pass_num,
-                    "sources_found": len(sources),
-                    "queries_used": [
-                        term
-                        for sq in current_questions
-                        for term in sq.search_terms
-                    ],
+                    "sub_questions": [sq.question for sq in research_plan.sub_questions],
+                    "strategy": research_plan.strategy_notes,
+                    "tokens": _plan_tokens,
                 },
             ),
         )
 
-        # Skip gap detection for quick depth or final pass.
-        if request.depth == Depth.quick or pass_num == max_passes:
-            break
+        # ── 2. GATHER (iterative) ────────────────────────────────────────
+        all_sources = []
+        current_questions = research_plan.sub_questions
 
-        # ── 3. GAP DETECT ────────────────────────────────────────────────
+        for pass_num in range(1, max_passes + 1):
+            sources = await gather(
+                current_questions,
+                pass_number=pass_num,
+                serper_api_key=serper_key,
+                tavily_api_key=tavily_key,
+            )
+            all_sources.extend(sources)
+
+            yield await _emit(
+                research_id,
+                ResearchEvent(
+                    stage="gathering",
+                    data={
+                        "pass": pass_num,
+                        "sources_found": len(sources),
+                        "queries_used": [
+                            term
+                            for sq in current_questions
+                            for term in sq.search_terms
+                        ],
+                    },
+                ),
+            )
+
+            # Skip gap detection for quick depth or final pass.
+            if request.depth == Depth.quick or pass_num == max_passes:
+                break
+
+            # ── 3. GAP DETECT ────────────────────────────────────────────
+            _before = client.get_usage()
+            gap_report = await detect_gaps(
+                research_plan.sub_questions, all_sources, client=client
+            )
+            _gap_tokens = _token_diff(_before, client.get_usage())
+
+            coverage_dict = {c.sub_question_id: c.score for c in gap_report.coverage}
+            gaps = [
+                c.assessment
+                for c in gap_report.coverage
+                if c.score < 0.6
+            ]
+
+            yield await _emit(
+                research_id,
+                ResearchEvent(
+                    stage="gap_detection",
+                    data={
+                        "coverage": coverage_dict,
+                        "gaps": gaps,
+                        "tokens": _gap_tokens,
+                    },
+                ),
+            )
+
+            if gap_report.recommendation == GapRecommendation.proceed:
+                break
+
+            # Build follow-up sub-questions for the next pass.
+            follow_ups: list[SubQuestion] = []
+            for c in gap_report.coverage:
+                if c.score < 0.6 and c.follow_up_queries:
+                    follow_ups.append(
+                        SubQuestion(
+                            id=c.sub_question_id,
+                            question=next(
+                                (sq.question for sq in research_plan.sub_questions if sq.id == c.sub_question_id),
+                                c.sub_question_id,
+                            ),
+                            search_terms=c.follow_up_queries,
+                        )
+                    )
+
+            if not follow_ups:
+                break
+            current_questions = follow_ups
+
+        # ── 4. SYNTHESIZE ────────────────────────────────────────────────
+        yield await _emit(research_id, ResearchEvent(stage="synthesizing", data={}))
+
         _before = client.get_usage()
-        gap_report = await detect_gaps(
-            research_plan.sub_questions, all_sources, client=client
+        document = await synthesize(
+            request.query,
+            research_plan.sub_questions,
+            all_sources,
+            client=client,
         )
-        _gap_tokens = _token_diff(_before, client.get_usage())
+        _synth_tokens = _token_diff(_before, client.get_usage())
+        yield await _emit(
+            research_id,
+            ResearchEvent(stage="synthesis", data={"tokens": _synth_tokens}),
+        )
 
-        coverage_dict = {c.sub_question_id: c.score for c in gap_report.coverage}
-        gaps = [
-            c.assessment
-            for c in gap_report.coverage
-            if c.score < 0.6
+        # ── 5. VERIFY ────────────────────────────────────────────────────
+        _before = client.get_usage()
+        verification = await verify(document, all_sources, client=client)
+        _verify_tokens = _token_diff(_before, client.get_usage())
+
+        yield await _emit(
+            research_id,
+            ResearchEvent(
+                stage="verifying",
+                data={
+                    "claims_total": (
+                        verification.summary.confirmed
+                        + verification.summary.weakened
+                        + verification.summary.removed
+                    ),
+                    "confirmed": verification.summary.confirmed,
+                    "weakened": verification.summary.weakened,
+                    "removed": verification.summary.removed,
+                    "tokens": _verify_tokens,
+                },
+            ),
+        )
+
+        # ── 6. MEMORY ───────────────────────────────────────────────────
+        if request.use_memory:
+            chunks_stored = await store_research(
+                research_id, request.query, verification.verified_document
+            )
+            yield await _emit(
+                research_id,
+                ResearchEvent(
+                    stage="memory",
+                    data={
+                        "chunks_stored": chunks_stored,
+                        "collection": settings.QDRANT_COLLECTION,
+                    },
+                ),
+            )
+
+        # ── 7. COST ─────────────────────────────────────────────────────
+        usage_by_model = client.get_usage_by_model()
+        cost_usd = round(
+            sum(
+                calculate_cost(model, c["input_tokens"], c["output_tokens"])
+                for model, c in usage_by_model.items()
+            ),
+            4,
+        )
+
+        # ── 8. PERSIST RESULT ────────────────────────────────────────────
+        sources_list = [
+            {"url": s.url, "title": s.title, "relevance_score": s.relevance_score}
+            for s in all_sources
         ]
 
+        await db.save_result(
+            research_id=research_id,
+            document_md=verification.verified_document,
+            sources_json=json.dumps(sources_list, ensure_ascii=False),
+            verification_json=json.dumps(verification.summary.model_dump(), ensure_ascii=False),
+        )
+        await db.update_run(
+            research_id,
+            status="completed",
+            cost_usd=cost_usd,
+            completed_at=datetime.now(timezone.utc),
+        )
+
+        # ── 9. COMPLETE ─────────────────────────────────────────────────
         yield await _emit(
             research_id,
             ResearchEvent(
-                stage="gap_detection",
+                stage="complete",
                 data={
-                    "coverage": coverage_dict,
-                    "gaps": gaps,
-                    "tokens": _gap_tokens,
+                    "document": verification.verified_document,
+                    "sources": sources_list,
+                    "cost_usd": cost_usd,
+                    "research_id": research_id,
                 },
             ),
         )
-
-        if gap_report.recommendation == GapRecommendation.proceed:
-            break
-
-        # Build follow-up sub-questions for the next pass.
-        follow_ups: list[SubQuestion] = []
-        for c in gap_report.coverage:
-            if c.score < 0.6 and c.follow_up_queries:
-                follow_ups.append(
-                    SubQuestion(
-                        id=c.sub_question_id,
-                        question=next(
-                            (sq.question for sq in research_plan.sub_questions if sq.id == c.sub_question_id),
-                            c.sub_question_id,
-                        ),
-                        search_terms=c.follow_up_queries,
-                    )
-                )
-
-        if not follow_ups:
-            break
-        current_questions = follow_ups
-
-    # ── 4. SYNTHESIZE ────────────────────────────────────────────────────
-    yield await _emit(research_id, ResearchEvent(stage="synthesizing", data={}))
-
-    _before = client.get_usage()
-    document = await synthesize(
-        request.query,
-        research_plan.sub_questions,
-        all_sources,
-        client=client,
-    )
-    _synth_tokens = _token_diff(_before, client.get_usage())
-    yield await _emit(
-        research_id,
-        ResearchEvent(stage="synthesis", data={"tokens": _synth_tokens}),
-    )
-
-    # ── 5. VERIFY ────────────────────────────────────────────────────────
-    _before = client.get_usage()
-    verification = await verify(document, all_sources, client=client)
-    _verify_tokens = _token_diff(_before, client.get_usage())
-
-    yield await _emit(
-        research_id,
-        ResearchEvent(
-            stage="verifying",
-            data={
-                "claims_total": (
-                    verification.summary.confirmed
-                    + verification.summary.weakened
-                    + verification.summary.removed
-                ),
-                "confirmed": verification.summary.confirmed,
-                "weakened": verification.summary.weakened,
-                "removed": verification.summary.removed,
-                "tokens": _verify_tokens,
-            },
-        ),
-    )
-
-    # ── 6. MEMORY ─────────────────────────────────────────────────────────
-    if request.use_memory:
-        chunks_stored = await store_research(
-            research_id, request.query, verification.verified_document
-        )
+    except Exception as exc:
+        logger.exception("Pipeline failed for %s", research_id)
+        await db.update_run(research_id, status="failed")
         yield await _emit(
             research_id,
             ResearchEvent(
-                stage="memory",
-                data={
-                    "chunks_stored": chunks_stored,
-                    "collection": settings.QDRANT_COLLECTION,
-                },
+                stage="error",
+                data={"error": str(exc)},
             ),
         )
-
-    # ── 7. COST ──────────────────────────────────────────────────────────
-    usage_by_model = client.get_usage_by_model()
-    cost_usd = round(
-        sum(
-            calculate_cost(model, c["input_tokens"], c["output_tokens"])
-            for model, c in usage_by_model.items()
-        ),
-        4,
-    )
-
-    # ── 8. PERSIST RESULT ────────────────────────────────────────���──────
-    sources_list = [
-        {"url": s.url, "title": s.title, "relevance_score": s.relevance_score}
-        for s in all_sources
-    ]
-
-    await db.save_result(
-        research_id=research_id,
-        document_md=verification.verified_document,
-        sources_json=json.dumps(sources_list, ensure_ascii=False),
-        verification_json=json.dumps(verification.summary.model_dump(), ensure_ascii=False),
-    )
-    await db.update_run(
-        research_id,
-        status="completed",
-        cost_usd=cost_usd,
-        completed_at=datetime.now(timezone.utc),
-    )
-
-    # ── 9. COMPLETE ──────────────────────────────────────────────────────
-    yield await _emit(
-        research_id,
-        ResearchEvent(
-            stage="complete",
-            data={
-                "document": verification.verified_document,
-                "sources": sources_list,
-                "cost_usd": cost_usd,
-                "research_id": research_id,
-            },
-        ),
-    )
+    finally:
+        await client.close()

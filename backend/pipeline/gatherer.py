@@ -23,6 +23,12 @@ def _get_reranker() -> CrossEncoder:
     return _reranker
 
 
+def preload_reranker() -> None:
+    """Pre-load the cross-encoder model. Call at startup to avoid first-request delay."""
+    _get_reranker()
+    logger.info("Cross-encoder reranker pre-loaded")
+
+
 async def _search_for_question(
     sq: SubQuestion,
     serper_api_key: str | None = None,

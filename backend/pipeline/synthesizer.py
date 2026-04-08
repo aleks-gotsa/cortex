@@ -41,7 +41,7 @@ def _build_user_message(
     to snippet-only.
     """
     # Sort a copy by relevance so we can trim the tail if needed.
-    ranked = sorted(sources, key=lambda s: s.relevance_score, reverse=True)
+    ranked = sorted(sources, key=lambda s: (-s.relevance_score, s.url))
 
     parts: list[str] = [
         f"RESEARCH QUERY: {query}\n",
