@@ -1,5 +1,6 @@
 """Qdrant vector memory — store and recall prior research chunks."""
 
+import asyncio
 import logging
 import re
 import uuid
@@ -45,17 +46,28 @@ _qdrant = AsyncQdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API
 
 # ── Collection management ────────────────────────────────────────────────────
 
+_collection_lock = asyncio.Lock()
+_collection_ensured = False
+
 
 async def ensure_collection() -> None:
     """Create the research collection if it does not already exist."""
-    name = settings.QDRANT_COLLECTION
-    if await _qdrant.collection_exists(name):
+    global _collection_ensured
+    if _collection_ensured:
         return
-    await _qdrant.create_collection(
-        collection_name=name,
-        vectors_config=VectorParams(size=384, distance=Distance.COSINE),
-    )
-    logger.info("Created Qdrant collection %r", name)
+    async with _collection_lock:
+        if _collection_ensured:
+            return
+        name = settings.QDRANT_COLLECTION
+        if await _qdrant.collection_exists(name):
+            _collection_ensured = True
+            return
+        await _qdrant.create_collection(
+            collection_name=name,
+            vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+        )
+        _collection_ensured = True
+        logger.info("Created Qdrant collection %r", name)
 
 
 # ── Chunking ─────────────────────────────────────────────────────────────────
@@ -118,58 +130,71 @@ def _chunk_document(text: str, max_tokens: int = 500) -> list[str]:
 
 async def store_research(research_id: str, query: str, document: str) -> int:
     """Chunk, embed, and upsert *document* into Qdrant. Return chunk count."""
-    await ensure_collection()
+    try:
+        await ensure_collection()
 
-    chunks = _chunk_document(document)
-    if not chunks:
-        return 0
+        chunks = _chunk_document(document)
+        if not chunks:
+            return 0
 
-    embeddings = (await _embed(chunks, normalize=True)).tolist()
-    now = datetime.now(timezone.utc).isoformat()
+        embeddings = (await _embed(chunks, normalize=True)).tolist()
+        now = datetime.now(timezone.utc).isoformat()
 
-    points = [
-        PointStruct(
-            id=uuid.uuid4().hex,
-            vector=vec,
-            payload={
-                "research_id": research_id,
-                "query": query,
-                "date": now,
-                "chunk_index": idx,
-                "text": text,
-            },
+        points = [
+            PointStruct(
+                id=uuid.uuid4().hex,
+                vector=vec,
+                payload={
+                    "research_id": research_id,
+                    "query": query,
+                    "date": now,
+                    "chunk_index": idx,
+                    "text": text,
+                },
+            )
+            for idx, (text, vec) in enumerate(zip(chunks, embeddings, strict=True))
+        ]
+
+        await _qdrant.upsert(
+            collection_name=settings.QDRANT_COLLECTION,
+            points=points,
         )
-        for idx, (text, vec) in enumerate(zip(chunks, embeddings, strict=True))
-    ]
-
-    await _qdrant.upsert(
-        collection_name=settings.QDRANT_COLLECTION,
-        points=points,
-    )
-    logger.info(
-        "Stored %d chunks for research %s in %s",
-        len(points),
-        research_id,
-        settings.QDRANT_COLLECTION,
-    )
-    return len(points)
+        logger.info(
+            "Stored %d chunks for research %s in %s",
+            len(points),
+            research_id,
+            settings.QDRANT_COLLECTION,
+        )
+        return len(points)
+    except Exception as exc:
+        logger.warning(
+            "Failed to store research %s in Qdrant (memory disabled): %s",
+            research_id, exc,
+        )
+        return 0
 
 
 async def recall(query: str, top_k: int = 5) -> list[str]:
     """Return the *top_k* most relevant prior-research chunks for *query*."""
-    await ensure_collection()
+    try:
+        await ensure_collection()
 
-    vector = (await _embed(query, normalize=True)).tolist()
+        vector = (await _embed(query, normalize=True)).tolist()
 
-    response = await _qdrant.query_points(
-        collection_name=settings.QDRANT_COLLECTION,
-        query=vector,
-        limit=top_k,
-    )
+        response = await _qdrant.query_points(
+            collection_name=settings.QDRANT_COLLECTION,
+            query=vector,
+            limit=top_k,
+        )
 
-    if not response.points:
+        if not response.points:
+            return []
+
+        texts = [pt.payload["text"] for pt in response.points if pt.payload]
+        logger.info("Recalled %d chunks for query %r", len(texts), query[:80])
+        return texts
+    except Exception as exc:
+        logger.warning(
+            "Failed to recall from Qdrant (memory disabled): %s", exc,
+        )
         return []
-
-    texts = [pt.payload["text"] for pt in response.points if pt.payload]
-    logger.info("Recalled %d chunks for query %r", len(texts), query[:80])
-    return texts

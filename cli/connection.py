@@ -109,7 +109,11 @@ def _parse_sse_frame(frame: str) -> SSEEvent | None:
         if line.startswith("event:"):
             event_name = line[len("event:") :].strip()
         elif line.startswith("data:"):
-            data_lines.append(line[len("data:") :].strip())
+            raw = line[len("data:"):]
+            # SSE spec: single space after colon is part of the field, not the value
+            if raw.startswith(" "):
+                raw = raw[1:]
+            data_lines.append(raw)
 
     if not event_name:
         return None

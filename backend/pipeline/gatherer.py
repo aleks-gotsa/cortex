@@ -59,26 +59,28 @@ def _dedupe(results: list[SearchResult]) -> list[SearchResult]:
 
 def _rerank(question: str, sources: list[Source]) -> list[Source]:
     """Score each source against the question text with the cross-encoder."""
+    if not sources:
+        return sources
+
     reranker = _get_reranker()
 
-    pairs: list[tuple[str, str]] = []
-    for s in sources:
-        text = s.full_content or s.snippet
-        pairs.append((question, text[:512]))
-
+    pairs = [(question, (s.full_content or s.snippet)[:512]) for s in sources]
     raw_scores = reranker.predict(pairs)
 
-    # Normalise raw logits to 0.0–1.0 via simple min-max.
     lo = float(min(raw_scores))
     hi = float(max(raw_scores))
-    span = hi - lo if hi != lo else 1.0
+    span = hi - lo
 
     scored: list[Source] = []
     for src, raw in zip(sources, raw_scores):
-        normed = (float(raw) - lo) / span
+        if span == 0:
+            # Single source or all identical scores — treat as fully relevant
+            normed = 1.0
+        else:
+            normed = (float(raw) - lo) / span
         scored.append(src.model_copy(update={"relevance_score": round(normed, 4)}))
 
-    scored.sort(key=lambda s: s.relevance_score, reverse=True)
+    scored.sort(key=lambda s: (-s.relevance_score, s.url))
     return scored
 
 

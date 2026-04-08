@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from pathlib import Path
 
 from rich.console import Console
@@ -53,9 +54,14 @@ def print_footer(
 
 
 def _slugify(query: str, max_words: int = 5) -> str:
-    """Turn a query into a filename-safe slug."""
-    words = query.lower().split()[:max_words]
+    """Turn a query into a filename-safe slug. Supports unicode."""
+    # Normalize unicode to decomposed form, strip combining marks for basic transliteration
+    normalized = unicodedata.normalize("NFKD", query.lower())
+    # Keep letters (including unicode), digits, spaces, hyphens
+    cleaned = re.sub(r"[^\w\s-]", "", normalized)
+    # Replace whitespace with hyphens
+    words = cleaned.split()[:max_words]
     slug = "-".join(words)
-    slug = re.sub(r"[^a-z0-9\-]", "", slug)
+    # Collapse multiple hyphens
     slug = re.sub(r"-+", "-", slug).strip("-")
     return slug or "research"

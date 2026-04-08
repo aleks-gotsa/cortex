@@ -8,7 +8,11 @@ from collections import defaultdict
 from backend.llm.anthropic_client import AnthropicLLMClient
 from backend.llm.base import LLMClientBase
 from dynamo.config import dynamo_settings
-from dynamo.worker_types import get_dynamo_endpoint, get_dynamo_model
+from dynamo.worker_types import (
+    infer_worker_type,
+    get_dynamo_endpoint_for_model,
+    get_dynamo_model_for_model,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -19,35 +23,34 @@ class MockDynamoClient(LLMClientBase):
     """
     Mock Dynamo client for local development and architecture testing.
 
-    Routes calls to the correct worker type (prefill/decode) and
-    logs what the real Dynamo client would do, but delegates actual
-    inference to AnthropicLLMClient underneath.
+    Routes calls to the correct worker type (prefill/decode) based on
+    the model parameter and logs what the real Dynamo client would do,
+    but delegates actual inference to AnthropicLLMClient underneath.
 
     Replace AnthropicLLMClient calls with real Dynamo HTTP calls
     in dynamo/real_client.py when running on actual GPU hardware.
     """
 
-    def __init__(self, task_type: str | None = None, api_key: str | None = None) -> None:
-        self._task_type = task_type
+    def __init__(self, api_key: str | None = None) -> None:
         self._delegate = AnthropicLLMClient(api_key=api_key)
         self._worker_usage: dict[str, dict[str, int]] = defaultdict(
             lambda: {"input_tokens": 0, "output_tokens": 0, "calls": 0}
         )
         self._routing_overhead_total = 0.0
 
-    def _log_routing(self, task_type: str | None, model: str) -> str:
-        effective_task = task_type or "synthesis"
-        endpoint = get_dynamo_endpoint(effective_task, dynamo_settings)
-        dynamo_model = get_dynamo_model(effective_task, dynamo_settings)
-        worker = "prefill" if effective_task in ("planning", "gap_detection") else "decode"
+    def _log_routing(self, model: str) -> str:
+        """Determine worker type from model string and log routing decision."""
+        worker = infer_worker_type(model)
+        endpoint = get_dynamo_endpoint_for_model(model, dynamo_settings)
+        dynamo_model = get_dynamo_model_for_model(model, dynamo_settings)
         logger.info(
-            "[MockDynamo] task=%s worker=%s endpoint=%s model=%s (using Anthropic: %s)",
-            task_type, worker, endpoint, dynamo_model, model,
+            "[MockDynamo] model=%s → worker=%s endpoint=%s dynamo_model=%s",
+            model, worker, endpoint, dynamo_model,
         )
         return worker
 
     async def call(self, system: str, user_message: str, model: str, max_tokens: int = 4096) -> dict:
-        worker = self._log_routing(self._task_type, model)
+        worker = self._log_routing(model)
         t0 = time.monotonic()
         await asyncio.sleep(ROUTING_OVERHEAD_S)
         result = await self._delegate.call(system, user_message, model, max_tokens)
@@ -56,7 +59,7 @@ class MockDynamoClient(LLMClientBase):
         return result
 
     async def call_text(self, system: str, user_message: str, model: str, max_tokens: int = 4096) -> str:
-        worker = self._log_routing(self._task_type, model)
+        worker = self._log_routing(model)
         await asyncio.sleep(ROUTING_OVERHEAD_S)
         result = await self._delegate.call_text(system, user_message, model, max_tokens)
         self._worker_usage[worker]["calls"] += 1

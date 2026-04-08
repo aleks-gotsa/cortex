@@ -1,5 +1,9 @@
 """Model routing and cost calculation."""
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 TASK_MODEL: dict[str, str] = {
     "planning": "claude-haiku-4-5-20251001",
     "gap_detection": "claude-sonnet-4-20250514",
@@ -8,9 +12,13 @@ TASK_MODEL: dict[str, str] = {
 }
 
 PRICING_PER_MILLION: dict[str, dict[str, float]] = {
+    # Anthropic models
     "claude-haiku-4-5-20251001": {"input": 0.80, "output": 4.00},
     "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
     "claude-opus-4-20250514": {"input": 15.00, "output": 75.00},
+    # Dynamo self-hosted (estimated based on Lambda Labs A10G @ $0.75/hr)
+    "meta-llama/Llama-3.1-8B-Instruct": {"input": 0.05, "output": 0.10},
+    "meta-llama/Llama-3.1-70B-Instruct": {"input": 0.40, "output": 0.80},
 }
 
 
@@ -21,7 +29,10 @@ def get_model(task_type: str) -> str:
 
 def calculate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     """Return estimated USD cost for the given token counts."""
-    prices = PRICING_PER_MILLION[model]
+    prices = PRICING_PER_MILLION.get(model)
+    if prices is None:
+        logger.warning("Unknown model for cost calculation: %s", model)
+        return 0.0
     return (input_tokens * prices["input"] + output_tokens * prices["output"]) / 1_000_000
 
 

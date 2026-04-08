@@ -228,6 +228,7 @@ async def run_research(
             sum(
                 calculate_cost(model, c["input_tokens"], c["output_tokens"])
                 for model, c in usage_by_model.items()
+                if not model.startswith("_")  # skip internal keys like _dynamo_worker_calls
             ),
             4,
         )

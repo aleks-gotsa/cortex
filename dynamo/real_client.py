@@ -9,7 +9,10 @@ import httpx
 
 from backend.llm.base import LLMClientBase
 from dynamo.config import dynamo_settings
-from dynamo.worker_types import get_dynamo_endpoint, get_dynamo_model
+from dynamo.worker_types import (
+    get_dynamo_endpoint_for_model,
+    get_dynamo_model_for_model,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -18,11 +21,11 @@ class DynamoLLMClient(LLMClientBase):
     """
     Real Dynamo client. Calls Dynamo workers via OpenAI-compatible API.
     Prefill worker handles planning + gap_detection (Llama 8B).
-    Decode worker handles synthesis + verification (Llama 8B in single-GPU mode).
+    Decode worker handles synthesis + verification (Llama 70B).
+    Routes based on the model parameter passed to call()/call_text().
     """
 
-    def __init__(self, task_type: str | None = None) -> None:
-        self._task_type = task_type
+    def __init__(self) -> None:
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0
@@ -30,11 +33,10 @@ class DynamoLLMClient(LLMClientBase):
             lambda: {"input_tokens": 0, "output_tokens": 0, "calls": 0}
         )
 
-    def _get_endpoint_and_model(self) -> tuple[str, str]:
-        task = self._task_type or "synthesis"
+    def _get_endpoint_and_model(self, model: str) -> tuple[str, str]:
         return (
-            get_dynamo_endpoint(task, dynamo_settings),
-            get_dynamo_model(task, dynamo_settings),
+            get_dynamo_endpoint_for_model(model, dynamo_settings),
+            get_dynamo_model_for_model(model, dynamo_settings),
         )
 
     async def _post(self, endpoint: str, model: str, system: str, user_message: str, max_tokens: int) -> dict:
@@ -76,7 +78,7 @@ class DynamoLLMClient(LLMClientBase):
         raise ValueError("Empty response text")
 
     async def call(self, system: str, user_message: str, model: str, max_tokens: int = 4096) -> dict:
-        endpoint, dynamo_model = self._get_endpoint_and_model()
+        endpoint, dynamo_model = self._get_endpoint_and_model(model)
         data = await self._post(endpoint, dynamo_model, system, user_message, max_tokens)
         self._track(dynamo_model, data)
         text = data["choices"][0]["message"]["content"]
@@ -90,7 +92,7 @@ class DynamoLLMClient(LLMClientBase):
             return self._parse_json(data["choices"][0]["message"]["content"])
 
     async def call_text(self, system: str, user_message: str, model: str, max_tokens: int = 4096) -> str:
-        endpoint, dynamo_model = self._get_endpoint_and_model()
+        endpoint, dynamo_model = self._get_endpoint_and_model(model)
         data = await self._post(endpoint, dynamo_model, system, user_message, max_tokens)
         self._track(dynamo_model, data)
         return data["choices"][0]["message"]["content"]
