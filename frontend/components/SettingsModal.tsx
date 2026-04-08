@@ -86,8 +86,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     >
       <div
         style={{
-          background: "#faf8f5",
-          border: "1px solid #e5e2dd",
+          background: "var(--bg)",
+          border: "1px solid var(--border)",
           width: "100%",
           maxWidth: 440,
           padding: "32px 28px 24px",
@@ -103,7 +103,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               fontWeight: 600,
               letterSpacing: "0.06em",
               textTransform: "uppercase" as const,
-              color: "#1a1a1a",
+              color: "var(--fg)",
               margin: 0,
             }}
           >
@@ -116,7 +116,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               border: "none",
               cursor: "pointer",
               padding: 4,
-              color: "#888",
+              color: "var(--fg-muted)",
               fontSize: 20,
               lineHeight: 1,
             }}
@@ -129,7 +129,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           </button>
         </div>
 
-        <div style={{ height: 1, background: "#e5e2dd", marginBottom: 24 }} />
+        <div style={{ height: 1, background: "var(--border)", marginBottom: 24 }} />
 
         {/* Fields */}
         {([
@@ -146,7 +146,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 fontWeight: 500,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase" as const,
-                color: "#888",
+                color: "var(--fg-muted)",
                 marginBottom: 6,
               }}
             >
@@ -164,10 +164,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   padding: "8px 36px 8px 10px",
                   fontFamily: "monospace",
                   fontSize: 13,
-                  background: "#faf8f5",
-                  border: "1px solid #e5e2dd",
+                  background: "var(--bg)",
+                  border: "1px solid var(--border)",
                   outline: "none",
-                  color: "#1a1a1a",
+                  color: "var(--fg)",
                   borderRadius: 0,
                 }}
               />
@@ -183,7 +183,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   border: "none",
                   cursor: "pointer",
                   padding: 2,
-                  color: "#aaa",
+                  color: "var(--fg-muted)",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -200,7 +200,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           style={{
             fontFamily: "monospace",
             fontSize: 10,
-            color: "#bbb",
+            color: "var(--fg-faint)",
             margin: "20px 0 16px",
           }}
         >
@@ -212,8 +212,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           <button
             onClick={handleSave}
             style={{
-              background: "#1a1a1a",
-              color: "#fff",
+              background: "var(--fg)",
+              color: "var(--bg)",
               border: "none",
               padding: "8px 24px",
               fontFamily: "monospace",
@@ -229,7 +229,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           </button>
 
           {status ? (
-            <span style={{ fontFamily: "monospace", fontSize: 12, color: "#888" }}>
+            <span style={{ fontFamily: "monospace", fontSize: 12, color: "var(--fg-muted)" }}>
               {status}
             </span>
           ) : (
@@ -240,7 +240,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 border: "none",
                 fontFamily: "monospace",
                 fontSize: 12,
-                color: "#888",
+                color: "var(--fg-muted)",
                 cursor: "pointer",
                 padding: 0,
                 textDecoration: "none",

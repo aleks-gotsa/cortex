@@ -1,4 +1,16 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+function getApiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  // In production without explicit URL, use relative paths (works with proxy/rewrites)
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    return "";
+  }
+  // Local development
+  return "http://localhost:8000";
+}
+
+const API_BASE = getApiBase();
 
 export function apiUrl(path: string): string {
   return `${API_BASE}${path}`;

@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 import type { Components } from "react-markdown";
 import type { SourceInfo } from "@/lib/research";
 
@@ -346,7 +347,7 @@ export default function ResearchDocument({
   return (
     <>
       <div className="prose-editorial" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]} components={components}>
           {displayMarkdown}
         </ReactMarkdown>
       </div>
