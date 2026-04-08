@@ -2,6 +2,7 @@
 
 import json
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -18,7 +19,17 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 
-app = FastAPI(title="Cortex", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    Path("data").mkdir(exist_ok=True)
+    await db.init_db()
+    yield
+    # Shutdown (nothing needed)
+
+
+app = FastAPI(title="Cortex", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,12 +37,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def _startup() -> None:
-    Path("data").mkdir(exist_ok=True)
-    await db.init_db()
 
 
 # ── SSE research endpoint ────────────────────────────────────────────────

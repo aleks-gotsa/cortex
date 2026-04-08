@@ -6,7 +6,7 @@ import uuid
 from collections.abc import AsyncGenerator
 from datetime import datetime, timezone
 
-from backend.llm.client import LLMClient
+from backend.llm.client import get_llm_client
 from backend.llm.router import calculate_cost
 from backend.models import (
     Depth,
@@ -53,7 +53,7 @@ async def run_research(
 ) -> AsyncGenerator[ResearchEvent, None]:
     """Execute the full Cortex pipeline, yielding events for each stage."""
     research_id = uuid.uuid4().hex[:12]
-    client = LLMClient(api_key=request.anthropic_api_key)
+    client = get_llm_client(api_key=request.anthropic_api_key)
     client.reset_usage()
     max_passes = _MAX_PASSES[request.depth]
     serper_key = request.serper_api_key

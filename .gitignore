@@ -10,5 +10,5 @@ data/
 dist/
 build/
 .pytest_cache/
-Prompts/
+prompts/
 CLAUDE.md

@@ -2,7 +2,7 @@
 
 import logging
 
-from backend.llm.client import LLMClient
+from backend.llm.client import LLMClientBase, get_llm_client
 from backend.llm.router import get_model
 from backend.models import CoverageScore, GapReport, GapRecommendation, Source, SubQuestion
 
@@ -54,10 +54,10 @@ async def detect_gaps(
     sub_questions: list[SubQuestion],
     sources: list[Source],
     *,
-    client: LLMClient | None = None,
+    client: LLMClientBase | None = None,
 ) -> GapReport:
     """Evaluate how well *sources* cover each sub-question."""
-    llm = client or LLMClient()
+    llm = client or get_llm_client()
 
     user_message = _build_user_message(sub_questions, sources)
 

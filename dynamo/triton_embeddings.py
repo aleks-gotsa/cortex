@@ -44,7 +44,10 @@ class TritonEmbeddingClient:
         texts: list[str] | str,
         normalize_embeddings: bool = True,
     ) -> np.ndarray:
-        """Synchronous encode — matches SentenceTransformer interface."""
+        """Synchronous encode — matches SentenceTransformer interface.
+
+        WARNING: Do NOT call from within a running event loop (use encode_async instead).
+        """
         import asyncio
 
         if isinstance(texts, str):
@@ -53,10 +56,20 @@ class TritonEmbeddingClient:
         else:
             single = False
 
-        result = asyncio.run(self._encode_async(texts, normalize_embeddings))
+        result = asyncio.run(self._encode_impl(texts, normalize_embeddings))
         return result[0] if single else result
 
-    async def _encode_async(self, texts: list[str], normalize: bool) -> np.ndarray:
+    async def encode_async(
+        self,
+        texts: list[str] | str,
+        normalize: bool = True,
+    ) -> np.ndarray:
+        """Async encode — use this from within a running event loop."""
+        if isinstance(texts, str):
+            texts = [texts]
+        return await self._encode_impl(texts, normalize)
+
+    async def _encode_impl(self, texts: list[str], normalize: bool) -> np.ndarray:
         payload = {
             "inputs": [{
                 "name": "TEXT",

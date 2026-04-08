@@ -2,7 +2,7 @@
 
 import logging
 
-from backend.llm.client import LLMClient
+from backend.llm.client import LLMClientBase, get_llm_client
 from backend.llm.router import get_model
 from backend.models import ResearchPlan
 
@@ -30,10 +30,10 @@ async def plan(
     query: str,
     prior_context: list[str] | None = None,
     *,
-    client: LLMClient | None = None,
+    client: LLMClientBase | None = None,
 ) -> ResearchPlan:
     """Decompose *query* into 3-6 independent sub-questions."""
-    llm = client or LLMClient()
+    llm = client or get_llm_client()
 
     user_message = query
     if prior_context:

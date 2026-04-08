@@ -2,7 +2,7 @@
 
 import logging
 
-from backend.llm.client import LLMClient
+from backend.llm.client import LLMClientBase, get_llm_client
 from backend.llm.router import get_model
 from backend.models import Source, VerificationDetail, VerificationResult, VerificationSummary
 
@@ -66,10 +66,10 @@ async def verify(
     document: str,
     sources: list[Source],
     *,
-    client: LLMClient | None = None,
+    client: LLMClientBase | None = None,
 ) -> VerificationResult:
     """Verify every cited claim in *document* against *sources*."""
-    llm = client or LLMClient()
+    llm = client or get_llm_client()
 
     user_message = _build_user_message(document, sources)
 
