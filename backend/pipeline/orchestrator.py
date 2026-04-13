@@ -167,6 +167,19 @@ async def run_research(
                 break
             current_questions = follow_ups
 
+        # ── Deduplicate sources across passes ────────────────────────────
+        seen_urls: dict[str, int] = {}
+        deduped: list = []
+        for src in all_sources:
+            if src.url in seen_urls:
+                existing_idx = seen_urls[src.url]
+                if src.relevance_score > deduped[existing_idx].relevance_score:
+                    deduped[existing_idx] = src
+            else:
+                seen_urls[src.url] = len(deduped)
+                deduped.append(src)
+        all_sources = deduped
+
         # ── 4. SYNTHESIZE ────────────────────────────────────────────────
         yield await _emit(research_id, ResearchEvent(stage="synthesizing", data={}))
 
