@@ -45,8 +45,3 @@ TASK_WORKER_TYPE: dict[str, str] = {
     "synthesis": "decode",       # Sonnet: generates long document
     "verification": "decode",    # Sonnet: generates corrected document
 }
-
-
-def get_worker_type(task_type: str) -> str:
-    """Return 'prefill' or 'decode' for the given pipeline task."""
-    return TASK_WORKER_TYPE.get(task_type, "decode")
