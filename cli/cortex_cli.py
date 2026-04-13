@@ -195,6 +195,15 @@ async def _repl_async(
             console.print()
             continue
 
+        if query.startswith("view "):
+            research_id = query[5:].strip()
+            if research_id:
+                await _show_detail(research_id, backend_url)
+            else:
+                console.print(f"  [{DIM}]Usage: view <research_id>[/{DIM}]")
+            console.print()
+            continue
+
         try:
             await _do_research(
                 query, depth, use_memory, backend_url, output_dir,
