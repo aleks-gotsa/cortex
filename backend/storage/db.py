@@ -36,6 +36,12 @@ CREATE TABLE IF NOT EXISTS research_events (
     data_json TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_research_results_research_id
+    ON research_results(research_id);
+
+CREATE INDEX IF NOT EXISTS idx_research_events_research_id
+    ON research_events(research_id);
 """
 
 
