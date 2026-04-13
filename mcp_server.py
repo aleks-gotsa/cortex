@@ -29,6 +29,7 @@ import logging
 from fastmcp import FastMCP
 
 from backend.models import Depth, ResearchRequest
+from backend.pipeline.gatherer import preload_reranker
 from backend.pipeline.memory import recall as _recall
 from backend.pipeline.orchestrator import run_research
 from backend.storage import db
@@ -56,14 +57,20 @@ _db_initialized = False
 _db_lock = asyncio.Lock()
 
 
+_reranker_loaded = False
+
+
 async def _ensure_db() -> None:
-    """Initialize the SQLite database once."""
-    global _db_initialized  # noqa: PLW0603
+    """Initialize the SQLite database and pre-load models once."""
+    global _db_initialized, _reranker_loaded  # noqa: PLW0603
     if _db_initialized:
         return
     async with _db_lock:
         if not _db_initialized:
             await db.init_db()
+            if not _reranker_loaded:
+                preload_reranker()
+                _reranker_loaded = True
             _db_initialized = True
 
 
