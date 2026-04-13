@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Import chain — core
+        run: |
+          python -c "
+          from backend.config import settings
+          from backend.models import ResearchRequest, Depth, ResearchEvent
+          from backend.llm.base import LLMClientBase
+          from backend.llm.client import get_llm_client, LLMClient
+          from backend.llm.anthropic_client import AnthropicLLMClient
+          from backend.llm.router import get_model, calculate_cost
+          print('backend core: OK')
+          "
+
+      - name: Import chain — pipeline
+        run: |
+          python -c "
+          from backend.pipeline.planner import plan
+          from backend.pipeline.gatherer import gather, preload_reranker
+          from backend.pipeline.gap_detector import detect_gaps
+          from backend.pipeline.synthesizer import synthesize
+          from backend.pipeline.verifier import verify
+          from backend.pipeline.memory import store_research, recall
+          from backend.pipeline.orchestrator import run_research
+          print('pipeline: OK')
+          "
+
+      - name: Import chain — search, storage, dynamo, CLI, MCP
+        run: |
+          python -c "
+          from backend.search.serper import search
+          from backend.search.tavily import search
+          from backend.search.scraper import scrape, scrape_many
+          from backend.storage.db import init_db, create_run, get_run, list_runs
+          from dynamo.config import dynamo_settings
+          from dynamo.mock_client import MockDynamoClient
+          from dynamo.real_client import DynamoLLMClient
+          from dynamo.worker_types import infer_worker_type
+          from cli.cortex_cli import cli
+          from cli.connection import check_backend, stream_research
+          print('all modules: OK')
+          "
+
+      - name: Router consistency
+        run: |
+          python -c "
+          from backend.llm.router import TASK_MODEL, PRICING_PER_MILLION, calculate_cost
+          for task, model in TASK_MODEL.items():
+              assert model in PRICING_PER_MILLION, f'{model} has no pricing'
+              cost = calculate_cost(model, 1000, 1000)
+              assert cost > 0, f'zero cost for {model}'
+          print('router: OK')
+          "
+
+      - name: Dynamo routing consistency
+        run: |
+          python -c "
+          from backend.llm.router import TASK_MODEL
+          from dynamo.worker_types import infer_worker_type
+          for task, model in TASK_MODEL.items():
+              worker = infer_worker_type(model)
+              print(f'  {task} -> {model} -> {worker}')
+          print('dynamo routing: OK')
+          "
+
+      - name: Database CRUD
+        run: |
+          python -c "
+          import asyncio, os, tempfile
+          os.environ['DATABASE_PATH'] = os.path.join(tempfile.mkdtemp(), 'test.db')
+          from backend.storage import db
+          from backend.config import settings
+          settings.DATABASE_PATH = os.environ['DATABASE_PATH']
+
+          async def test():
+              await db.init_db()
+              await db.create_run('test1', 'test query', 'quick')
+              run = await db.get_run('test1')
+              assert run is not None and run['query'] == 'test query'
+              deleted = await db.delete_run('test1')
+              assert deleted
+              print('database: OK')
+
+          asyncio.run(test())
+          "
+
+      - name: FastAPI routes
+        run: |
+          python -c "
+          from backend.main import app
+          routes = [r.path for r in app.routes if hasattr(r, 'path')]
+          for r in ['/health', '/research', '/research/history', '/research/{research_id}']:
+              assert r in routes, f'missing route: {r}'
+          print('routes: OK')
+          "
+
+      - name: Config files valid
+        run: |
+          python -c "
+          import json
+          json.load(open('vercel.json'))
+          json.load(open('frontend/package.json'))
+          json.load(open('frontend/tsconfig.json'))
+          print('configs: OK')
+          "
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: TypeScript
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
