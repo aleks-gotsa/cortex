@@ -43,7 +43,7 @@ function processCitations(
     }
 
     const groupText = match[0];
-    const nums = [...groupText.matchAll(/\[(\d+)\]/g)].map((m) =>
+    const nums = Array.from(groupText.matchAll(/\[(\d+)\]/g)).map((m) =>
       parseInt(m[1], 10)
     );
     const firstNum = nums[0];
