@@ -3,7 +3,11 @@ function getApiBase(): string {
     return process.env.NEXT_PUBLIC_API_URL;
   }
   // In production without explicit URL, use relative paths (works with proxy/rewrites)
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1"
+  ) {
     return "";
   }
   // Local development
