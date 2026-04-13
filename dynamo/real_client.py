@@ -1,5 +1,6 @@
 """Real Dynamo client — calls Dynamo workers via OpenAI-compatible API."""
 
+import asyncio
 import json
 import logging
 import re
@@ -39,6 +40,9 @@ class DynamoLLMClient(LLMClientBase):
             get_dynamo_model_for_model(model, dynamo_settings),
         )
 
+    _MAX_RETRIES = 3
+    _RETRY_BACKOFF = (1.0, 2.0, 4.0)
+
     async def _post(self, endpoint: str, model: str, system: str, user_message: str, max_tokens: int) -> dict:
         payload = {
             "model": model,
@@ -49,13 +53,27 @@ class DynamoLLMClient(LLMClientBase):
             ],
         }
         timeout = httpx.Timeout(connect=10.0, read=300.0, write=10.0, pool=10.0)
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(
-                f"{endpoint}/chat/completions",
-                json=payload,
-            )
-            response.raise_for_status()
-            return response.json()
+        last_exc: Exception | None = None
+        for attempt in range(self._MAX_RETRIES):
+            try:
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    response = await client.post(
+                        f"{endpoint}/chat/completions",
+                        json=payload,
+                    )
+                    response.raise_for_status()
+                    return response.json()
+            except (httpx.ConnectError, httpx.TimeoutException, httpx.HTTPStatusError) as exc:
+                last_exc = exc
+                if isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code < 500:
+                    raise  # don't retry client errors (4xx)
+                backoff = self._RETRY_BACKOFF[min(attempt, len(self._RETRY_BACKOFF) - 1)]
+                logger.warning(
+                    "Dynamo worker call failed (attempt %d/%d): %s — retrying in %.1fs",
+                    attempt + 1, self._MAX_RETRIES, exc, backoff,
+                )
+                await asyncio.sleep(backoff)
+        raise last_exc  # type: ignore[misc]
 
     def _track(self, model: str, data: dict) -> None:
         usage = data.get("usage", {})
