@@ -260,6 +260,10 @@ cortex/
 └── .env.example
 ```
 
+## Deployment
+
+Two deployment configs are included: `render.yaml` for the backend (Render.com) and `vercel.json` for the frontend (Vercel). Pick one per service; they are not meant to be used together for the same component.
+
 ## MCP Server
 
 Use Cortex as a tool from Claude Desktop, claude.ai, or any MCP client.
