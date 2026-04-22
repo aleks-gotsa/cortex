@@ -47,6 +47,19 @@ graph TD
     DB[(SQLite<br/>History)] -.-> D
 ```
 
+## Cortex-D: Disaggregated Inference
+
+Cortex-D is an optional inference layer that routes each pipeline stage to a specialized worker tier, in the style of NVIDIA Dynamo's prefill/decode split. The idea is that stages are not uniform: planning and gap detection are prefill-heavy — large inputs, short JSON outputs — while synthesis and verification are decode-heavy — moderate inputs, long document outputs. Sending both through one endpoint wastes GPU time; routing by stage characteristics lets each tier run on hardware and a model sized for its workload.
+
+| Worker Type | Pipeline Stages | Characteristics |
+|-------------|-----------------|-----------------|
+| **Prefill** | planning, gap_detection | Large input, short JSON output |
+| **Decode** | synthesis, verification | Moderate input, long document output |
+
+Real-Dynamo mode requires GPU hardware with NVIDIA Dynamo workers running on the prefill and decode endpoints. In this codebase it was validated primarily in mock mode, which routes through the same dispatcher but delegates actual inference back to Anthropic — useful for exercising the routing logic and measuring overhead without a GPU.
+
+See [`dynamo/README.md`](./dynamo/README.md) for full setup details and environment variables.
+
 ## Quick Start
 
 ### 1. Clone and configure
