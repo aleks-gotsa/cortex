@@ -62,6 +62,15 @@ See [`dynamo/README.md`](./dynamo/README.md) for full setup details and environm
 
 ## Quick Start
 
+### Prerequisites
+
+This project requires Python 3.12. If you have pyenv:
+
+```bash
+pyenv install 3.12.7
+pyenv local 3.12.7
+```
+
 ### 1. Clone and configure
 
 ```bash
@@ -82,15 +91,6 @@ TAVILY_API_KEY=...         # optional — Serper alone works fine
 
 ```bash
 docker-compose up -d
-```
-
-### Python version
-
-This project requires Python 3.12. If you have pyenv:
-
-```bash
-pyenv install 3.12.7
-pyenv local 3.12.7
 ```
 
 ### 3. Install and run backend
