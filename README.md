@@ -4,9 +4,16 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Model](https://img.shields.io/badge/model-Claude%20Sonnet-orange)
 
+> **Status:** Archived. This project explored multi-pass research agents and is no longer actively developed. See the [retrospective post](./docs/retrospective.md) for what I learned and why I moved on.
+
 Multi-layer research engine with cumulative memory and cost-efficient model routing.
 
 Search -> find gaps -> search again -> verify every claim -> remember everything for next time.
+
+## Screenshots
+
+![Pipeline streaming](docs/screenshots/pipeline.png)
+![Final document with citations](docs/screenshots/document.png)
 
 ## What Makes It Different
 
@@ -180,6 +187,22 @@ The `/research` endpoint streams these events in order:
 | Deep | 3 | ~$0.25-0.40 | ~90s |
 
 Costs depend on query complexity and source volume. Haiku handles planning at 1/4 the cost of Sonnet.
+
+## Limitations
+
+- No test suite — this was a research exploration, not production code
+- Verification pass can produce false positives on ambiguous or context-dependent claims
+- Cost estimates are rough and vary significantly with query complexity and source volume
+- Cortex-D real-Dynamo mode was tested in mock only; real-hardware end-to-end validation was not completed
+- Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
+
+## What I Learned
+
+- Verification pass catches more hallucinations than additional search passes prevent — rigor at synthesis time beats volume at gather time
+- Multi-model routing (Haiku/Sonnet) cuts cost 3-4x with no measurable quality loss on typical queries
+- Multi-pass latency compounds: even fast individual passes produce slow end-to-end UX, which is why I stopped using Cortex myself
+- Cross-session memory is more useful as an explicit recall tool than as automatic pipeline input
+- Deep research as a product category demands a waiting-page UX that conflicts with mobile-first quick-lookup usage
 
 ## Project Structure
 
