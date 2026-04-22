@@ -208,6 +208,7 @@ Costs depend on query complexity and source volume. Haiku handles planning at 1/
 - Cost estimates are rough and vary significantly with query complexity and source volume
 - Cortex-D real-Dynamo mode was tested in mock only; real-hardware end-to-end validation was not completed
 - Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
+- Benchmark runner reports success=true for SSE error events; treat reported success rates with skepticism
 
 ## What I Learned
 
