@@ -1,4 +1,4 @@
-# Cortex: Six Months Building a Deep Research Engine
+# Cortex: 2 Months Building a Deep Research Engine
 
 ### What Cortex is
 
