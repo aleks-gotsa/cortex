@@ -108,16 +108,19 @@ async def _run_single_query(
 
                     stage_times[current_event] = round(elapsed, 4)
 
+                    event_data: dict = {}
                     if current_data:
                         try:
                             event_data = json.loads(current_data)
                         except json.JSONDecodeError:
                             event_data = {}
 
-                        if current_event == "complete":
-                            total_time = round(elapsed, 4)
-                            cost_usd = event_data.get("cost_usd")
-                            research_id = event_data.get("research_id")
+                    if current_event == "error":
+                        error = event_data.get("error") or current_data or "SSE error event received"
+                    elif current_event == "complete":
+                        total_time = round(elapsed, 4)
+                        cost_usd = event_data.get("cost_usd")
+                        research_id = event_data.get("research_id")
 
                     current_event = None
                     current_data = ""
