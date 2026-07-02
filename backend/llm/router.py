@@ -2,6 +2,8 @@
 
 import logging
 
+from backend.config import settings
+
 logger = logging.getLogger(__name__)
 
 TASK_MODEL: dict[str, str] = {
@@ -19,11 +21,27 @@ PRICING_PER_MILLION: dict[str, dict[str, float]] = {
     # Dynamo self-hosted (estimated based on Lambda Labs A10G @ $0.75/hr)
     "meta-llama/Llama-3.1-8B-Instruct": {"input": 0.05, "output": 0.10},
     "meta-llama/Llama-3.1-70B-Instruct": {"input": 0.40, "output": 0.80},
+    # local inference — no marginal cost
+    "llama3.2:3b": {"input": 0.0, "output": 0.0},
+    "llama3.1:8b": {"input": 0.0, "output": 0.0},
+    "qwen3:8b": {"input": 0.0, "output": 0.0},
 }
+
+
+def local_task_model() -> dict[str, str]:
+    """Task→model map for the local backend, read from settings."""
+    return {
+        "planning": settings.LOCAL_MODEL_PLANNING,
+        "gap_detection": settings.LOCAL_MODEL_GAP_DETECTION,
+        "synthesis": settings.LOCAL_MODEL_SYNTHESIS,
+        "verification": settings.LOCAL_MODEL_VERIFICATION,
+    }
 
 
 def get_model(task_type: str) -> str:
     """Return the model string for a given pipeline task type."""
+    if settings.LLM_BACKEND == "local":
+        return local_task_model()[task_type]
     return TASK_MODEL[task_type]
 
 

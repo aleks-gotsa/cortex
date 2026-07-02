@@ -62,7 +62,14 @@ async def research(request: ResearchRequest) -> StreamingResponse:
     serper_key = request.serper_api_key or settings.SERPER_API_KEY
     tavily_key = request.tavily_api_key or settings.TAVILY_API_KEY
 
-    if not anthropic_key or not serper_key:
+    if settings.LLM_BACKEND == "local":
+        # Local inference needs no Anthropic key; search still goes through Serper.
+        if not serper_key:
+            raise HTTPException(
+                status_code=400,
+                detail="SERPER_API_KEY required — search is not served by the local LLM backend.",
+            )
+    elif not anthropic_key or not serper_key:
         raise HTTPException(
             status_code=400,
             detail="API keys required. Provide anthropic_api_key and serper_api_key in the request body (tavily_api_key is optional).",
