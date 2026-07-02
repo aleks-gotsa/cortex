@@ -121,9 +121,14 @@ class OpenAICompatLLMClient(LLMClientBase):
         max_tokens: int,
         json_mode: bool,
     ) -> str:
+        # Streaming is load-bearing, not cosmetic: local servers cap
+        # non-streaming requests (Ollama 500s them at 10 minutes), and long
+        # verify/synthesis generations on laptop hardware run past that.
         payload: dict = {
             "model": model,
             "max_tokens": max_tokens,
+            "stream": True,
+            "stream_options": {"include_usage": True},
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user_message},
@@ -137,21 +142,35 @@ class OpenAICompatLLMClient(LLMClientBase):
         if self._seed is not None:
             payload["seed"] = self._seed
 
+        text_parts: list[str] = []
+        usage: dict = {}
         try:
-            response = await self._client.post(
-                f"{self._base_url}/chat/completions", json=payload
-            )
-            response.raise_for_status()
+            async with self._client.stream(
+                "POST", f"{self._base_url}/chat/completions", json=payload
+            ) as response:
+                response.raise_for_status()
+                async for line in response.aiter_lines():
+                    if not line.startswith("data: "):
+                        continue
+                    data_str = line[6:]
+                    if data_str.strip() == "[DONE]":
+                        break
+                    chunk = json.loads(data_str)
+                    if chunk.get("usage"):
+                        usage = chunk["usage"]
+                    choices = chunk.get("choices") or []
+                    if choices:
+                        content = (choices[0].get("delta") or {}).get("content")
+                        if content:
+                            text_parts.append(content)
         except httpx.ConnectError as exc:
             raise ConnectionError(
                 f"Cannot reach LLM endpoint at {self._base_url} — is Ollama running? "
                 "Start it with `ollama serve`."
             ) from exc
 
-        data = response.json()
-        text = data["choices"][0]["message"]["content"] or ""
-        text = _THINK_BLOCK.sub("", text).strip()
-        self._track(model, data.get("usage") or {})
+        text = _THINK_BLOCK.sub("", "".join(text_parts)).strip()
+        self._track(model, usage)
         return text
 
     @staticmethod
