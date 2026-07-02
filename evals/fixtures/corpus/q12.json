@@ -1,0 +1,59 @@
+{
+  "index": 12,
+  "query": "What is model quantization and what are the tradeoffs?",
+  "sub_questions": [
+    {
+      "id": "sq1",
+      "question": "What is model quantization and what are the tradeoffs?",
+      "search_terms": []
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://huggingface.co/docs/optimum/concept_guides/quantization",
+      "title": "Quantization concepts — Hugging Face Optimum docs (part 1)",
+      "snippet": "Join the Hugging Face community and get access to the augmented documentation experience Collaborate on models, datasets and Spaces Faster examples with accelerated inference Switch between documentat",
+      "full_content": "Join the Hugging Face community\nand get access to the augmented documentation experience\nCollaborate on models, datasets and Spaces\nFaster examples with accelerated inference\nSwitch between documentation themes\nSign Up\nto get started\nCopy page\n#   Quantization\nQuantization is a technique to reduce the computational and memory costs of running inference by representing the weights and activations with low-precision data types like 8-bit integer (`int8`) instead of the usual 32-bit floating point (`float32`).\nReducing the number of bits means the resulting model requires less memory storage, consumes less energy (in theory), and operations like matrix multiplication can be performed much faster with integer arithmetic. It also allows to run models on embedded devices, which sometimes only support integer data types.\n##   Theory\nThe basic idea behind quantization is quite easy: going from high-precision representation (usually the regular 32-bit floating-point) for weights and activations to a lower precision data type. The most common lower precision data types are:\n  * `float16`, accumulation data type `float16`\n  * `bfloat16`, accumulation data type `float32`\n  * `int16`, accumulation data type `int32`\n  * `int8`, accumulation data type `int32`\n\nThe accumulation data type specifies the type of the result of accumulating (adding, multiplying, etc) values of the data type in question. For example, let’s consider two `int8` values `A = 127`, `B = 127`, and let’s define `C` as the sum of `A` and `B`:\nCopied\n\n```\nC = A + B\n```",
+      "relevance_score": 1.0,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://huggingface.co/docs/optimum/concept_guides/quantization",
+      "title": "Quantization concepts — Hugging Face Optimum docs (part 8)",
+      "snippet": "## Energy efficiency in practice The introduction above notes that quantization “consumes less energy (in theory).” Systematic benchmarking across NVIDIA Ada Lovelace (RTX 4090D) and Blackwell (RTX 50",
+      "full_content": "##   Energy efficiency in practice\nThe introduction above notes that quantization “consumes less energy (in theory).” Systematic benchmarking across NVIDIA Ada Lovelace (RTX 4090D) and Blackwell (RTX 5090) architectures reveals that the relationship between quantization and energy consumption is more nuanced in practice:\n  * **Large models (≥5B parameters)** : NF4 quantization achieves near-FP16 energy consumption with significant memory savings — the expected benefit holds.\n  * **Small models ( <3B parameters)**: NF4 quantization can _increase_ energy consumption by 25–56% despite achieving 75% memory compression. The dequantization overhead exceeds the memory bandwidth savings at this scale.\n  * **INT8 mixed-precision** : The default `llm_int8_threshold=6.0` in `bitsandbytes` adds 17–33% energy overhead compared to FP16, which is a justified cost for maintaining model accuracy.\n  * **Batch size effect** : Increasing batch size from 1 to 8–64 reduces per-token energy by 84–96%, often outweighing the impact of precision choice.",
+      "relevance_score": 0.6695,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://huggingface.co/docs/optimum/concept_guides/quantization",
+      "title": "Quantization concepts — Hugging Face Optimum docs (part 9)",
+      "snippet": "> These findings suggest that energy-optimal deployment depends on model size, precision format, batch size, and hardware generation. Quantization remains beneficial for memory reduction, but its ener",
+      "full_content": "> These findings suggest that energy-optimal deployment depends on model size, precision format, batch size, and hardware generation. Quantization remains beneficial for memory reduction, but its energy impact should be validated empirically for each deployment scenario.\nFor detailed benchmarks and interactive visualizations, see the EcoCompute-AI toolkit and interactive dashboard. The full dataset is available on the Hugging Face Hub and archived on Zenodo.\n##   Supported tools to perform quantization in 🤗 Optimum\n🤗 Optimum provides APIs to perform quantization using different tools for different targets:\n  * The `optimum.onnxruntime` package allows to quantize and run ONNX models using the ONNX Runtime tool.\n  * The `optimum.intel` package enables to quantize 🤗 Transformers models while respecting accuracy and latency constraints.\n  * The `optimum.fx` package provides wrappers around the PyTorch quantization functions to allow graph-mode quantization of 🤗 Transformers models in PyTorch. This is a lower-level API compared to the two mentioned above, giving more flexibility, but requiring more work on your end.\n  * The `optimum.gptq` package allows to quantize and run LLM models with GPTQ.",
+      "relevance_score": 0.614,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://huggingface.co/docs/optimum/concept_guides/quantization",
+      "title": "Quantization concepts — Hugging Face Optimum docs (part 7)",
+      "snippet": "### Practical steps to follow to quantize a model to int8 To effectively quantize a model to `int8`, the steps to follow are: 1. Choose which operators to quantize. Good operators to quantize are the ",
+      "full_content": "###   Practical steps to follow to quantize a model to int8\nTo effectively quantize a model to `int8`, the steps to follow are:\n  1. Choose which operators to quantize. Good operators to quantize are the one dominating in terms of computation time, for instance linear projections and matrix multiplications.\n  2. Try post-training dynamic quantization, if it is fast enough stop here, otherwise continue to step 3.\n  3. Try post-training static quantization which can be faster than dynamic quantization but often with a drop in terms of accuracy. Apply observers to your models in places where you want to quantize.\n  4. Choose a calibration technique and perform it.\n  5. Convert the model to its quantized form: the observers are removed and the `float32` operators are converted to their `int8` counterparts.\n  6. Evaluate the quantized model: is the accuracy good enough? If yes, stop here, otherwise start again at step 3 but with quantization aware training this time.",
+      "relevance_score": 0.5429,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://arxiv.org/abs/2106.08295",
+      "title": "A White Paper on Neural Network Quantization — arXiv",
+      "snippet": "A White Paper on Neural Network Quantization Authors:Markus Nagel, Marios Fournarakis, Rana Ali Amjad, Yelysei Bondarenko, Mart van Baalen, Tijmen Blankevoort View a PDF of the paper titled A White Pa",
+      "full_content": "A White Paper on Neural Network Quantization\nAuthors:Markus Nagel, Marios Fournarakis, Rana Ali Amjad, Yelysei Bondarenko, Mart van Baalen, Tijmen Blankevoort\nView a PDF of the paper titled A White Paper on Neural Network Quantization, by Markus Nagel and 5 other authors\nView PDF\n> Abstract:While neural networks have advanced the frontiers in many applications, they often come at a high computational cost. Reducing the power and latency of neural network inference is key if we want to integrate modern networks into edge devices with strict power and compute requirements. Neural network quantization is one of the most effective ways of achieving these savings but the additional noise it induces can lead to accuracy degradation. In this white paper, we introduce state-of-the-art algorithms for mitigating the impact of quantization noise on the network's performance while maintaining low-bit weights and activations. We start with a hardware motivated introduction to quantization and then consider two main classes of algorithms: Post-Training Quantization (PTQ) and Quantization-Aware-Training (QAT). PTQ requires no re-training or labelled data and is thus a lightweight push-button approach to quantization. In most cases, PTQ is sufficient for achieving 8-bit quantization with close to floating-point accuracy. QAT requires fine-tuning and access to labeled training data but enables lower bit quantization with competitive results. For both solutions, we provide tested pipelines based on existing literature and extensive experimentation that lead to state-of-the-art performance for common deep learning models and tasks.   \n| Subjects:  |  Machine Learning (cs.LG); Artificial Intelligence (cs.AI); Computer Vision and Pattern Recognition (cs.CV)  |  \n| --- | --- |  \n| Cite as:  | arXiv:2106.08295 [cs.LG]  |  \n|   | (or  arXiv:2106.08295v1 [cs.LG] for this version)   |  \n|   |  < Focus to learn more arXiv-issued DOI via DataCite  |  \n## Submission history\nFrom: Marios Fournar",
+      "relevance_score": 0.2367,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    }
+  ],
+  "failed_urls": []
+}

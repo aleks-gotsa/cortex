@@ -1,0 +1,59 @@
+{
+  "index": 18,
+  "query": "What is tensor parallelism in distributed LLM inference?",
+  "sub_questions": [
+    {
+      "id": "sq1",
+      "question": "What is tensor parallelism in distributed LLM inference?",
+      "search_terms": []
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/abs/1909.08053",
+      "title": "Megatron-LM: Training Multi-Billion Parameter Models — arXiv",
+      "snippet": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism Authors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro View a PDF ",
+      "full_content": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism\nAuthors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro\nView a PDF of the paper titled Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism, by Mohammad Shoeybi and 5 other authors\nView PDF\n> Abstract:Recent work in language modeling demonstrates that training large transformer models advances the state of the art in Natural Language Processing applications. However, very large models can be quite difficult to train due to memory constraints. In this work, we present our techniques for training very large transformer models and implement a simple, efficient intra-layer model parallel approach that enables training transformer models with billions of parameters. Our approach does not require a new compiler or library changes, is orthogonal and complimentary to pipeline model parallelism, and can be fully implemented with the insertion of a few communication operations in native PyTorch. We illustrate this approach by converging transformer based models up to 8.3 billion parameters using 512 GPUs. We sustain 15.1 PetaFLOPs across the entire application with 76% scaling efficiency when compared to a strong single GPU baseline that sustains 39 TeraFLOPs, which is 30% of peak FLOPs. To demonstrate that large language models can further advance the state of the art (SOTA), we train an 8.3 billion parameter transformer language model similar to GPT-2 and a 3.9 billion parameter model similar to BERT. We show that careful attention to the placement of layer normalization in BERT-like models is critical to achieving increased performance as the model size grows. Using the GPT-2 model we achieve SOTA results on the WikiText103 (10.8 compared to SOTA perplexity of 15.8) and LAMBADA (66.5% compared to SOTA accuracy of 63.2%) datasets. Our BERT model achieves SOTA results on the RACE dataset (90.9% compared to SOTA ",
+      "relevance_score": 1.0,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM",
+      "title": "NVIDIA/Megatron-LM — GitHub README (part 2)",
+      "snippet": "* **[2026/05]** **DeepSeek-V4 initial support** - Megatron Core's `dev` branch includes the initial DeepSeek-V4 implementation; Megatron Bridge provides conversion, inference, and pretraining recipes.",
+      "full_content": "* **[2026/05]** **DeepSeek-V4 initial support** - Megatron Core's `dev` branch includes the initial DeepSeek-V4 implementation; Megatron Bridge provides conversion, inference, and pretraining recipes.\n  * **[2026/04]** **Advancing Emerging Optimizers for Accelerated LLM Training with NVIDIA Megatron** - Muon and other emerging optimizers are now supported in Megatron Core via the new **Emerging-Optimizers** library.\n  * **[2026/03]** **Scalable Training of Mixture-of-Experts Models with Megatron Core** - Technical report on scaling MoE training with integrated optimizations for memory, communication, and computation.\n  * **[2026/03]** **Implementing Falcon-H1 Hybrid Architecture in Megatron Core** - Technology Innovation Institute (TII) contributes Falcon-H1 hybrid transformer-Mamba architecture and BitNet ternary quantization support to Megatron Core.\n  * **[2026/03]** **Megatron Core Roadmap** - Roadmap for upcoming Megatron Core features and improvements.\n  * **[2026/03]** **Deprecating Python 3.10 support:** The upcoming 0.17.0 release drops Python 3.10 support. Downstream applications must raise their lower boundary to 3.12 to stay compatible with Megatron Core.\n  * **[2026/01]** **Dynamic Context Parallelism** - Up to 1.48x speedup for variable-length sequence training with adaptive CP sizing.\n  * **[2025/12]** **Megatron Core development has moved to GitHub.** All development and CI now happen in the open, and community contributions are welcome.\n  * **[2025/10]** **Megatron Dev Branch** - Early access branch with experimental features.\n  * **[2025/10]** **Megatron Bridge** - Bidirectional converter for interoperability between Hugging Face and Megatron checkpoints, featuring production-ready recipes for popular models.\n  * **[2025/08]** **Mixture of Experts (MoE) Q3–Q4 2025 Roadmap** - Comprehensive roadmap for MoE features including DeepSeek-V3, Qwen3, advanced parallelism strategies, FP8 optimizations, and Blackwell performance enhancements.\n  * **[2025/08",
+      "relevance_score": 0.6366,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM",
+      "title": "NVIDIA/Megatron-LM — GitHub README (part 4)",
+      "snippet": "``` @article{megatron-lm, title={Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism}, author={Shoeybi, Mohammad and Patwary, Mostofa and Puri, Raul and LeGresley, Pa",
+      "full_content": "```\n@article{megatron-lm,\n  title={Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism},\n  author={Shoeybi, Mohammad and Patwary, Mostofa and Puri, Raul and LeGresley, Patrick and Casper, Jared and Catanzaro, Bryan},\n  journal={arXiv preprint arXiv:1909.08053},\n  year={2019}\n}\n```\n\n## About\nOngoing research training transformer models at scale \ndocs.nvidia.com/megatron-core/developer-guide/latest/get-started/quickstart.html\n### Topics\n transformers   model-para   large-language-models \n### Resources\n Readme \n### License\n View license \n### Contributing\n Contributing \n### Security policy\n Security policy \n###  Uh oh! \nThere was an error while loading. Please reload this page.\n Activity\n Custom properties\n### Stars\n **16.9k** stars\n### Watchers\n **166** watching\n### Forks\n **4.2k** forks\n Report repository \n##  Releases 46\n NVIDIA Megatron Core 0.18.0 Latest  Jun 23, 2026 \n+ 45 releases\n##  Packages 0\n###  Uh oh! \nThere was an error while loading. Please reload this page.\n###  Uh oh! \nThere was an error while loading. Please reload this page.\n##  Contributors\n###  Uh oh! \nThere was an error while loading. Please reload this page.\n## Languages\n  *  Python 98.9% \n  * Other 1.1%\n\n## Footer\n  © 2026 GitHub, Inc. \n### Footer navigation\n  * Terms\n  * Privacy\n  * Security\n  * Status\n  * Community\n  * Docs\n  * Contact\n  * Manage cookies \n  * Do not share my personal information\n\nYou can’t perform that action at this time.",
+      "relevance_score": 0.5954,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM",
+      "title": "NVIDIA/Megatron-LM — GitHub README (part 1)",
+      "snippet": "* README * Contributing * License * Security More items # Megatron-LM and Megatron Core #### GPU-optimized library for training transformer models at scale ## About This repository contains two compon",
+      "full_content": "* README\n  * Contributing\n  * License\n  * Security\n\nMore items\n# Megatron-LM and Megatron Core\n\n#### GPU-optimized library for training transformer models at scale\n\n## About\n\nThis repository contains two components: **Megatron-LM** and **Megatron Core**.\n**Megatron-LM** is a reference example that includes Megatron Core plus pre-configured training scripts, ideal for research teams, learning distributed training, and quick experimentation.\n**Megatron Core** is a composable library with GPU-optimized building blocks for custom training frameworks. It provides transformer building blocks, advanced parallelism strategies (TP, PP, DP, EP, and CP), mixed precision support (FP16, BF16, FP8, and FP4), and model architectures, ideal for framework developers and ML engineers building custom training pipelines.\n**Megatron Bridge** provides bidirectional Hugging Face ↔ Megatron checkpoint conversion with production-ready recipes.\n## Getting Started\n\n**Install from PyPI:**\n\n```\nuv pip install megatron-core\n```\n\n**Or clone and install from source:**\n\n```\ngit clone \ncd Megatron-LM\nuv pip install -e .\n```\n\n> **Note:** Building from source can use a lot of memory. If the build runs out of memory, limit parallel compilation jobs by setting `MAX_JOBS` (for example, `MAX_JOBS=4 uv pip install -e .`).\nFor NVIDIA GPU Cloud (NGC) container setup and all installation options, review the **Installation Guide**.\n  * **Your First Training Run** - End-to-end training examples with data preparation\n  * **Parallelism Strategies** - Scale training across GPUs with TP, PP, DP, EP, and CP\n  * **Contribution Guide** - How to contribute to Megatron Core\n\n# Latest News",
+      "relevance_score": 0.0095,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM",
+      "title": "NVIDIA/Megatron-LM — GitHub README (part 3)",
+      "snippet": "**Key Results:** * **6,144 H100 GPUs** : Successfully benchmarked 462B parameter model training. * **Superlinear scaling** : MFU increases from 41% to 47–48% with model size. * **End-to-end measuremen",
+      "full_content": "**Key Results:**\n  * **6,144 H100 GPUs** : Successfully benchmarked 462B parameter model training.\n  * **Superlinear scaling** : MFU increases from 41% to 47–48% with model size.\n  * **End-to-end measurement** : Throughputs include all operations (data loading, optimizer steps, communication, and logging).\n  * **Production ready** : Full training pipeline with checkpointing and fault tolerance.\n  * _Note: Performance results measured without training to convergence_\n\n## Weak Scaling Results\n\nThe weak scaled results show superlinear scaling (MFU increases from 41% for the smallest model considered to 47–48% for the largest models); this is because larger GEMMs have higher arithmetic intensity and are consequently more efficient to execute.\n\n## Strong Scaling Results\n\nThis test strong scales the standard GPT-3 model (slightly more than 175 billion parameters due to larger vocabulary size) from 96 H100 GPUs to 4,608 GPUs, using the same batch size of 1,152 sequences throughout. Communication becomes more exposed at larger scale, leading to a reduction in MFU from 47% to 42%.\n\n# Roadmaps\n\n* **2026 Q2 Roadmap**\n  * **2026 Q2 MoE-Specific Roadmap** [`dev` branch first developments]\n\n# Resources\n\n## Getting Help\n\n* 📖 **Documentation** - Official guides and API reference\n  * 🐛 **Issues** - Bug reports and feature requests\n\n## Contributing\n\nContributions are welcome. Ways to contribute:\n  * 🐛 **Report bugs** - Help improve reliability\n  * 💡 **Suggest features** - Shape the future of Megatron Core\n  * 📝 **Improve docs** - Make Megatron Core more accessible\n  * 🔧 **Submit PRs** - Contribute code improvements\n\n**→Contributing Guide**\n## Citation\n\nIf you use Megatron in your research or project, use the following citation:",
+      "relevance_score": 0.0,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    }
+  ],
+  "failed_urls": []
+}

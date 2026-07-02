@@ -1,0 +1,77 @@
+{
+  "index": 7,
+  "query": "How does Triton Inference Server work?",
+  "sub_questions": [
+    {
+      "id": "sq1",
+      "question": "How does Triton Inference Server work?",
+      "search_terms": []
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html",
+      "title": "Triton Inference Server — NVIDIA user guide index",
+      "snippet": "# NVIDIA Triton Inference Server# Triton Inference Server is an open source inference serving software that streamlines AI inferencing. Triton Inference Server enables teams to deploy any AI model fro",
+      "full_content": "# NVIDIA Triton Inference Server#\nTriton Inference Server is an open source inference serving software that streamlines AI inferencing. Triton Inference Server enables teams to deploy any AI model from multiple deep learning and machine learning frameworks, including TensorRT, PyTorch, ONNX, OpenVINO, Python, RAPIDS FIL, and more. Triton supports inference across cloud, data center, edge and embedded devices on NVIDIA GPUs, x86 and ARM CPU, or AWS Inferentia. Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.\n## Triton Architecture#\nThe following figure shows the Triton Inference Server high-level architecture. The model repository is a file-system based repository of the models that Triton will make available for inferencing. Inference requests arrive at the server via either HTTP/REST or GRPC or by the [C API](",
+      "relevance_score": 1.0,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/architecture.html",
+      "title": "Triton architecture — NVIDIA Triton user guide",
+      "snippet": "# Triton Architecture# The following figure shows the Triton Inference Server high-level architecture. The model repository is a file-system based repository of the models that Triton will make availa",
+      "full_content": "# Triton Architecture#\nThe following figure shows the Triton Inference Server high-level architecture. The model repository is a file-system based repository of the models that Triton will make available for inferencing. Inference requests arrive at the server via either HTTP/REST or GRPC or by the C API and are then routed to the appropriate per-model scheduler. Triton implements multiple scheduling and batching algorithms that can be configured on a model-by-model basis. Each model’s scheduler optionally performs batching of inference requests an",
+      "relevance_score": 0.9771,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/triton-inference-server/server",
+      "title": "triton-inference-server/server — GitHub README (part 4)",
+      "snippet": "A Triton _client_ application sends inference and other requests to Triton. The Python and C++ client libraries provide APIs to simplify this communication. * Review client examples for C++, Python, a",
+      "full_content": "A Triton _client_ application sends inference and other requests to Triton. The Python and C++ client libraries provide APIs to simplify this communication.\n  * Review client examples for C++, Python, and Java\n  * Configure HTTP and gRPC client options\n  * Send input data (e.g. a jpeg image) directly to Triton in the body of an HTTP request without any additional metadata\n\n### Extend Triton\n\nTriton Inference Server's architecture is specifically designed for modularity and flexibility\n  * Customize Triton Inference Server container for your use case\n  * Create custom backends in either C/C++ or Python\n  * Create decoupled backends and models that can send multiple responses for a request or not send any responses for a request\n  * Use a Triton repository agent to add functionality that operates when a model is loaded and unloaded, such as authentication, decryption, or conversion\n  * Deploy Triton on Jetson and JetPack\n  * Use Triton on AWS Inferentia\n\n### Additional Documentation\n\n* FAQ\n  * User Guide\n  * Customization Guide\n  * Release Notes\n  * GPU, Driver, and CUDA Support Matrix\n\n## Contributing\n\nContributions to Triton Inference Server are more than welcome. To contribute please review the contribution guidelines. If you have a backend, client, example or similar contribution that is not modifying the core of Triton, then you should file a PR in the contrib repo.\n## Reporting problems, asking questions",
+      "relevance_score": 0.9215,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/triton-inference-server/server",
+      "title": "triton-inference-server/server — GitHub README (part 1)",
+      "snippet": "* README * Contributing * BSD-3-Clause license * Security More items Warning You are currently on the `main` branch which tracks under-development progress towards the next release. The current releas",
+      "full_content": "* README\n  * Contributing\n  * BSD-3-Clause license\n  * Security\n\nMore items\n\nWarning\nYou are currently on the `main` branch which tracks under-development progress towards the next release. The current release is version 2.70.0 and corresponds to the 26.06 container release on NVIDIA GPU Cloud (NGC).\n# Triton Inference Server\n\nTriton Inference Server is an open source inference serving software that streamlines AI inferencing. Triton enables teams to deploy any AI model from multiple deep learning and machine learning frameworks, including TensorRT, PyTorch, ONNX, OpenVINO, Python, RAPIDS FIL, and more. Triton Inference Server supports inference across cloud, data center, edge and embedded devices on NVIDIA GPUs, x86 and ARM CPU, or AWS Inferentia. Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.\nMajor features include:\n  * Supports multiple deep learning frameworks\n  * Supports multiple machine learning frameworks\n  * Concurrent model execution\n  * Dynamic batching\n  * Sequence batching and implicit state management for stateful models\n  * Provides Backend API that allows adding custom backends and pre/post processing operations\n  * Supports writing custom backends in python, a.k.a. Python-based backends.\n  * Model pipelines using Ensembling or Business Logic Scripting (BLS)\n  * HTTP/REST and GRPC inference protocols based on the community developed KServe protocol\n  * A C API and Java API allow Triton to link directly into your application for edge and other in-process use cases\n  * Metrics indicating GPU utilization, server throughput, server latency, and more",
+      "relevance_score": 0.8955,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/triton-inference-server/server",
+      "title": "triton-inference-server/server — GitHub README (part 3)",
+      "snippet": "The recommended way to build and use Triton Inference Server is with Docker images. * Install Triton Inference Server with Docker containers (_Recommended_) * Install Triton Inference Server without D",
+      "full_content": "The recommended way to build and use Triton Inference Server is with Docker images.\n  * Install Triton Inference Server with Docker containers (_Recommended_)\n  * Install Triton Inference Server without Docker containers\n  * Build a custom Triton Inference Server Docker container\n  * Build Triton Inference Server from source\n  * Examples for deploying Triton Inference Server with Kubernetes and Helm on GCP, AWS, and NVIDIA FleetCommand\n  * Secure Deployment Considerations\n\n### Using Triton\n\n#### Preparing Models for Triton Inference Server\n\nThe first step in using Triton to serve your models is to place one or more models into a model repository. Depending on the type of the model and on what Triton capabilities you want to enable for the model, you may need to create a model configuration for the model.\n  * Add custom operations to Triton if needed by your model\n  * Enable model pipelining with Model Ensemble and Business Logic Scripting (BLS)\n  * Optimize your models setting scheduling and batching parameters and model instances.\n  * Use the Model Analyzer tool to help optimize your model configuration with profiling\n  * Learn how to explicitly manage what models are available by loading and unloading models\n\n#### Configure and Use Triton Inference Server\n\n* Read the Quick Start Guide to run Triton Inference Server on both GPU and CPU\n  * Triton supports multiple execution engines, called backends, including TensorRT, PyTorch, ONNX, OpenVINO, Python, and more\n  * Not all the above backends are supported on every platform supported by Triton. Look at the Backend-Platform Support Matrix to learn which backends are supported on your target platform.\n  * Learn how to optimize performance using the Performance Analyzer and Model Analyzer\n  * Learn how to manage loading and unloading models in Triton\n  * Send requests directly to Triton with the HTTP/REST JSON-based or gRPC protocols\n\n#### Client Support and Examples",
+      "relevance_score": 0.8912,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/triton-inference-server/server",
+      "title": "triton-inference-server/server — GitHub README (part 2)",
+      "snippet": "**New to Triton Inference Server?** Make use of these tutorials to begin your Triton journey! Join the Triton and TensorRT community and stay current on the latest product updates, bug fixes, content,",
+      "full_content": "**New to Triton Inference Server?** Make use of these tutorials to begin your Triton journey!\nJoin the Triton and TensorRT community and stay current on the latest product updates, bug fixes, content, best practices, and more. Need enterprise support? NVIDIA global support is available for Triton Inference Server with the NVIDIA AI Enterprise software suite.\n## Serve a Model in 3 Easy Steps\n\n```\n# Step 1: Create the example model repository\ngit clone -b r26.06 \ncd server/docs/examples\n./fetch_models.sh\n\n# Step 2: Launch triton from the NGC Triton container\ndocker run --gpus=1 --rm --net=host -v ${PWD}/model_repository:/models nvcr.io/nvidia/tritonserver:26.06-py3 tritonserver --model-repository=/models --model-control-mode explicit --load-model densenet_onnx\n\n# Step 3: Sending an Inference Request\n# In a separate console, launch the image_client example from the NGC Triton SDK container\ndocker run -it --rm --net=host nvcr.io/nvidia/tritonserver:26.06-py3-sdk /workspace/install/bin/image_client -m densenet_onnx -c 3 -s INCEPTION /workspace/images/mug.jpg\n\n# Inference should return the following\nImage '/workspace/images/mug.jpg':\n    15.346230 (504) = COFFEE MUG\n    13.224326 (968) = CUP\n    10.422965 (505) = COFFEEPOT\n```\n\nPlease read the QuickStart guide for additional information regarding this example. The quickstart guide also contains an example of how to launch Triton on CPU-only systems. New to Triton and wondering where to get started? Watch the Getting Started video.\n## Examples and Tutorials\n\nCheck out NVIDIA LaunchPad for free access to a set of hands-on labs with Triton Inference Server hosted on NVIDIA infrastructure.\nSpecific end-to-end examples for popular models, such as ResNet, BERT, and DLRM are located in the NVIDIA Deep Learning Examples page on GitHub. The NVIDIA Developer Zone contains additional documentation, presentations, and examples.\n## Documentation\n\n### Build and Deploy",
+      "relevance_score": 0.8296,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/model_repository.html",
+      "title": "Model repository — NVIDIA Triton user guide",
+      "snippet": "Server * Concurrent Model Execution * Scheduler * Batcher * Model Pipelines * Ensemble * Business Logic Scripting * State Management * Implicit State Management * Request Cancellation * Rate Limiter *",
+      "full_content": "Server\n  * Concurrent Model Execution\n  * Scheduler\n  * Batcher\n  * Model Pipelines\n    * Ensemble\n    * Business Logic Scripting\n  * State Management\n    * Implicit State Management\n  * Request Cancellation\n  * Rate Limiter\n  * Caching\n  * Metrics\n  * Tracing\n\nModel Management\n  * Repository\n  * Configuration\n  * Optimization\n  * Controls\n  * Decoupled models\n  * Custom operators\n\nBackends\n  * TensorRT-LLM\n  * vLLM\n    * vLLM Backend\n    * Multi-LoRA\n  * Python Backend\n  * PyTorch\n  * ONNX Runtime\n  * TensorRT\n  * FIL\n  * DALI\n  * Custom\n\nPerformance benchmarking and tuning\n  * GenAI Perf Analyzer\n    * Overview\n    * Large language models\n    * Visual language models\n    * Embedding models\n    * Ranking models\n    * Multiple LoRA adapters\n  * Performance Analyzer\n    * Triton Performance Analyzer\n    * Documentation\n    * Quick Start\n    * Recommended Installation Method\n    * CLI Reference\n    * Inference Load Modes\n    * Input Data\n    * Measurement Modes\n    * Benchmarking Triton via HTTP or gRPC endpoint\n  * Model Analyzer\n    * Triton Model Analyzer\n    * Documentation\n    * Quick Start\n    * Recommended Installation Method\n    * CLI Reference\n    * Launch Modes\n    * Table of Contents\n    * Table of Contents\n    * Metrics\n    * Checkpointing\n    * Reports\n    * Kubernetes\n    * Model Types\n    * Ensemble Model\n    * BLS Model\n    * Multi-Model\n  * Model Navigator\n\nDebugging\n  * Guide\n\n*  \n  * Model Repository\n\n# Model Repository#\n**Is this your first time setting up a model repository?** Check out these tutorials to begin your Triton journey!\nThe Triton Inference Server serves models from one or more model repositories that are specified when the server is started. While Triton is running, the models being served can be modified as described in Model Management.\n## Repository Layout#\nThese repository paths are specified when Triton is started using the `--model-repository` option. The `--model-reposit",
+      "relevance_score": 0.0213,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    }
+  ],
+  "failed_urls": []
+}
