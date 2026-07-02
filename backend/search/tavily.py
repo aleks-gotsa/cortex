@@ -24,6 +24,9 @@ def _get_client() -> httpx.AsyncClient:
 async def search(query: str, num_results: int = 10, api_key: str | None = None) -> list[SearchResult]:
     """Run a web search via Tavily Search API and return unified SearchResult list."""
     resolved_key = api_key or settings.TAVILY_API_KEY
+    if not resolved_key:
+        logger.debug("No Tavily API key configured — skipping Tavily search")
+        return []
     try:
         client = _get_client()
         response = await client.post(

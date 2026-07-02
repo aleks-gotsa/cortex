@@ -62,10 +62,10 @@ async def research(request: ResearchRequest) -> StreamingResponse:
     serper_key = request.serper_api_key or settings.SERPER_API_KEY
     tavily_key = request.tavily_api_key or settings.TAVILY_API_KEY
 
-    if not anthropic_key or not serper_key or not tavily_key:
+    if not anthropic_key or not serper_key:
         raise HTTPException(
             status_code=400,
-            detail="API keys required. Provide anthropic_api_key, serper_api_key, and tavily_api_key in the request body.",
+            detail="API keys required. Provide anthropic_api_key and serper_api_key in the request body (tavily_api_key is optional).",
         )
 
     # Write resolved keys back so the pipeline always reads from request
