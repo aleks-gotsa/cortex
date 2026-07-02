@@ -44,6 +44,7 @@ from backend.pipeline.planner import plan  # noqa: E402
 from backend.pipeline.synthesizer import synthesize  # noqa: E402
 from backend.pipeline.verifier import verify  # noqa: E402
 from evals.judge import JUDGE_MODEL, ensure_context, ollama_json  # noqa: E402
+from evals.pacing import cooldown  # noqa: E402
 from evals.verifier_ablation import load_fixtures, _write_json  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -53,8 +54,8 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 _RESULTS_DIR = _REPO_ROOT / "benchmarks" / "results" / "routing_ablation"
 
 _SEED = 42
-_SMALL_MODEL = os.environ.get("ROUTING_SMALL_MODEL", "llama3.2:3b")
-_DECODE_MODEL = os.environ.get("ROUTING_DECODE_MODEL", "qwen3:8b")
+_SMALL_MODEL = os.environ.get("ROUTING_SMALL_MODEL", settings.LOCAL_MODEL_PLANNING)
+_DECODE_MODEL = os.environ.get("ROUTING_DECODE_MODEL", settings.LOCAL_MODEL_SYNTHESIS)
 _JUDGE_DOC_CHARS = 12_000
 
 CONFIGS: dict[str, dict[str, str]] = {
@@ -150,12 +151,14 @@ async def run_configs(fixtures: list[dict]) -> None:
                     _write_json(stats_path, stats)
                     continue
 
+                await cooldown(f"{config_name}/{name} synthesis")
                 verification = await _run_stage(
                     "verification", verify(document, fx["sources"], client=client), client, stats
                 )
                 _write_json(stats_path, stats)
                 if verification is not None:
                     doc_path.write_text(verification.verified_document)
+                await cooldown(f"{config_name}/{name} verify")
         finally:
             await client.close()
 

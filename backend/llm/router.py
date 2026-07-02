@@ -25,6 +25,7 @@ PRICING_PER_MILLION: dict[str, dict[str, float]] = {
     "llama3.2:3b": {"input": 0.0, "output": 0.0},
     "llama3.1:8b": {"input": 0.0, "output": 0.0},
     "qwen3:8b": {"input": 0.0, "output": 0.0},
+    "qwen2.5:7b-instruct": {"input": 0.0, "output": 0.0},
 }
 
 

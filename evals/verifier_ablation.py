@@ -31,11 +31,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import httpx  # noqa: E402
 
+from backend.config import settings  # noqa: E402
 from backend.llm.openai_compat_client import OpenAICompatLLMClient  # noqa: E402
 from backend.models import Source, SubQuestion  # noqa: E402
 from backend.pipeline.synthesizer import synthesize  # noqa: E402
 from backend.pipeline.verifier import verify  # noqa: E402
 from evals.judge import JUDGE_MODEL, ensure_context, judge_claim  # noqa: E402
+from evals.pacing import cooldown  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("evals.verifier_ablation")
@@ -136,6 +138,7 @@ async def generate_arms(fixtures: list[dict]) -> None:
                     fx["query"], fx["sub_questions"], fx["sources"], client=client
                 )
                 raw_path.write_text(document)
+                await cooldown(f"{name} synthesis")
             raw_document = raw_path.read_text()
 
             if not verified_path.exists() and not error_path.exists():
@@ -148,6 +151,7 @@ async def generate_arms(fixtures: list[dict]) -> None:
                     continue
                 verified_path.write_text(result.verified_document)
                 _write_json(verification_path, result.summary.model_dump())
+                await cooldown(f"{name} verify")
     finally:
         await client.close()
 
@@ -276,8 +280,8 @@ def compute_metrics(fixtures: list[dict]) -> dict:
     n_confirmed = sum(confirmed_total.values())
     metrics = {
         "generator_models": {
-            "synthesis": os.environ.get("LOCAL_MODEL_SYNTHESIS", "qwen3:8b"),
-            "verification": os.environ.get("LOCAL_MODEL_VERIFICATION", "qwen3:8b"),
+            "synthesis": settings.LOCAL_MODEL_SYNTHESIS,
+            "verification": settings.LOCAL_MODEL_VERIFICATION,
         },
         "judge_model": JUDGE_MODEL,
         "temperature": 0.0,
