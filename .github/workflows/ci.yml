@@ -63,6 +63,11 @@ jobs:
           print('all modules: OK')
           "
 
+      - name: Tests
+        run: |
+          pip install pytest
+          pytest -q
+
       - name: Router consistency
         run: |
           python -c "

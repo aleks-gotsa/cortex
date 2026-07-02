@@ -50,6 +50,43 @@ def _atomic_write_json(path: Path, data: dict) -> None:
         raise
 
 
+def _new_stream_state() -> dict:
+    """Fresh accumulator for one SSE research stream."""
+    return {
+        "ttff": None,
+        "stage_times": {},
+        "total_time": None,
+        "cost_usd": None,
+        "research_id": None,
+        "error": None,
+    }
+
+
+def _reduce_sse_event(event: str, data_str: str, elapsed: float, state: dict) -> None:
+    """Apply one completed SSE event to the accumulating stream state.
+
+    An `error` event captures its payload into state["error"], which marks
+    the run failed; only a `complete` event sets total_time/cost/research_id.
+    """
+    if state["ttff"] is None:
+        state["ttff"] = round(elapsed, 4)
+    state["stage_times"][event] = round(elapsed, 4)
+
+    event_data: dict = {}
+    if data_str:
+        try:
+            event_data = json.loads(data_str)
+        except json.JSONDecodeError:
+            event_data = {}
+
+    if event == "error":
+        state["error"] = event_data.get("error") or data_str or "SSE error event received"
+    elif event == "complete":
+        state["total_time"] = round(elapsed, 4)
+        state["cost_usd"] = event_data.get("cost_usd")
+        state["research_id"] = event_data.get("research_id")
+
+
 async def _run_single_query(
     client: httpx.AsyncClient,
     url: str,
@@ -66,12 +103,7 @@ async def _run_single_query(
     }
 
     t0 = time.monotonic()
-    ttff: float | None = None
-    stage_times: dict[str, float] = {}
-    total_time: float | None = None
-    cost_usd: float | None = None
-    research_id: str | None = None
-    error: str | None = None
+    state = _new_stream_state()
 
     try:
         async with client.stream("POST", f"{url}/research", json=payload) as response:
@@ -101,52 +133,34 @@ async def _run_single_query(
                 elif line.startswith("data: "):
                     current_data = line[6:]
                 elif line == "" and current_event is not None:
-                    elapsed = time.monotonic() - t0
-
-                    if ttff is None:
-                        ttff = round(elapsed, 4)
-
-                    stage_times[current_event] = round(elapsed, 4)
-
-                    event_data: dict = {}
-                    if current_data:
-                        try:
-                            event_data = json.loads(current_data)
-                        except json.JSONDecodeError:
-                            event_data = {}
-
-                    if current_event == "error":
-                        error = event_data.get("error") or current_data or "SSE error event received"
-                    elif current_event == "complete":
-                        total_time = round(elapsed, 4)
-                        cost_usd = event_data.get("cost_usd")
-                        research_id = event_data.get("research_id")
-
+                    _reduce_sse_event(
+                        current_event, current_data, time.monotonic() - t0, state
+                    )
                     current_event = None
                     current_data = ""
 
     except httpx.TimeoutException:
-        error = "Request timed out"
+        state["error"] = "Request timed out"
     except httpx.HTTPError as e:
-        error = f"HTTP error: {e}"
+        state["error"] = f"HTTP error: {e}"
     except Exception as e:
-        error = f"Unexpected error: {e}"
+        state["error"] = f"Unexpected error: {e}"
 
-    if total_time is None and error is None:
-        total_time = round(time.monotonic() - t0, 4)
+    if state["total_time"] is None and state["error"] is None:
+        state["total_time"] = round(time.monotonic() - t0, 4)
 
-    success = error is None and total_time is not None
+    success = state["error"] is None and state["total_time"] is not None
 
     return {
         "query": query,
         "depth": depth,
         "success": success,
-        "error": error,
-        "ttff": ttff,
-        "total_time": total_time,
-        "cost_usd": cost_usd,
-        "stage_times": stage_times,
-        "research_id": research_id,
+        "error": state["error"],
+        "ttff": state["ttff"],
+        "total_time": state["total_time"],
+        "cost_usd": state["cost_usd"],
+        "stage_times": state["stage_times"],
+        "research_id": state["research_id"],
         "tokens_in": None,
         "tokens_out": None,
     }

@@ -201,7 +201,7 @@ Costs depend on query complexity and source volume. Haiku handles planning at 1/
 
 ## Limitations
 
-- No test suite — this was a research exploration, not production code
+- Test coverage targets the deterministic core; LLM-dependent stages are exercised by the committed eval harness (`evals/`)
 - Verification pass can produce false positives on ambiguous or context-dependent claims
 - Cost estimates are rough and vary significantly with query complexity and source volume
 - Cortex-D real mode: client code path validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure remains untested
