@@ -11,9 +11,9 @@ from backend.llm.base import LLMClientBase
 
 logger = logging.getLogger(__name__)
 
-# Local generation is slow — a full synthesis pass on laptop hardware can
-# take minutes, so the read timeout is far above hosted-API norms.
-_TIMEOUT = httpx.Timeout(connect=10.0, read=600.0, write=30.0, pool=10.0)
+# Local generation is slow — a long-document verify pass on laptop hardware
+# can take 10+ minutes, so the read timeout is far above hosted-API norms.
+_TIMEOUT = httpx.Timeout(connect=10.0, read=1800.0, write=30.0, pool=10.0)
 
 # Reasoning models (e.g. qwen3) may emit chain-of-thought inline in the
 # response body; strip it so callers only ever see the answer.
@@ -23,15 +23,28 @@ _THINK_BLOCK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 class OpenAICompatLLMClient(LLMClientBase):
     """Calls an OpenAI-compatible chat-completions endpoint and tracks cumulative token usage."""
 
-    def __init__(self, base_url: str | None = None) -> None:
+    def __init__(
+        self,
+        base_url: str | None = None,
+        temperature: float | None = None,
+        seed: int | None = None,
+    ) -> None:
         self._base_url = (base_url or settings.LOCAL_BASE_URL).rstrip("/")
+        self._temperature = temperature
+        self._seed = seed
         self._client = httpx.AsyncClient(timeout=_TIMEOUT)
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0
+        self._json_retries = 0
         self._per_model: dict[str, dict[str, int]] = {}
 
     # ── Public API ───────────────────────────────────────────────────────
+
+    @property
+    def json_retries(self) -> int:
+        """How many call() invocations needed the JSON-retry fallback."""
+        return self._json_retries
 
     async def call(
         self,
@@ -53,6 +66,7 @@ class OpenAICompatLLMClient(LLMClientBase):
         try:
             return self._parse_json(text)
         except (json.JSONDecodeError, ValueError):
+            self._json_retries += 1
             logger.warning(
                 "JSON parse failed for model=%s — retrying with JSON instruction",
                 model,
@@ -81,6 +95,7 @@ class OpenAICompatLLMClient(LLMClientBase):
         self._input_tokens = 0
         self._output_tokens = 0
         self._calls = 0
+        self._json_retries = 0
         self._per_model = {}
 
     async def call_text(
@@ -116,6 +131,11 @@ class OpenAICompatLLMClient(LLMClientBase):
         }
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
+        # Deterministic decoding for evals — omitted entirely unless configured.
+        if self._temperature is not None:
+            payload["temperature"] = self._temperature
+        if self._seed is not None:
+            payload["seed"] = self._seed
 
         try:
             response = await self._client.post(
