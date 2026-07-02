@@ -8,6 +8,10 @@ from backend.models import Source, VerificationDetail, VerificationResult, Verif
 
 logger = logging.getLogger(__name__)
 
+# Below this verified/original length ratio, treat the verifier output as
+# truncated and fall back to the unverified document.
+_MIN_LENGTH_RATIO = 0.7
+
 _SYSTEM_PROMPT = """\
 You are a research verifier. Your job is to check every cited claim in the document against its source.
 
@@ -94,8 +98,23 @@ async def verify(
             removed=summary_raw["removed"],
             details=details,
         )
+        verified_document = data["verified_document"]
+        # Safety guard: the verifier regenerates the whole document in a single
+        # completion and can silently truncate it — measured on small local
+        # models, where verified output ran as low as 68% of the original length
+        # (see docs/evaluation.md). Rather than ship a shortened document, fall
+        # back to the unverified one. On the Reference (Claude) path this never
+        # triggers in practice.
+        if document and len(verified_document) < _MIN_LENGTH_RATIO * len(document):
+            logger.warning(
+                "Verified document is %.0f%% of the original length (< %.0f%%) — "
+                "falling back to the unverified document",
+                100 * len(verified_document) / len(document),
+                100 * _MIN_LENGTH_RATIO,
+            )
+            verified_document = document
         return VerificationResult(
-            verified_document=data["verified_document"],
+            verified_document=verified_document,
             summary=summary,
         )
     except Exception as exc:

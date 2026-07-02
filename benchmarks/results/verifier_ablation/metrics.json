@@ -1,0 +1,382 @@
+{
+  "generator_models": {
+    "synthesis": "qwen2.5:7b-instruct",
+    "verification": "qwen2.5:7b-instruct"
+  },
+  "judge_model": "llama3.1:8b",
+  "temperature": 0.0,
+  "seed": 42,
+  "n_queries_judged": 17,
+  "verify_failures": [
+    "q01",
+    "q09",
+    "q11"
+  ],
+  "overall": {
+    "raw": {
+      "claims": 91,
+      "supported": 47,
+      "partial": 19,
+      "unsupported": 25,
+      "overclaim_rate": 0.4835
+    },
+    "verified": {
+      "claims": 91,
+      "supported": 46,
+      "partial": 20,
+      "unsupported": 25,
+      "overclaim_rate": 0.4945
+    }
+  },
+  "verifier_precision": 0.4875,
+  "verifier_confirmed_judged": {
+    "supported": 39,
+    "partial": 14,
+    "unsupported": 27,
+    "total": 80
+  },
+  "length_ratio_min": 0.685,
+  "invented_claims_total": 0,
+  "per_query": [
+    {
+      "query": "q00",
+      "raw": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "verified": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "length_ratio": 0.7503,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q02",
+      "raw": {
+        "claims": 7,
+        "supported": 2,
+        "partial": 2,
+        "unsupported": 3,
+        "overclaim_rate": 0.7143
+      },
+      "verified": {
+        "claims": 7,
+        "supported": 2,
+        "partial": 2,
+        "unsupported": 3,
+        "overclaim_rate": 0.7143
+      },
+      "length_ratio": 0.845,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q03",
+      "raw": {
+        "claims": 4,
+        "supported": 4,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "verified": {
+        "claims": 4,
+        "supported": 4,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "length_ratio": 0.7477,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q04",
+      "raw": {
+        "claims": 8,
+        "supported": 6,
+        "partial": 1,
+        "unsupported": 1,
+        "overclaim_rate": 0.25
+      },
+      "verified": {
+        "claims": 8,
+        "supported": 6,
+        "partial": 1,
+        "unsupported": 1,
+        "overclaim_rate": 0.25
+      },
+      "length_ratio": 0.8102,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q05",
+      "raw": {
+        "claims": 10,
+        "supported": 4,
+        "partial": 2,
+        "unsupported": 4,
+        "overclaim_rate": 0.6
+      },
+      "verified": {
+        "claims": 10,
+        "supported": 4,
+        "partial": 2,
+        "unsupported": 4,
+        "overclaim_rate": 0.6
+      },
+      "length_ratio": 0.7275,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q06",
+      "raw": {
+        "claims": 6,
+        "supported": 6,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "verified": {
+        "claims": 6,
+        "supported": 6,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "length_ratio": 0.7379,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q07",
+      "raw": {
+        "claims": 7,
+        "supported": 4,
+        "partial": 3,
+        "unsupported": 0,
+        "overclaim_rate": 0.4286
+      },
+      "verified": {
+        "claims": 7,
+        "supported": 3,
+        "partial": 4,
+        "unsupported": 0,
+        "overclaim_rate": 0.5714
+      },
+      "length_ratio": 0.7217,
+      "citation_delta": -2,
+      "invented_claims": 0
+    },
+    {
+      "query": "q08",
+      "raw": {
+        "claims": 4,
+        "supported": 3,
+        "partial": 0,
+        "unsupported": 1,
+        "overclaim_rate": 0.25
+      },
+      "verified": {
+        "claims": 4,
+        "supported": 3,
+        "partial": 0,
+        "unsupported": 1,
+        "overclaim_rate": 0.25
+      },
+      "length_ratio": 0.685,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q10",
+      "raw": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "verified": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "length_ratio": 0.9997,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q12",
+      "raw": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "verified": {
+        "claims": 0,
+        "supported": 0,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": null
+      },
+      "length_ratio": 0.8665,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q13",
+      "raw": {
+        "claims": 7,
+        "supported": 3,
+        "partial": 2,
+        "unsupported": 2,
+        "overclaim_rate": 0.5714
+      },
+      "verified": {
+        "claims": 7,
+        "supported": 3,
+        "partial": 2,
+        "unsupported": 2,
+        "overclaim_rate": 0.5714
+      },
+      "length_ratio": 0.7067,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q14",
+      "raw": {
+        "claims": 5,
+        "supported": 0,
+        "partial": 1,
+        "unsupported": 4,
+        "overclaim_rate": 1.0
+      },
+      "verified": {
+        "claims": 5,
+        "supported": 0,
+        "partial": 1,
+        "unsupported": 4,
+        "overclaim_rate": 1.0
+      },
+      "length_ratio": 0.8023,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q15",
+      "raw": {
+        "claims": 10,
+        "supported": 5,
+        "partial": 2,
+        "unsupported": 3,
+        "overclaim_rate": 0.5
+      },
+      "verified": {
+        "claims": 10,
+        "supported": 5,
+        "partial": 2,
+        "unsupported": 3,
+        "overclaim_rate": 0.5
+      },
+      "length_ratio": 0.72,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q16",
+      "raw": {
+        "claims": 5,
+        "supported": 2,
+        "partial": 1,
+        "unsupported": 2,
+        "overclaim_rate": 0.6
+      },
+      "verified": {
+        "claims": 5,
+        "supported": 2,
+        "partial": 1,
+        "unsupported": 2,
+        "overclaim_rate": 0.6
+      },
+      "length_ratio": 0.7774,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q17",
+      "raw": {
+        "claims": 10,
+        "supported": 1,
+        "partial": 4,
+        "unsupported": 5,
+        "overclaim_rate": 0.9
+      },
+      "verified": {
+        "claims": 10,
+        "supported": 1,
+        "partial": 4,
+        "unsupported": 5,
+        "overclaim_rate": 0.9
+      },
+      "length_ratio": 0.8647,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q18",
+      "raw": {
+        "claims": 3,
+        "supported": 3,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "verified": {
+        "claims": 3,
+        "supported": 3,
+        "partial": 0,
+        "unsupported": 0,
+        "overclaim_rate": 0.0
+      },
+      "length_ratio": 0.9364,
+      "citation_delta": 0,
+      "invented_claims": 0
+    },
+    {
+      "query": "q19",
+      "raw": {
+        "claims": 5,
+        "supported": 4,
+        "partial": 1,
+        "unsupported": 0,
+        "overclaim_rate": 0.2
+      },
+      "verified": {
+        "claims": 5,
+        "supported": 4,
+        "partial": 1,
+        "unsupported": 0,
+        "overclaim_rate": 0.2
+      },
+      "length_ratio": 0.9666,
+      "citation_delta": 0,
+      "invented_claims": 0
+    }
+  ]
+}

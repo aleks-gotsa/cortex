@@ -1,0 +1,34 @@
+{
+  "judge_model": "llama3.1:8b",
+  "raw": [],
+  "verified": [],
+  "verifier_confirmed": [
+    {
+      "claim": "RAG involves retrieval steps where documents are queried and pre-processed before being integrated into the LLM's context for generation.",
+      "source_ids": [
+        3
+      ],
+      "verdict": "supported",
+      "reason": "The source directly states that RAG involves retrieval steps where documents are queried and pre-processed before being integrated into the LLM's context for generation.",
+      "invalid_citation": false
+    },
+    {
+      "claim": "RAG improves the reliability of generated text by mitigating 'gen AI hallucinations'.",
+      "source_ids": [
+        4
+      ],
+      "verdict": "unsupported",
+      "reason": "The source content does not mention anything related to 'gen AI hallucinations' or the reliability of generated text.",
+      "invalid_citation": false
+    },
+    {
+      "claim": "RAG involves a combination of retrieval steps where documents are queried and pre-processed before being integrated into the LLM's context for generation.",
+      "source_ids": [
+        5
+      ],
+      "verdict": "partial",
+      "reason": "The source describes RAG as involving a combination of retrieval steps where relevant passages are fetched and conditioned on during inference, but it does not explicitly mention pre-processing documents before integration into the LLM's context for generation.",
+      "invalid_citation": false
+    }
+  ]
+}

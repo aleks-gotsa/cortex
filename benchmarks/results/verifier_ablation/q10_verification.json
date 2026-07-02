@@ -1,0 +1,126 @@
+{
+  "confirmed": 15,
+  "weakened": 2,
+  "removed": 1,
+  "details": [
+    {
+      "claim": "Speculative decoding can reduce latency by up to 2-3 times compared to standard autoregressive decoding.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "The verification phase uses a modified rejection sampling algorithm.",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source [2] describes the verification process using a modified rejection sampling algorithm.",
+      "correction": null
+    },
+    {
+      "claim": "Speculative decoding preserves the original output distribution of the target model.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explicitly states this.",
+      "correction": null
+    },
+    {
+      "claim": "The drafting phase generates a short sequence of candidate tokens (typically between 3 and 12).",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] specifies the typical length of the draft sequence.",
+      "correction": null
+    },
+    {
+      "claim": "Speculative decoding is an inference-time optimization for autoregressive large language models (LLMs) that generates multiple tokens per decoding step instead of one.",
+      "source_id": 3,
+      "verdict": "confirmed",
+      "reason": "Source [3] describes speculative decoding as generating multiple tokens in parallel.",
+      "correction": null
+    },
+    {
+      "claim": "The technique alternates between two phases: drafting and verification.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explicitly states this.",
+      "correction": null
+    },
+    {
+      "claim": "A smaller draft model proposes a sequence of candidate tokens, and the larger target model verifies them in a single forward pass through a modified rejection sampling scheme.",
+      "source_id": 3,
+      "verdict": "confirmed",
+      "reason": "Source [3] describes this process.",
+      "correction": null
+    },
+    {
+      "claim": "Speculative decoding can accelerate existing off-the-shelf models without retraining or architecture changes.",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source [2] states that speculative decoding can be applied to existing models without modifications.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation is naturally designed for greedy decoding, but it can also be used with multinomial sampling.",
+      "source_id": 5,
+      "verdict": "confirmed",
+      "reason": "Source [5] discusses the use of assisted generation with both greedy and sampling-based methods.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation can deliver significant latency reductions in diverse settings, but it is not a silver bullet – you should benchmark it before applying it to your use case.",
+      "source_id": 6,
+      "verdict": "confirmed",
+      "reason": "Source [6] provides details on the benefits and limitations of assisted generation.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation requires access to an assistant model that is at least an order of magnitude smaller than your model.",
+      "source_id": 6,
+      "verdict": "confirmed",
+      "reason": "Source [6] explicitly states this requirement.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation can get up to 3x speedups in the presence of INT8 and up to 2x otherwise, when the model fits in the GPU memory.",
+      "source_id": 6,
+      "verdict": "confirmed",
+      "reason": "Source [6] provides specific latency reduction numbers.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation shines in input-grounded tasks, like automatic speech recognition or summarization.",
+      "source_id": 6,
+      "verdict": "confirmed",
+      "reason": "Source [6] lists input-grounded tasks as areas where assisted generation performs well.",
+      "correction": null
+    },
+    {
+      "claim": "Speculative decoding is an optimization technique for large language models (LLMs) that aims to reduce inference latency by generating multiple tokens per decoding step.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explicitly states this.",
+      "correction": null
+    },
+    {
+      "claim": "The verification phase scores the entire draft sequence in one batched forward pass.",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source [2] describes the verification process as a single forward pass.",
+      "correction": null
+    },
+    {
+      "claim": "Speculative decoding can be applied to existing models without retraining or architecture changes.",
+      "source_id": 1,
+      "verdict": "weakened",
+      "reason": "Source [1] does not explicitly state that no retraining is required, only that it can be applied without modifications.",
+      "correction": null
+    },
+    {
+      "claim": "Assisted generation can deliver significant latency reductions in diverse settings.",
+      "source_id": 6,
+      "verdict": "weakened",
+      "reason": "Source [6] states 'can deliver' rather than 'will deliver'.",
+      "correction": null
+    }
+  ]
+}

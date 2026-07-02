@@ -1,0 +1,77 @@
+{
+  "confirmed": 14,
+  "weakened": 0,
+  "removed": 1,
+  "details": [
+    {
+      "claim": "MoEs have been particularly successful in natural language processing tasks, allowing for the training of extremely large models with faster inference times compared to dense models.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source [4] supports this claim.",
+      "correction": null
+    },
+    {
+      "claim": "The experts are specialized neural networks that process input tokens, while the gating network decides which expert processes each token based on learned parameters.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explains the components of MoE models.",
+      "correction": null
+    },
+    {
+      "claim": "The concept of MoEs originated from the 1991 paper 'Adaptive Mixture of Local Experts,' where separate networks were used to handle different subsets of training cases.",
+      "source_id": 7,
+      "verdict": "confirmed",
+      "reason": "Source [7] provides this historical context.",
+      "correction": null
+    },
+    {
+      "claim": "Sparse MoE layers replace dense feed-forward network (FFN) layers with a set of experts, each processing a subset of tokens. The number of experts can range from a few to thousands, depending on the model architecture.",
+      "source_id": 3,
+      "verdict": "confirmed",
+      "reason": "Source [3] explains sparse MoE layers.",
+      "correction": null
+    },
+    {
+      "claim": "The gating network determines which expert processes each token. This decision is based on learned parameters and can be complex, leading to hierarchical MoEs where experts themselves are composed of other MoE layers.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explains the role of the gating network.",
+      "correction": null
+    },
+    {
+      "claim": "MoEs have been successfully applied in natural language processing tasks such as language modeling and machine translation.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source [4] supports this claim.",
+      "correction": null
+    },
+    {
+      "claim": "They allow for the training of models with up to trillions of parameters, achieving better results at lower computational costs compared to dense models.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source [4] supports this claim.",
+      "correction": null
+    },
+    {
+      "claim": "MoE models offer faster inference times due to their sparse nature, where only a subset of experts is active for each token.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source [1] explains the benefits of MoEs.",
+      "correction": null
+    },
+    {
+      "claim": "Sparsity introduces challenges such as uneven batch sizes and underutilization of resources. Techniques like the learned gating network help manage these issues by dynamically selecting which experts to use for each token.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source [4] discusses sparsity challenges.",
+      "correction": null
+    },
+    {
+      "claim": "Fine-tuning MoE models can be challenging due to their complex architecture, but recent work with instruction-tuning shows promising results.",
+      "source_id": 9,
+      "verdict": "confirmed",
+      "reason": "Source [9] supports this claim.",
+      "correction": null
+    }
+  ]
+}

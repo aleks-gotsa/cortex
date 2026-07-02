@@ -52,3 +52,21 @@ def test_unknown_verdict_string_raises_value_error():
     client = StubLLMClient(payload=_payload("maybe"))
     with pytest.raises(ValueError):
         asyncio.run(verify("doc", _SOURCES, client=client))
+
+
+def test_truncated_verified_document_falls_back_to_original():
+    original = "x" * 1000
+    payload = _payload("confirmed")
+    payload["verified_document"] = "y" * 500  # 50% of original — below the guard
+    client = StubLLMClient(payload=payload)
+    result = asyncio.run(verify(original, _SOURCES, client=client))
+    assert result.verified_document == original
+
+
+def test_non_truncated_verified_document_is_kept():
+    original = "x" * 1000
+    payload = _payload("confirmed")
+    payload["verified_document"] = "y" * 800  # 80% — above the guard
+    client = StubLLMClient(payload=payload)
+    result = asyncio.run(verify(original, _SOURCES, client=client))
+    assert result.verified_document == "y" * 800
