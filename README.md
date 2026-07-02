@@ -204,7 +204,7 @@ Costs depend on query complexity and source volume. Haiku handles planning at 1/
 - No test suite — this was a research exploration, not production code
 - Verification pass can produce false positives on ambiguous or context-dependent claims
 - Cost estimates are rough and vary significantly with query complexity and source volume
-- Cortex-D real-Dynamo mode was tested in mock only; real-hardware end-to-end validation was not completed
+- Cortex-D real mode: client code path validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure remains untested
 - Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
 - Last end-to-end validation was performed during active development; no fresh validation has been run since April 22, 2026
 
