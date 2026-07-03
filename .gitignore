@@ -12,3 +12,6 @@ build/
 .pytest_cache/
 prompts/
 CLAUDE.md
+
+# Eval label files are filled in by a human and committed explicitly
+evals/labels/

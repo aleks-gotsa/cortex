@@ -1,0 +1,2 @@
+verify() failed: Verifier returned invalid VerificationResult: 'summary'
+Raw keys: ['verified_document', 'claim', 'source_id', 'verdict', 'reason']

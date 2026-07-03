@@ -1,0 +1,77 @@
+{
+  "confirmed": 15,
+  "weakened": 2,
+  "removed": 1,
+  "details": [
+    {
+      "claim": "...",
+      "source_id": 3,
+      "verdict": "weakened",
+      "reason": "source says X not Y",
+      "correction": "revised claim text"
+    },
+    {
+      "claim": "Continuous batching can achieve up to 23x improvement in LLM inference throughput over naive batching methods [1][2].",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Continuous batching can achieve up to 23x improvement in LLM inference throughput over naive batching methods [1][2].",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Techniques like PagedAttention in vLLM reduce memory fragmentation, allowing for more efficient use of GPU resources and higher batch sizes [4].",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Continuous batching is implemented in frameworks such as Hugging Face’s text-generation-inference, Ray Serve, and vLLM, each with its own optimizations.",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Continuous batching is implemented in frameworks such as Hugging Face’s text-generation-inference, Ray Serve, and vLLM, each with its own optimizations.",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Continuous batching is implemented in frameworks such as Hugging Face’s text-generation-inference, Ray Serve, and vLLM, each with its own optimizations.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Benchmark results show that continuous batching can achieve up to 23x throughput improvement over naive batching methods using vLLM [1].",
+      "source_id": 1,
+      "verdict": "weakened",
+      "reason": "Source says 'up to 23x' not 'exactly 23x'.",
+      "correction": "Benchmark results show that continuous batching can achieve up to 23x throughput improvement over naive batching methods using vLLM."
+    },
+    {
+      "claim": "Benchmark results show that continuous batching can achieve 8x throughput improvement compared to Hugging Face’s text-generation-inference and Ray Serve [2].",
+      "source_id": 2,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "Benchmark results show that continuous batching can achieve 4x throughput improvement with optimized model implementations like NVIDIA’s FasterTransformer [1].",
+      "source_id": 1,
+      "verdict": "confirmed",
+      "reason": "Source directly states this.",
+      "correction": null
+    }
+  ]
+}

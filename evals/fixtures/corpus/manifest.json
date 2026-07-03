@@ -1,0 +1,129 @@
+{
+  "built_at": "2026-07-02T09:00:23.012984+00:00",
+  "n_queries": 20,
+  "total_sources": 178,
+  "total_bytes": 402723,
+  "max_chunk_chars": 2000,
+  "queries": [
+    {
+      "file": "q00.json",
+      "query": "What is retrieval-augmented generation?",
+      "n_sources": 11,
+      "failed_urls": []
+    },
+    {
+      "file": "q01.json",
+      "query": "How do transformer attention mechanisms work?",
+      "n_sources": 10,
+      "failed_urls": []
+    },
+    {
+      "file": "q02.json",
+      "query": "What are the key differences between GPT-4 and Claude?",
+      "n_sources": 6,
+      "failed_urls": []
+    },
+    {
+      "file": "q03.json",
+      "query": "How does NVIDIA Dynamo disaggregated inference work?",
+      "n_sources": 11,
+      "failed_urls": []
+    },
+    {
+      "file": "q04.json",
+      "query": "What is KV-cache and why does it matter for LLM serving?",
+      "n_sources": 11,
+      "failed_urls": []
+    },
+    {
+      "file": "q05.json",
+      "query": "How do vector databases work?",
+      "n_sources": 11,
+      "failed_urls": []
+    },
+    {
+      "file": "q06.json",
+      "query": "What is the difference between prefill and decode in LLM inference?",
+      "n_sources": 7,
+      "failed_urls": []
+    },
+    {
+      "file": "q07.json",
+      "query": "How does Triton Inference Server work?",
+      "n_sources": 7,
+      "failed_urls": []
+    },
+    {
+      "file": "q08.json",
+      "query": "What are the best practices for deploying LLMs in production?",
+      "n_sources": 12,
+      "failed_urls": []
+    },
+    {
+      "file": "q09.json",
+      "query": "How does RLHF training work?",
+      "n_sources": 10,
+      "failed_urls": []
+    },
+    {
+      "file": "q10.json",
+      "query": "What is speculative decoding in LLMs?",
+      "n_sources": 8,
+      "failed_urls": []
+    },
+    {
+      "file": "q11.json",
+      "query": "How does flash attention reduce memory usage?",
+      "n_sources": 7,
+      "failed_urls": []
+    },
+    {
+      "file": "q12.json",
+      "query": "What is model quantization and what are the tradeoffs?",
+      "n_sources": 5,
+      "failed_urls": []
+    },
+    {
+      "file": "q13.json",
+      "query": "How do mixture of experts models work?",
+      "n_sources": 10,
+      "failed_urls": []
+    },
+    {
+      "file": "q14.json",
+      "query": "What is the current state of open source LLMs in 2026?",
+      "n_sources": 12,
+      "failed_urls": []
+    },
+    {
+      "file": "q15.json",
+      "query": "How does NVIDIA NIM simplify LLM deployment?",
+      "n_sources": 11,
+      "failed_urls": []
+    },
+    {
+      "file": "q16.json",
+      "query": "What are the main bottlenecks in LLM inference throughput?",
+      "n_sources": 7,
+      "failed_urls": []
+    },
+    {
+      "file": "q17.json",
+      "query": "How does continuous batching work in LLM serving?",
+      "n_sources": 9,
+      "failed_urls": []
+    },
+    {
+      "file": "q18.json",
+      "query": "What is tensor parallelism in distributed LLM inference?",
+      "n_sources": 5,
+      "failed_urls": []
+    },
+    {
+      "file": "q19.json",
+      "query": "How does PagedAttention improve KV cache efficiency?",
+      "n_sources": 8,
+      "failed_urls": []
+    }
+  ]
+}

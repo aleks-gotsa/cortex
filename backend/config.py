@@ -12,6 +12,14 @@ class Settings(BaseSettings):
     SERPER_API_KEY: str = Field(default="", validation_alias="SERPER_API_KEY")
     TAVILY_API_KEY: str = Field(default="", validation_alias="TAVILY_API_KEY")
 
+    # --- LLM backend: "anthropic" (default) or "local" (OpenAI-compatible) ---
+    LLM_BACKEND: str = Field(default="anthropic", validation_alias="LLM_BACKEND")
+    LOCAL_BASE_URL: str = Field(default="http://localhost:11434/v1", validation_alias="LOCAL_BASE_URL")
+    LOCAL_MODEL_PLANNING: str = Field(default="llama3.2:3b", validation_alias="LOCAL_MODEL_PLANNING")
+    LOCAL_MODEL_GAP_DETECTION: str = Field(default="llama3.2:3b", validation_alias="LOCAL_MODEL_GAP_DETECTION")
+    LOCAL_MODEL_SYNTHESIS: str = Field(default="qwen2.5:7b-instruct", validation_alias="LOCAL_MODEL_SYNTHESIS")
+    LOCAL_MODEL_VERIFICATION: str = Field(default="qwen2.5:7b-instruct", validation_alias="LOCAL_MODEL_VERIFICATION")
+
     # --- Qdrant ---
     QDRANT_URL: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")
     QDRANT_COLLECTION: str = Field(default="cortex_research", validation_alias="QDRANT_COLLECTION")

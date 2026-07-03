@@ -11,7 +11,9 @@ _SKIP_EXTENSIONS = (".pdf", ".zip", ".tar", ".gz")
 _MAX_CHARS = 4000
 
 
-async def _scrape_one(crawler: AsyncWebCrawler, url: str, timeout: int = 10) -> str | None:
+async def _scrape_one(
+    crawler: AsyncWebCrawler, url: str, timeout: int = 10, max_chars: int = _MAX_CHARS
+) -> str | None:
     """Scrape a single URL using an existing crawler. Returns None on error."""
     try:
         if any(url.lower().endswith(ext) for ext in _SKIP_EXTENSIONS):
@@ -32,21 +34,21 @@ async def _scrape_one(crawler: AsyncWebCrawler, url: str, timeout: int = 10) -> 
         if not content.strip():
             return None
 
-        return content[:_MAX_CHARS]
+        return content[:max_chars]
     except Exception:
         logger.exception("Scrape error for %s", url)
         return None
 
 
 async def scrape_many(
-    urls: list[str], max_concurrent: int = 5
+    urls: list[str], max_concurrent: int = 5, max_chars: int = _MAX_CHARS
 ) -> dict[str, str | None]:
     """Scrape multiple URLs in parallel with a shared browser."""
     semaphore = asyncio.Semaphore(max_concurrent)
 
     async def _limited(crawler: AsyncWebCrawler, url: str) -> tuple[str, str | None]:
         async with semaphore:
-            content = await _scrape_one(crawler, url)
+            content = await _scrape_one(crawler, url, max_chars=max_chars)
             return url, content
 
     async with AsyncWebCrawler() as crawler:

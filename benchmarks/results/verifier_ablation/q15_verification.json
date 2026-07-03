@@ -1,0 +1,14 @@
+{
+  "confirmed": 15,
+  "weakened": 2,
+  "removed": 1,
+  "details": [
+    {
+      "claim": "...",
+      "source_id": 3,
+      "verdict": "weakened",
+      "reason": "source says X not Y",
+      "correction": "revised claim text"
+    }
+  ]
+}

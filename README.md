@@ -4,8 +4,6 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Model](https://img.shields.io/badge/model-Claude%20Sonnet-orange)
 
-> **Status:** Archived. This project explored multi-pass research agents and is no longer actively developed. See the [retrospective post](./docs/retrospective.md) for what I learned and why I moved on.
-
 Multi-layer research engine with cumulative memory and cost-efficient model routing.
 
 Search -> find gaps -> search again -> verify every claim -> remember everything for next time.
@@ -203,13 +201,12 @@ Costs depend on query complexity and source volume. Haiku handles planning at 1/
 
 ## Limitations
 
-- No test suite — this was a research exploration, not production code
+- Test coverage targets the deterministic core; LLM-dependent stages are exercised by the committed eval harness (`evals/`)
 - Verification pass can produce false positives on ambiguous or context-dependent claims
 - Cost estimates are rough and vary significantly with query complexity and source volume
-- Cortex-D real-Dynamo mode was tested in mock only; real-hardware end-to-end validation was not completed
+- Cortex-D real mode: client code path validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure remains untested
 - Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
-- Benchmark runner reports success=true for SSE error events; treat reported success rates with skepticism
-- Last end-to-end validation was performed during active development; no fresh validation was run before archiving on April 22, 2026
+- Last end-to-end validation was performed during active development; no fresh validation has been run since April 22, 2026
 
 ## What I Learned
 

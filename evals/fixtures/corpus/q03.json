@@ -1,0 +1,113 @@
+{
+  "index": 3,
+  "query": "How does NVIDIA Dynamo disaggregated inference work?",
+  "sub_questions": [
+    {
+      "id": "sq1",
+      "question": "How does NVIDIA Dynamo disaggregated inference work?",
+      "search_terms": []
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/",
+      "title": "Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 4)",
+      "snippet": "__Figure 3. NVIDIA Dynamo architecture__ ## NVIDIA Dynamo Planner: Optimizing GPU resources for distributed inference In large-scale distributed and disaggregated-serving inference systems, efficientl",
+      "full_content": "__Figure 3. NVIDIA Dynamo architecture__\n## NVIDIA Dynamo Planner: Optimizing GPU resources for distributed inference \nIn large-scale distributed and disaggregated-serving inference systems, efficiently managing GPU resources is essential to maximize throughput and minimize latency. While disaggregated serving can significantly enhance inference throughput and efficiency, it might not always be the most effective solution for every incoming request. \nImagine a scenario where a surge of summarization requests with long input sequence lengths (ISLs) but short output sequence lengths (OSLs) overwhelms the prefill GPUs. While the decode GPUs remain underutilized, the prefill GPUs become a bottleneck. In this case, allowing decode GPUs to perform both prefill and decode tasks in a traditional aggregated manner, or shifting decode GPUs to perform prefill tasks, might be more efficient. This approach can help balance the load, alleviate pressure on the prefill GPUs, and ultimately improve overall throughput.\nDeciding between disaggregated and aggregated serving or how many GPUs should be assigned to each phase requires careful consideration of several factors. These factors include the time needed to transfer the KV cache between the prefill and decode GPUs, the GPUs’ queue wait times for incoming requests, and the estimated processing times for both disaggregated and aggregated configurations. In large-scale environments with hundreds of GPUs, these decisions can quickly become very complex.\nThis is where NVIDIA Dynamo Planner comes into play. It continuously monitors key GPU capacity metrics in distributed inference environments, and combines them with application SLOs such as TTFT and ITL to make informed decisions on whether to serve incoming requests with or without disaggregation or if additional GPUs should be added to either phase. NVIDIA Dynamo Planner ensures that GPU resources are allocated efficiently across prefill and decode, adapting to fluctuating workloads",
+      "relevance_score": 1.0,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/",
+      "title": "Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 2)",
+      "snippet": "AI-generated content may summarize information incompletely. Verify important information. Learn more NVIDIA announced the release of NVIDIA Dynamo at GTC 2025. NVIDIA Dynamo is a high-throughput, low",
+      "full_content": "AI-generated content may summarize information incompletely. Verify important information. Learn more\nNVIDIA announced the release of NVIDIA Dynamo at GTC 2025. NVIDIA Dynamo is a high-throughput, low-latency open-source inference serving framework for deploying generative AI and reasoning models in large-scale distributed environments. The framework boosts the number of requests served by up to 30x, when running the open-source DeepSeek-R1 models on NVIDIA Blackwell. NVIDIA Dynamo is compatible with open-source tools, including PyTorch, SGLang, NVIDIA TensorRT-LLM, and vLLM, joining the expanding community of inference tools that empower developers and AI researchers to accelerate AI. \nNVIDIA Dynamo introduces several key innovations, including: \n  * Disaggregated prefill and decode inference stages to increase throughput per GPU\n  * Dynamic scheduling of GPUs based on fluctuating demand to optimize performance \n  * LLM-aware request routing to avoid KV cache recomputation costs\n  * Accelerated asynchronous data transfer between GPUs to reduce inference response time\n  * KV cache offloading across different memory hierarchies to increase system throughput",
+      "relevance_score": 0.8459,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/",
+      "title": "Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 3)",
+      "snippet": "Starting today, NVIDIA Dynamo is available for developers on the ai-dynamo/dynamo GitHub repo. For enterprises looking for faster time to production and enterprise-grade security, support, and stabili",
+      "full_content": "Starting today, NVIDIA Dynamo is available for developers on the ai-dynamo/dynamo GitHub repo. For enterprises looking for faster time to production and enterprise-grade security, support, and stability, NVIDIA Dynamo will be included with NVIDIA NIM microservices, part of NVIDIA AI Enterprise. \nThis post explains the architecture and key components of NVIDIA Dynamo, highlighting how they facilitate cost-effective disaggregated serving and scaling of generative AI models, from a single GPU to thousands of GPUs. \n_Video 1. Learn how NVIDIA Dynamo can increase AI model throughout by up to 30x_\n## Accelerating AI inference in multinode deployments\nAI inference will help developers create new groundbreaking applications by integrating reasoning models into their workflows, allowing apps to understand and interact with users in more intuitive ways. However, it also represents a significant recurring cost, posing considerable challenges for those looking to scale their models cost efficiently to meet the insatiable demand for AI. \nWhen NVIDIA first introduced NVIDIA Triton Inference Server in 2018, the goal was to accelerate AI innovation and drive down inference costs. Triton was the first open-source AI inference server that consolidated bespoke framework-specific inference serving, including TensorFlow, PyTorch, ONNX, OpenVINO and more, into a single unified platform—significantly reducing inference costs and accelerating time to market (TTM) for new AI models. \nTriton has been downloaded over 1 million times from NVIDIA NGC and is today used by some of the world’s leading organizations to deploy AI models in production, including Amazon, Microsoft, Oracle Cloud, DocuSign, Perplexity, Snap, and many others. \nSince the launch of Triton, open-source model sizes have grown dramatically—by almost 2,000x—and are now increasingly integrated into agentic AI workflows that require interaction with multiple other models. Deploying these models and workflows in production enviro",
+      "relevance_score": 0.8087,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://docs.nvidia.com/dynamo/design-docs/disaggregated-serving",
+      "title": "Disaggregated Serving — NVIDIA Dynamo design docs (part 2)",
+      "snippet": "The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions. ## Efficient KV Transfer The key to high-performance disaggregation is eff",
+      "full_content": "The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions.\n## Efficient KV Transfer\nThe key to high-performance disaggregation is efficient KV transfer. Dynamo leverages NIXL to transfer KV cache directly from the VRAM of the prefill engine to the VRAM of the decode engine. The KV transfer is non-blocking, allowing GPU forward passes to continue serving other requests during the transfer.\n### Router Orchestration\nThe disaggregated serving flow is orchestrated by the `PrefillRouter`:\n  1. **Worker Selection** : The router selects a prefill worker using KV-aware routing (based on cache overlap scores and load) or simple load balancing.\n  2. **Prefill Execution** : The router sends the prefill request to the selected prefill worker. The prefill worker computes the KV cache and returns `disaggregated_params` containing backend-specific transfer metadata.\n  3. **Decode Routing** : The router injects the prefill result into the decode request, th",
+      "relevance_score": 0.7983,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/",
+      "title": "Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 1)",
+      "snippet": "DEVELOPER * Home * Blog * Forums * Docs * Downloads * Training * * Join * Technical Blog Subscribe Related Resources Developer Tools & Techniques English 中文 # NVIDIA Dynamo, A Low-Latency Distributed ",
+      "full_content": "DEVELOPER\n  * Home\n  * Blog\n  * Forums\n  * Docs\n  * Downloads\n  * Training\n\n*   *  Join \n  *\n\nTechnical Blog\n Subscribe \n Related Resources \nDeveloper Tools & Techniques\nEnglish 中文\n# NVIDIA Dynamo, A Low-Latency Distributed Inference Framework for Scaling Reasoning AI Models\n\nMar 18, 2025 \nBy Amr Elmeleegy, Harry Kim, David Zier, Kyle Kranen, Neelay Shah, Ryan Olson and Omri Kahalon\n+64\nLike \n Discuss (2) \n  * L\n  * T\n  * F\n  * R\n  * E\n\nAI-Generated Summary\nLike\nDislike\n  * NVIDIA Dynamo is a high-throughput, low-latency open-source inference serving framework that boosts the number of requests served by up to 30x when running the open-source DeepSeek-R1 models on NVIDIA Blackwell.\n  * NVIDIA Dynamo introduces key innovations such as disaggregated prefill and decode inference stages, dynamic scheduling of GPUs, LLM-aware request routing, and accelerated asynchronous data transfer between GPUs.\n  * NVIDIA Dynamo is compatible with open-source tools, including PyTorch, SGLang, NVIDIA TensorRT-LLM, and vLLM, and is available for developers on the ai-dynamo/dynamo GitHub repo.",
+      "relevance_score": 0.7476,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/ai-dynamo/dynamo",
+      "title": "ai-dynamo/dynamo — GitHub README (part 2)",
+      "snippet": "* **Zero-config deploy (DGDR)** _(beta):_ Specify model, HW, and SLA in one YAML — AIConfigurator auto-profiles the workload, Planner optimizes the topology, and Dynamo deploys * **Agentic inference:*",
+      "full_content": "* **Zero-config deploy (DGDR)** _(beta):_ Specify model, HW, and SLA in one YAML — AIConfigurator auto-profiles the workload, Planner optimizes the topology, and Dynamo deploys\n  * **Agentic inference:** Per-request hints for priority, expected output length, and speculative prefill, plus session metadata for tracing and SGLang subagent KV isolation. LangChain + NeMo Agent Toolkit integrations\n  * **Multimodal E/P/D:** Disaggregated encode/prefill/decode with embedding cache — 30% faster TTFT on image workloads\n  * **Video generation:** Native FastVideo + SGLang Diffusion support — real-time 1080p on single B200\n  * **K8s Inference Gateway plugin:** KV-aware routing inside the standard Kubernetes gateway\n  * **Storage-tier KV offload:** S3/Azure blob support + global KV events for cluster-wide cache visibility\n\n## Request Routing Topologies",
+      "relevance_score": 0.6695,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/ai-dynamo/dynamo",
+      "title": "ai-dynamo/dynamo — GitHub README (part 3)",
+      "snippet": "Dynamo can expose traffic through two Kubernetes request routing topologies. Both expose an OpenAI-compatible API and support the same backends, disaggregated serving, and KV-aware routing. | Topology",
+      "full_content": "Dynamo can expose traffic through two Kubernetes request routing topologies. Both expose an OpenAI-compatible API and support the same backends, disaggregated serving, and KV-aware routing.  \n| Topology  | What it is  | When to use  |  \n| --- | --- | --- |  \n| **Dynamo-native Frontend routing**  | The Dynamo Frontend serves HTTP and the integrated Dynamo Router makes worker-selection decisions. No external gateway is required.  | Local development, single-cluster deployments, and environments where Dynamo should own the request entry point end to end.  |  \n| **Gateway API routing with GAIE**  | A Kubernetes Gateway API Inference Extension gateway calls the Dynamo Endpoint Picker Plugin (EPP) before forwarding to the selected worker's Frontend sidecar in `--router-mode direct`.  | Kubernetes platforms that standardize on Gateway API, or deployments where gateway-level policy, auth, rate limiting, and observability should sit at the cluster edge.  |  \nRequest flow for the Dynamo-native path is `client → Frontend → Router → workers`. Request flow for the Gateway API path is `client → Gateway → EPP → Frontend sidecar (direct) → workers`.\nSee the Gateway API Inference Extension (GAIE) guide for the Gateway API setup, supported features, and configuration.\n## Quick Start\n\n### Option A: Container (fastest)\n\n```\n# Pull a prebuilt container (SGLang example)\ndocker run --gpus all --network host --rm -it nvcr.io/nvidia/ai-dynamo/sglang-runtime:1.2.1\n\n# Inside the container — start frontend and worker\npython3 -m dynamo.frontend --http-port 8000 --discovery-backend file > /dev/null 2>&1 &\npython3 -m dynamo.sglang --model-path Qwen/Qwen3-0.6B --discovery-backend file &\n\n# Send a request\ncurl -s localhost:8000/v1/chat/completions -H \"Content-Type: application/json\" -d '{\n  \"model\": \"Qwen/Qwen3-0.6B\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}],\n  \"max_tokens\": 100\n}' | jq\n```",
+      "relevance_score": 0.4791,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://docs.nvidia.com/dynamo/design-docs/disaggregated-serving",
+      "title": "Disaggregated Serving — NVIDIA Dynamo design docs (part 1)",
+      "snippet": "Digest Light On this page * Efficient KV Transfer * Router Orchestration * Backend-Specific Transfer Metadata * Runtime-Reconfigurable xPyD Scroll to top Design Docs # Disaggregated Serving Ask a ques",
+      "full_content": "Digest\nLight\nOn this page\n  * Efficient KV Transfer\n  * Router Orchestration\n  * Backend-Specific Transfer Metadata\n  * Runtime-Reconfigurable xPyD\n\nScroll to top\nDesign Docs\n# Disaggregated Serving\nAsk a question|Copy page|View as Markdown|More actions\n\nThe prefill and decode phases of LLM requests have different computation characteristics and memory footprints. Disaggregating these phases into specialized llm engines allows for better hardware allocation, improved scalability, and overall enhanced performance. For example, using a larger TP for the memory-bound decoding phase while a smaller TP for the computation-bound prefill phase allows both phases to be computed efficiently. In addition, for requests with long context, separating their prefill phase into dedicated prefill engines allows the ongoing decoding requests to be efficiently processed without being blocked by these long prefills.\nDisaggregated execution of a request has three main steps:\n  1. Prefill engine computes prefill phase and generates KV cache\n  2. Prefill engine transfers the KV cache to decode engine\n  3. Decode engine computes decode phase.",
+      "relevance_score": 0.1912,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://arxiv.org/abs/2401.09670",
+      "title": "DistServe: Disaggregating Prefill and Decoding — arXiv",
+      "snippet": "DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving Authors:Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, Hao Zhang Vi",
+      "full_content": "DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving\nAuthors:Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, Hao Zhang\nView a PDF of the paper titled DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving, by Yinmin Zhong and 7 other authors\nView PDF HTML (experimental)\n> Abstract:DistServe improves the performance of large language models (LLMs) serving by disaggregating the prefill and decoding computation. Existing LLM serving systems colocate the two phases and batch the computation of prefill and decoding across all users and requests. We find that this strategy not only leads to strong prefill-decoding interferences but also couples the resource allocation and parallelism plans for both phases. LLM applications often emphasize individual latency for each phase: time to first token (TTFT) for the prefill phase and time per output token (TPOT) of each request for the decoding phase. In the presence of stringent latency requirements, existing systems have to prioritize one latency over the other, or over-provision compute resources to meet both.   \n> DistServe assigns prefill and decoding computation to different GPUs, hence eliminating prefill-decoding interferences. Given the application's TTFT and TPOT requirements, DistServe co-optimizes the resource allocation and parallelism strategy tailored for each phase. DistServe also places the two phases according to the serving cluster's bandwidth to minimize the communication caused by disaggregation. As a result, DistServe significantly improves LLM serving performance in terms of the maximum rate that can be served within both TTFT and TPOT constraints on each GPU. Our evaluations show that on various popular LLMs, applications, and latency requirements, DistServe can serve 7.4x more requests or 12.6x tighter SLO, compared to state-of-the-art systems, while staying within latency constraints f",
+      "relevance_score": 0.1871,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/ai-dynamo/dynamo",
+      "title": "ai-dynamo/dynamo — GitHub README (part 5)",
+      "snippet": "> VSCode/Cursor users: see the `.devcontainer` for a pre-configured dev environment. ## Community and Contributing Dynamo is built in the open with an OSS-first development model. We welcome contribut",
+      "full_content": "> VSCode/Cursor users: see the `.devcontainer` for a pre-configured dev environment.\n## Community and Contributing\n\nDynamo is built in the open with an OSS-first development model. We welcome contributions of all kinds.\n  * **Contribution Guide** — How to contribute code, docs, and recipes\n  * **Design Proposals** — RFCs for major features\n  * **Office Hours** — Biweekly calls\n  * **Community Meetings** (Youtube) – Weekly (Wed 10:30 AM PT) development community meetings\n  * **Discord** — Chat with the team and community\n  * **Dynamo Day Recordings** — Deep dives from production users\n\n## Latest News\n\n* [03/15] Dynamo 1.0 is here — production-ready with strong community adoption\n  * [03/15] NVIDIA Blackwell Ultra sets new inference records in MLPerf\n  * [03/15] NVIDIA Blackwell leads on SemiAnalysis InferenceMax benchmarks\n  * [12/05] Moonshot AI's Kimi K2 achieves 10x inference speedup with Dynamo on GB200\n  * [12/02] Mistral AI runs Mistral Large 3 with 10x faster inference using Dynamo\n  * [11/20] Dell integrates PowerScale with NIXL for 19x faster TTFT\n\nOlder news\nDynamo provides comprehensive benchmarking tools:\n  * **Benchmarking Guide** – Compare deployment topol",
+      "relevance_score": 0.015,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    },
+    {
+      "url": "https://github.com/ai-dynamo/dynamo",
+      "title": "ai-dynamo/dynamo — GitHub README (part 1)",
+      "snippet": "* README * Code of conduct * Contributing * License * Security More items | **Docs** | **Roadmap** | **Recipes** | **Examples** | **Prebuilt Containers** | **Digest** | **Design Proposals** | **How to",
+      "full_content": "* README\n  * Code of conduct\n  * Contributing\n  * License\n  * Security\n\nMore items\n\n| **Docs** | **Roadmap** | **Recipes** | **Examples** | **Prebuilt Containers** | **Digest** | **Design Proposals** | **How to Contribute** |\n\n# Dynamo\n\nNote\n**Day-0 Nemotron 3 Ultra recipes available.** Tested and performance optimized Kubernetes deployment paths for Nemotron 3 Ultra are merged to main for **vLLM** , with a prebuilt container image published on NGC.  \nRecipes include KV-aware routing, multi-token prediction (MTP), and disaggregated prefill/decode\n**The open-source, datacenter-scale inference stack.** Dynamo is the orchestration layer above inference engines — it doesn't replace SGLang, TensorRT-LLM, or vLLM, it turns them into a coordinated multi-node inference system. Disaggregated serving, intelligent routing, multi-tier KV caching, and automatic scaling work together to maximize throughput and minimize latency for LLM, reasoning, multimodal, and video generation workloads.\nBuilt in Rust for performance, Python for extensibility.\n## When to use Dynamo\n\n* You're serving LLMs across **multiple GPUs or nodes** and need to coordinate them\n  * You want **KV-aware routing** to avoid redundant prefill computation\n  * You need to **independently scale prefill and decode** (disaggregated serving)\n  * You want **automatic scaling** that meets latency SLAs at minimum total cost of ownership (TCO)\n  * You need **fast cold-starts** when spinning up new replicas",
+      "relevance_score": 0.0053,
+      "sub_question_id": "sq1",
+      "search_engine": "fixture"
+    }
+  ],
+  "failed_urls": []
+}

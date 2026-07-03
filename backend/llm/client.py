@@ -1,4 +1,5 @@
 # Backward-compatible alias — all existing imports still work
+from backend.config import settings
 from backend.llm.anthropic_client import AnthropicLLMClient as LLMClient
 from backend.llm.base import LLMClientBase
 
@@ -8,10 +9,14 @@ __all__ = ["LLMClient", "get_llm_client"]
 def get_llm_client(api_key: str | None = None) -> LLMClientBase:
     """
     Return the appropriate LLM client based on environment config.
+    LLM_BACKEND=local -> OpenAICompatLLMClient (Ollama or any OpenAI-compatible endpoint)
     DYNAMO_ENABLED=false (default) -> AnthropicLLMClient (no change)
     DYNAMO_ENABLED=true DYNAMO_MODE=mock -> MockDynamoClient (logs routing)
     DYNAMO_ENABLED=true DYNAMO_MODE=real -> DynamoLLMClient (real HTTP calls)
     """
+    if settings.LLM_BACKEND == "local":
+        from backend.llm.openai_compat_client import OpenAICompatLLMClient
+        return OpenAICompatLLMClient()
     try:
         from dynamo.config import dynamo_settings
         if dynamo_settings.DYNAMO_ENABLED:

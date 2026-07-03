@@ -9,10 +9,12 @@ from datetime import datetime, timezone
 from backend.llm.client import get_llm_client
 from backend.llm.router import calculate_cost
 from backend.models import (
+    CoverageScore,
     Depth,
     GapRecommendation,
     ResearchEvent,
     ResearchRequest,
+    Source,
     SubQuestion,
 )
 from backend.config import settings
@@ -40,6 +42,42 @@ def _token_diff(before: dict[str, int], after: dict[str, int]) -> dict[str, int]
         "output_tokens": after["output_tokens"] - before["output_tokens"],
         "llm_calls": after["calls"] - before["calls"],
     }
+
+
+def _follow_up_questions(
+    coverage: list[CoverageScore],
+    sub_questions: list[SubQuestion],
+) -> list[SubQuestion]:
+    """Build follow-up sub-questions for the next gather pass."""
+    follow_ups: list[SubQuestion] = []
+    for c in coverage:
+        if c.score < 0.6 and c.follow_up_queries:
+            follow_ups.append(
+                SubQuestion(
+                    id=c.sub_question_id,
+                    question=next(
+                        (sq.question for sq in sub_questions if sq.id == c.sub_question_id),
+                        c.sub_question_id,
+                    ),
+                    search_terms=c.follow_up_queries,
+                )
+            )
+    return follow_ups
+
+
+def _dedupe_keep_max_relevance(sources: list[Source]) -> list[Source]:
+    """Deduplicate by URL, keeping the highest-relevance copy in first-occurrence position."""
+    seen_urls: dict[str, int] = {}
+    deduped: list[Source] = []
+    for src in sources:
+        if src.url in seen_urls:
+            existing_idx = seen_urls[src.url]
+            if src.relevance_score > deduped[existing_idx].relevance_score:
+                deduped[existing_idx] = src
+        else:
+            seen_urls[src.url] = len(deduped)
+            deduped.append(src)
+    return deduped
 
 
 async def _emit(research_id: str, event: ResearchEvent) -> ResearchEvent:
@@ -149,36 +187,14 @@ async def run_research(
                 break
 
             # Build follow-up sub-questions for the next pass.
-            follow_ups: list[SubQuestion] = []
-            for c in gap_report.coverage:
-                if c.score < 0.6 and c.follow_up_queries:
-                    follow_ups.append(
-                        SubQuestion(
-                            id=c.sub_question_id,
-                            question=next(
-                                (sq.question for sq in research_plan.sub_questions if sq.id == c.sub_question_id),
-                                c.sub_question_id,
-                            ),
-                            search_terms=c.follow_up_queries,
-                        )
-                    )
+            follow_ups = _follow_up_questions(gap_report.coverage, research_plan.sub_questions)
 
             if not follow_ups:
                 break
             current_questions = follow_ups
 
         # ── Deduplicate sources across passes ────────────────────────────
-        seen_urls: dict[str, int] = {}
-        deduped: list = []
-        for src in all_sources:
-            if src.url in seen_urls:
-                existing_idx = seen_urls[src.url]
-                if src.relevance_score > deduped[existing_idx].relevance_score:
-                    deduped[existing_idx] = src
-            else:
-                seen_urls[src.url] = len(deduped)
-                deduped.append(src)
-        all_sources = deduped
+        all_sources = _dedupe_keep_max_relevance(all_sources)
 
         # ── 4. SYNTHESIZE ────────────────────────────────────────────────
         yield await _emit(research_id, ResearchEvent(stage="synthesizing", data={}))

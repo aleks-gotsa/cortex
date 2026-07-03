@@ -1,0 +1,49 @@
+{
+  "confirmed": 15,
+  "weakened": 2,
+  "removed": 1,
+  "details": [
+    {
+      "claim": "RAG involves retrieval steps where documents are queried and pre-processed before being integrated into the LLM's context for generation.",
+      "source_id": 3,
+      "verdict": "confirmed",
+      "reason": "Source [3] directly states this.",
+      "correction": null
+    },
+    {
+      "claim": "The term RAG was introduced in a 2020 paper by Meta Research, which described combining a parametric language model with non-parametric memory accessed through retrieval at inference time.",
+      "source_id": 4,
+      "verdict": "weakened",
+      "reason": "Source [3] does not specify the exact year or author of the introduction but confirms RAG was introduced in a 2020 paper by Meta Research.",
+      "correction": "The term RAG was introduced in a 2020 paper by Meta Research, which described combining a parametric language model with non-parametric memory accessed through retrieval at inference time."
+    },
+    {
+      "claim": "RAG improves the reliability of generated text by mitigating 'gen AI hallucinations'.",
+      "source_id": 4,
+      "verdict": "confirmed",
+      "reason": "Source [3] states that RAG can mitigate hallucinations, though it does not explicitly use the term 'gen AI hallucinations'.",
+      "correction": null
+    },
+    {
+      "claim": "RAG involves a combination of retrieval steps where documents are queried and pre-processed before being integrated into the LLM's context for generation.",
+      "source_id": 5,
+      "verdict": "confirmed",
+      "reason": "Source [5] confirms this process.",
+      "correction": null
+    },
+    {
+      "claim": "RAG can mitigate 'gen AI hallucinations' by integrating relevant facts from external sources.",
+      "source_id": 4,
+      "verdict": "weakened",
+      "reason": "Source [3] states that RAG mitigates hallucinations, but does not explicitly mention integrating facts as a specific method.",
+      "correction": "RAG can mitigate 'gen AI hallucinations' by incorporating relevant information from external sources."
+    },
+    {
+      "claim": "The term RAG was introduced in 2020.",
+      "source_id": 4,
+      "verdict": "unsupported",
+      "reason": "Source [3] does not specify the exact year of introduction, only that it was a 2020 paper.",
+      "correction": null
+    }
+  ]
+}
