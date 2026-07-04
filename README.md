@@ -10,8 +10,10 @@ Search -> find gaps -> search again -> verify every claim -> remember everything
 
 ## Screenshots
 
-![Pipeline streaming](docs/screenshots/pipeline.png)
+![Pipeline streaming](docs/screenshots/pipeline.gif)
 ![Final document with citations](docs/screenshots/document.png)
+
+*Recorded fully local on a MacBook Air (M4) — zero API calls. Note the `$0.0000` cost on the finished document.*
 
 ## What Makes It Different
 
