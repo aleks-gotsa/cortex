@@ -4,9 +4,20 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Model](https://img.shields.io/badge/model-Claude%20Sonnet-orange)
 
-Multi-layer research engine with cumulative memory and cost-efficient model routing.
+Cortex is a multi-pass research pipeline: plan, gather, gap-check, synthesize, verify, store. Development ended April 2026; the evaluation, test suite, and local backend were added in July 2026 to close it out.
 
-Search -> find gaps -> search again -> verify every claim -> remember everything for next time.
+- Up to 3 iterative search passes, with coverage scoring and targeted follow-up between passes.
+- Every cited claim is checked against its source content; verdicts ship inline with the document.
+- Cross-session Qdrant memory recalls prior research; model routing sends bounded stages to Haiku, synthesis and verification to Sonnet. Self-hosted, MIT-licensed.
+
+## Status
+
+Development ended 2026-04-22. The evaluation harness, test suite, and local (Ollama) backend were added in July 2026 as an archival close-out, not new features. It ended for four reasons:
+
+- Multi-pass latency compounds: even fast individual passes sum to slow end-to-end UX.
+- The author stopped reaching for the tool for real research.
+- Automatic memory recall biased planning toward earlier results.
+- The waiting-page UX that deep research needs conflicts with mobile-first quick lookups.
 
 ## Screenshots
 
@@ -15,52 +26,24 @@ Search -> find gaps -> search again -> verify every claim -> remember everything
 
 *Recorded fully local on a MacBook Air (M4) — zero API calls. Note the `$0.0000` cost on the finished document.*
 
-## What Makes It Different
-
-| Feature | Standard AI Search | Cortex |
-|---------|-------------------|--------|
-| Search depth | Single pass | Up to 3 iterative passes |
-| Gap detection | No | Automatic coverage scoring + targeted follow-up |
-| Claim verification | No | Every citation checked against its source |
-| Memory | No | Qdrant vector DB recalls prior research |
-| Cost control | Opaque | Model routing: Haiku for planning, Sonnet for synthesis |
-| Source transparency | Partial | Full inline citations with verification verdicts |
-| Self-hosted | No | Yes, fully open-source |
-
 ## Architecture
 
 ```mermaid
-graph TD
-    Q[User Query] --> P[Planner<br/>Haiku]
-    P --> G1[Gatherer Pass 1<br/>Serper + Tavily + crawl4ai]
-    G1 --> R[Reranker<br/>cross-encoder local]
-    R --> GD{Gap Detector<br/>Sonnet}
-    GD -->|Gaps found| G2[Gatherer Pass 2..N<br/>targeted queries]
-    G2 --> R
-    GD -->|Coverage OK| S[Synthesizer<br/>Sonnet]
-    S --> V[Verifier<br/>Sonnet]
-    V --> M[Memory Writer<br/>Qdrant + BGE embeddings]
-    M --> D[Final Document<br/>with verified citations]
-
-    QD[(Qdrant<br/>Vector Memory)] -.->|prior context| P
-    QD -.-> M
-    DB[(SQLite<br/>History)] -.-> D
+graph LR
+    Q[Query] --> P[Planner<br/>Haiku] --> G[Gather + Rerank<br/>Serper · Tavily · crawl4ai · cross-encoder] --> GD{Gap check<br/>Sonnet}
+    GD -->|gaps| G
+    GD -->|coverage ok| S[Synthesize<br/>Sonnet] --> V[Verify<br/>Sonnet] --> D[Document<br/>verified citations]
+    QD[(Qdrant<br/>memory)] -.->|prior context| P
+    V -.->|store · BGE| QD
 ```
 
-## Two configurations
+## Configurations
 
-Cortex runs in either of two documented configurations, selected by
-`LLM_BACKEND`.
+Selected by `LLM_BACKEND`.
 
-**Reference (Claude API)** — the product as built: Haiku plans, Sonnet handles
-gap detection, synthesis, and verification; bring your own key. This is the
-configuration the project was developed in and the default (`LLM_BACKEND=anthropic`).
+**Reference (Claude API)** — the default (`LLM_BACKEND=anthropic`) and the config the project was built in: Haiku plans; Sonnet handles gap detection, synthesis, and verification. Bring your own key.
 
-**Local (OpenAI-compatible / Ollama)** — zero API keys for inference. Every LLM
-call is served by a local endpoint; this is the configuration the committed
-evaluations (see [`docs/evaluation.md`](./docs/evaluation.md)) were run on and
-the demo below was recorded with. Setup is three `ollama pull`s plus
-`LLM_BACKEND=local`:
+**Local (OpenAI-compatible / Ollama)** — no API keys for inference; every LLM call is served locally. The committed evaluations ([`docs/evaluation.md`](./docs/evaluation.md)) were run and the demo recorded here.
 
 ```bash
 ollama pull llama3.2:3b          # planning + gap detection
@@ -69,130 +52,52 @@ ollama pull llama3.1:8b          # eval judge only
 export LLM_BACKEND=local
 ```
 
-The local backend was added to make the evaluation reproducible and the demo
-free to run — the project was designed and developed Claude-first. Adding it
-took roughly 200 lines behind the existing `get_llm_client()` /
-`LLMClientBase` seam: a second backend dropped in without touching the
-pipeline, which is the strongest evidence the abstraction was worth having.
+Added at archival time to make the evaluation reproducible and the demo free to run; the project was developed Claude-first. It dropped in behind the existing `get_llm_client()` / `LLMClientBase` seam in ~200 lines, without touching the pipeline.
 
-## Cortex-D: Disaggregated Inference
+## Cortex-D: disaggregated inference
 
-Cortex-D is an optional inference layer that routes each pipeline stage to a specialized worker tier, in the style of NVIDIA Dynamo's prefill/decode split. The idea is that stages are not uniform: planning and gap detection are prefill-heavy — large inputs, short JSON outputs — while synthesis and verification are decode-heavy — moderate inputs, long document outputs. Sending both through one endpoint wastes GPU time; routing by stage characteristics lets each tier run on hardware and a model sized for its workload.
+Optional inference layer that routes each stage to a worker tier, after NVIDIA Dynamo's prefill/decode split: planning and gap detection are prefill-heavy (large input, short JSON), synthesis and verification are decode-heavy (moderate input, long output). Routing by stage lets each tier size its own hardware and model.
 
-| Worker Type | Pipeline Stages | Characteristics |
-|-------------|-----------------|-----------------|
+| Worker | Stages | Profile |
+|--------|--------|---------|
 | **Prefill** | planning, gap_detection | Large input, short JSON output |
 | **Decode** | synthesis, verification | Moderate input, long document output |
 
-Real-Dynamo mode requires GPU hardware with NVIDIA Dynamo workers running on the prefill and decode endpoints. In this codebase it was validated primarily in mock mode, which routes through the same dispatcher but delegates actual inference back to Anthropic — useful for exercising the routing logic and measuring overhead without a GPU.
+Validated primarily in mock mode, which uses the same dispatcher but delegates inference to Anthropic; real mode needs GPU hosts running NVIDIA Dynamo workers. See [`dynamo/README.md`](./dynamo/README.md).
 
-See [`dynamo/README.md`](./dynamo/README.md) for full setup details and environment variables.
+## Run
 
-## Quick Start
-
-### Prerequisites
-
-This project requires Python 3.12. If you have pyenv:
+Requires Python 3.12, Docker (Qdrant), and Node (frontend).
 
 ```bash
-pyenv install 3.12.7
-pyenv local 3.12.7
-```
-
-### 1. Clone and configure
-
-```bash
-git clone https://github.com/aleks-gotsa/cortex.git
-cd cortex
-cp .env.example .env
-```
-
-Edit `.env` with your API keys:
-
-```
-ANTHROPIC_API_KEY=sk-ant-...
-SERPER_API_KEY=...
-TAVILY_API_KEY=...         # optional — Serper alone works fine
-```
-
-### 2. Start Qdrant (vector memory)
-
-```bash
-docker-compose up -d
-```
-
-### 3. Install and run backend
-
-```bash
-pip install -r requirements.txt
-python -m playwright install chromium   # for crawl4ai scraping
+git clone https://github.com/aleks-gotsa/cortex.git && cd cortex
+cp .env.example .env    # ANTHROPIC_API_KEY, SERPER_API_KEY; TAVILY_API_KEY optional
+docker-compose up -d    # Qdrant vector memory
+pip install -r requirements.txt && python -m playwright install chromium
 uvicorn backend.main:app --reload --port 8000
+cd frontend && npm install && npm run dev   # http://localhost:3000
 ```
 
-### 4. Install and run frontend
-
 ```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:3000
-
-## Usage
-
-### Via the web UI
-
-1. Enter a research query
-2. Select depth: **quick** (1 pass), **standard** (2 passes), or **deep** (3 passes)
-3. Watch real-time progress as each pipeline stage completes
-4. Read the verified document with inline citations
-5. Browse past research in the sidebar
-
-### Via curl
-
-```bash
-# Stream a research session
-curl -N -X POST http://localhost:8000/research \
-  -H "Content-Type: application/json" \
+curl -N -X POST http://localhost:8000/research -H "Content-Type: application/json" \
   -d '{"query": "What is retrieval augmented generation?", "depth": "quick"}'
-
-# Get research history
-curl http://localhost:8000/research/history
-
-# Get a specific result
-curl http://localhost:8000/research/{research_id}
 ```
 
-## CLI
+Deploy with the included `render.yaml` (backend, Render) and `vercel.json` (frontend, Vercel) — one per service, not both for the same component.
 
-Run research from your terminal:
+## Interfaces
 
-```bash
-pip install -e .
-cortex "What is retrieval-augmented generation?"
-cortex --depth deep "How do transformers work?"
-cortex history
-cortex view <research_id>
-```
+**CLI** — `pip install -e .`, then `cortex "your question"` or `cortex --depth deep "..."`; also `cortex history`, `cortex view <id>`, and bare `cortex` for the REPL.
 
-Or launch the interactive REPL:
-
-```bash
-cortex
-```
-
-## API
+**API**
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/research` | Start research, returns SSE stream |
-| `GET` | `/research/history` | List past research runs |
-| `GET` | `/research/{id}` | Get full result by ID |
+| `POST` | `/research` | Start research, returns an SSE stream |
+| `GET` | `/research/history` | List past runs |
+| `GET` | `/research/{id}` | Get a full result by ID |
 
-### SSE Events
-
-The `/research` endpoint streams these events in order:
+**SSE** — `/research` streams these events in order:
 
 | Event | Data |
 |-------|------|
@@ -208,147 +113,66 @@ The `/research` endpoint streams these events in order:
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | FastAPI, Python 3.12+, async everywhere |
-| LLM | Anthropic Claude (Haiku for planning, Sonnet for synthesis/verification) |
-| Search | Serper.dev + Tavily Search API |
-| Scraping | crawl4ai (Playwright-based, JS rendering) |
-| Reranking | cross-encoder/ms-marco-MiniLM-L-6-v2 (local) |
-| Embeddings | BAAI/bge-small-en-v1.5 (local) |
-| Vector DB | Qdrant (Docker) |
-| Storage | SQLite via aiosqlite |
-| Frontend | Next.js 14, TypeScript, Tailwind CSS |
-| Streaming | Server-Sent Events (SSE) |
+| Backend | FastAPI, Python 3.12+, async |
+| LLM | Anthropic Claude — Haiku (planning), Sonnet (synthesis, verification) |
+| Search + scrape | Serper.dev + Tavily; crawl4ai (Playwright, JS rendering) |
+| Local models | cross-encoder/ms-marco-MiniLM-L-6-v2 (rerank), BAAI/bge-small-en-v1.5 (embed) |
+| Data | Qdrant vectors (Docker) + SQLite via aiosqlite |
+| Frontend | Next.js 14, TypeScript, Tailwind; SSE streaming |
 
-## Cost Estimates
+## Cost
 
-| Depth | Passes | Typical Cost | Time |
-|-------|--------|-------------|------|
-| Quick | 1 | ~$0.08-0.15 | ~30s |
-| Standard | 2 | ~$0.15-0.25 | ~60s |
-| Deep | 3 | ~$0.25-0.40 | ~90s |
-
-Costs depend on query complexity and source volume. Haiku handles planning at 1/4 the cost of Sonnet. These dollar figures are development estimates, not benchmarked; the Local configuration runs at zero inference cost.
+Reference (Claude API): rough development estimate $0.08–0.40 per query, unbenchmarked. Local: no inference cost.
 
 ## Limitations
 
-- Test coverage targets the deterministic core; LLM-dependent stages are exercised by the committed eval harness (`evals/`)
-- Verification pass can produce false positives on ambiguous or context-dependent claims
-- Cost estimates are rough and vary significantly with query complexity and source volume
-- Cortex-D real mode: client code path validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure remains untested
-- Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
-- Last end-to-end validation was performed during active development; no fresh validation has been run since April 22, 2026
-- Evaluation was performed on local open-weight models; findings validate the pipeline's mechanisms, not vendor-specific cost or quality figures
+- Test coverage targets the deterministic core; LLM-dependent stages are exercised by the committed eval harness (`evals/`).
+- Verification can produce false positives on ambiguous or context-dependent claims.
+- Cost estimates are rough and vary with query complexity and source volume.
+- Cortex-D real mode: the client path is validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure is untested.
+- The gap detector's 0.6 coverage threshold is heuristic, not tuned against a reference dataset.
+- Last end-to-end validation was during active development; none has been run since April 22, 2026.
+- Evaluation used local open-weight models; findings validate the pipeline's mechanisms, not vendor-specific cost or quality figures.
 
-## What I Learned (measured)
+## Findings
 
-Two claims were tested with a committed eval harness on local models; see
-[`docs/evaluation.md`](./docs/evaluation.md) for method, tables, and failure cases.
+Two claims were tested with a committed eval harness on local models; see [`docs/evaluation.md`](./docs/evaluation.md) for method, tables, and failure cases.
 
-- **Routing bounded stages to a small model preserves quality.** Sending
-  planning and gap detection to a 3B model (synthesis and verification
-  unchanged) produced final documents a blind, position-swapped judge rated
-  equivalent to the all-large-model config — 13 ties, 1 routed win, 0 losses
-  over 14 queries — while shifting 10.2% of tokens off the large model. The
-  original **3–4× Haiku/Sonnet cost figure is a development observation, not
-  benchmarked**; the measured local number is that token shift.
-- **Verification did not reduce overclaiming on local models.** Overclaiming
-  was essentially unchanged before vs. after the verification pass
-  (48.4% → 49.5%), the verifier confirmed unsupported claims about as often as
-  chance (precision 0.49), and it sometimes truncated or failed outright
-  (~15%). The original claim that *verification beats extra search for catching
-  hallucinations* is a **development observation, not benchmarked** — it did
-  not reproduce on 3B–8B models. Judge reliability is bounded by human
-  agreement (Cohen's kappa 0.33).
-- Multi-pass latency compounds: even fast individual passes produce slow
-  end-to-end UX. *Development observation, not benchmarked.*
-- Cross-session memory is more useful as an explicit recall tool than as
-  automatic pipeline input. *Development observation, not benchmarked.*
-- Deep research as a product category demands a waiting-page UX that conflicts
-  with mobile-first quick-lookup usage. *Development observation, not benchmarked.*
+- Routing bounded stages to a small model preserved quality. Planning and gap detection on a 3B model (synthesis and verification unchanged) produced final documents a blind, position-swapped judge rated equivalent to the all-large-model config — 13 ties, 1 routed win, 0 losses over 14 queries — while shifting 10.2% of tokens off the large model. The original 3–4× Haiku/Sonnet cost figure is a development observation, not benchmarked; the measured local number is that token shift.
+- Verification did not reduce overclaiming on local models. Overclaiming was essentially unchanged before vs. after the verification pass (48.4% → 49.5%), the verifier confirmed unsupported claims about as often as chance (precision 0.49), and it sometimes truncated or failed outright (~15%). The original claim that verification beats extra search for catching hallucinations is a development observation, not benchmarked; it did not reproduce on 3B–8B models. Judge reliability is bounded by human agreement (Cohen's kappa 0.33).
+- Multi-pass latency compounds: even fast individual passes produce slow end-to-end UX. Development observation, not benchmarked.
+- Cross-session memory is more useful as an explicit recall tool than as automatic pipeline input. Development observation, not benchmarked.
+- Deep research as a product category demands a waiting-page UX that conflicts with mobile-first quick-lookup usage. Development observation, not benchmarked.
 
-## Project Structure
+## Project structure
 
 ```
 cortex/
-├── backend/
-│   ├── main.py              # FastAPI app, SSE endpoint
-│   ├── config.py            # Settings from .env
-│   ├── models.py            # Pydantic schemas
-│   ├── pipeline/
-│   │   ├── orchestrator.py  # Full pipeline coordination
-│   │   ├── planner.py       # Query decomposition (Haiku)
-│   │   ├── gatherer.py      # Search + scrape + rerank
-│   │   ├── gap_detector.py  # Coverage evaluation (Sonnet)
-│   │   ├── synthesizer.py   # Document generation (Sonnet)
-│   │   ├── verifier.py      # Claim verification (Sonnet)
-│   │   └── memory.py        # Qdrant read/write
-│   ├── search/
-│   │   ├── serper.py        # Serper.dev client
-│   │   ├── tavily.py        # Tavily Search client
-│   │   └── scraper.py       # crawl4ai wrapper
-│   ├── llm/
-│   │   ├── client.py        # Anthropic SDK wrapper
-│   │   └── router.py        # Model selection + cost tracking
-│   └── storage/
-│       └── db.py            # SQLite persistence
-├── cli/
-│   ├── cortex_cli.py        # CLI entrypoint, REPL, commands
-│   ├── connection.py        # SSE stream client
-│   ├── progress.py          # Live stage progress display
-│   ├── output.py            # File saving and stats footer
-│   └── renderer.py          # Terminal markdown renderer
-├── frontend/
-│   ├── app/                 # Next.js App Router
-│   └── components/
-│       ├── SearchInput.tsx       # Query field + depth selector
-│       ├── PipelineProgress.tsx  # Real-time SSE progress display
-│       ├── ResearchDocument.tsx  # Rendered markdown with citations
-│       └── HistoryList.tsx       # Past researches sidebar
-├── docker-compose.yml       # Qdrant service
-├── requirements.txt
-└── .env.example
+├── backend/     # FastAPI app + pipeline (plan, gather, gap-check, synthesize, verify, memory)
+├── cli/         # Terminal client and REPL
+├── frontend/    # Next.js UI (SSE progress, document, history)
+├── dynamo/      # Cortex-D disaggregated-inference layer
+├── evals/       # Committed eval harness: ablations, judge, labels, fixtures
+├── benchmarks/  # Frozen queries and committed results (benchmarks/results/)
+├── tests/       # Deterministic-core pytest suite
+├── scripts/     # Corpus builder, local smoke test
+└── docs/        # evaluation.md, screenshots
 ```
 
-## Deployment
+## MCP server
 
-Two deployment configs are included: `render.yaml` for the backend (Render.com) and `vercel.json` for the frontend (Vercel). Pick one per service; they are not meant to be used together for the same component.
-
-## MCP Server
-
-Use Cortex as a tool from Claude Desktop, claude.ai, or any MCP client.
-
-### Run
-
-```bash
-python mcp_server.py
-# or
-fastmcp run mcp_server.py
-```
-
-### Claude Desktop config
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Add to Claude Desktop's `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ```json
-{
-  "mcpServers": {
-    "cortex": {
-      "command": "python",
-      "args": ["mcp_server.py"],
-      "cwd": "/absolute/path/to/cortex"
-    }
-  }
-}
+{ "mcpServers": { "cortex": { "command": "python", "args": ["mcp_server.py"], "cwd": "/absolute/path/to/cortex" } } }
 ```
-
-### Available tools
 
 | Tool | Description | Params |
 |------|-------------|--------|
-| `research` | Run full research pipeline (30-90s) | `query` (str), `depth` ("quick"\|"standard"\|"deep"), `use_memory` (bool) |
-| `recall` | Search Qdrant memory for prior research | `query` (str), `top_k` (int) |
-| `history` | List past research runs | `limit` (int) |
-| `get_research` | Retrieve a specific past result | `research_id` (str) |
+| `research` | Run the full pipeline (30–90s) | `query` (str), `depth` ("quick"\|"standard"\|"deep"), `use_memory` (bool) |
+| `recall` | Search Qdrant memory | `query` (str), `top_k` (int) |
+| `history` | List past runs | `limit` (int) |
+| `get_research` | Retrieve a past result | `research_id` (str) |
 
 ## License
 

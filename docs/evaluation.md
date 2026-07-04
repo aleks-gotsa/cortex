@@ -159,6 +159,15 @@ systematic judge bias cancels in the within-pair comparison. In other words:
 even a fair-only judge is enough to show that verification did not move the
 needle, though not enough to pin the needle's exact position.
 
+**Calibration disclosure.** Four of the 93 labels — `q13:raw:0`, `q06:raw:2`,
+`q05:verified:9`, `q06:raw:3` — were adjudicated in discussion with an LLM
+assistant during annotator calibration, before the rest were labeled solo and
+blind; they are not fully independent human judgments. Recomputing over the
+committed labels without these four (n=89) gives 58.4% agreement and Cohen's
+kappa 0.318, against 59.1% and 0.326 over the full 93. The delta is within
+rounding and changes nothing above: the judge remains a fair-only adjudicator,
+and the within-pair comparison that carries the central result is unaffected.
+
 ### Experiment B — routing ablation
 
 Configs: ROUTED (planning + gap detection on `llama3.2:3b`, synthesis +
