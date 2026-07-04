@@ -1,0 +1,42 @@
+{
+  "config": "mono",
+  "models": {
+    "PLANNING": "qwen2.5:7b-instruct",
+    "GAP_DETECTION": "qwen2.5:7b-instruct",
+    "SYNTHESIS": "qwen2.5:7b-instruct",
+    "VERIFICATION": "qwen2.5:7b-instruct"
+  },
+  "planning": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 165,
+    "output_tokens": 150,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "plan_fallback": false,
+  "gap_detection": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 1825,
+    "output_tokens": 122,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "synthesis": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 3755,
+    "output_tokens": 875,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "verification": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 4678,
+    "output_tokens": 864,
+    "calls": 2,
+    "json_retries": 1,
+    "failed": false
+  }
+}

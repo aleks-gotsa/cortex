@@ -355,13 +355,28 @@ def sample_labels(target: int = 100) -> None:
 
 
 def agreement() -> None:
-    """Judge–human agreement %, Cohen's kappa, and a confusion table."""
+    """Judge–human agreement %, Cohen's kappa, and a confusion table.
+
+    Reads labeled.csv (falling back to to_label.csv). Labels outside the three
+    verdicts — e.g. "flag" for a claim the labeler judged un-adjudicable (empty
+    or boilerplate source excerpt) — are excluded from the agreement math and
+    reported separately.
+    """
+    labels = ("supported", "partial", "unsupported")
+    label_file = _LABELS_DIR / "labeled.csv"
+    if not label_file.exists():
+        label_file = _LABELS_DIR / "to_label.csv"
+
     human: dict[str, str] = {}
-    with open(_LABELS_DIR / "to_label.csv") as f:
-        for row in csv.DictReader(f):
-            label = row["my_label"].strip().lower()
-            if label:
-                human[row["claim_id"]] = label
+    flagged: list[str] = []
+    for row in csv.DictReader(open(label_file)):
+        label = row["my_label"].strip().lower()
+        if not label:
+            continue
+        if label in labels:
+            human[row["claim_id"]] = label
+        else:
+            flagged.append(row["claim_id"])
     judge: dict[str, str] = {}
     with open(_LABELS_DIR / "judge_verdicts_hidden.csv") as f:
         for row in csv.DictReader(f):
@@ -369,12 +384,7 @@ def agreement() -> None:
 
     ids = [cid for cid in human if cid in judge]
     if not ids:
-        print("no labeled rows found — fill my_label in to_label.csv first")
-        return
-    labels = ("supported", "partial", "unsupported")
-    bad = {cid: human[cid] for cid in ids if human[cid] not in labels}
-    if bad:
-        print(f"unrecognized labels (use supported/partial/unsupported): {bad}")
+        print(f"no usable labels found in {label_file.name}")
         return
 
     n = len(ids)
@@ -390,10 +400,17 @@ def agreement() -> None:
     for cid in ids:
         confusion[judge[cid]][human[cid]] += 1
 
-    result = {"n_labeled": n, "agreement": round(po, 4), "cohens_kappa": round(kappa, 4), "confusion_judge_rows_human_cols": confusion}
+    result = {
+        "n_labeled": n,
+        "n_flagged_unadjudicable": len(flagged),
+        "flagged_claim_ids": flagged,
+        "agreement": round(po, 4),
+        "cohens_kappa": round(kappa, 4),
+        "confusion_judge_rows_human_cols": confusion,
+    }
     _write_json(_LABELS_DIR / "agreement.json", result)
 
-    print(f"n={n}  agreement={po:.1%}  Cohen's kappa={kappa:.3f}")
+    print(f"n={n}  (excluded {len(flagged)} flagged)  agreement={po:.1%}  Cohen's kappa={kappa:.3f}")
     print(f"{'judge \\ human':<16}" + "".join(f"{lab:>13}" for lab in labels))
     for j in labels:
         print(f"{j:<16}" + "".join(f"{confusion[j][h]:>13}" for h in labels))
@@ -403,6 +420,7 @@ def agreement() -> None:
         metrics = json.loads(metrics_path.read_text())
         metrics["human_agreement"] = result
         _write_json(metrics_path, metrics)
+        print(f"folded human_agreement into {metrics_path}")
 
 
 # ── Entrypoint ───────────────────────────────────────────────────────────

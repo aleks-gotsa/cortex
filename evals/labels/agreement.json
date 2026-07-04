@@ -1,0 +1,31 @@
+{
+  "n_labeled": 93,
+  "n_flagged_unadjudicable": 6,
+  "flagged_claim_ids": [
+    "q13:verified:2",
+    "q05:verified:7",
+    "q14:raw:2",
+    "q05:raw:7",
+    "q07:raw:5",
+    "q15:verified:5"
+  ],
+  "agreement": 0.5914,
+  "cohens_kappa": 0.3262,
+  "confusion_judge_rows_human_cols": {
+    "supported": {
+      "supported": 34,
+      "partial": 9,
+      "unsupported": 8
+    },
+    "partial": {
+      "supported": 9,
+      "partial": 6,
+      "unsupported": 5
+    },
+    "unsupported": {
+      "supported": 5,
+      "partial": 2,
+      "unsupported": 15
+    }
+  }
+}

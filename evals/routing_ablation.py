@@ -121,7 +121,13 @@ async def run_configs(fixtures: list[dict]) -> None:
                 name = fx["name"]
                 doc_path = config_dir / f"{name}_verified.md"
                 stats_path = config_dir / f"{name}_stats.json"
-                if doc_path.exists() and stats_path.exists():
+                # Skip any already-attempted query. A stats file is written
+                # after the verification stage (success or recorded failure),
+                # so its presence means the deterministic (temp-0) pipeline
+                # already ran — re-running would only reproduce the same
+                # result, including the same verify failure. Interrupted
+                # queries have no stats file and correctly re-run.
+                if stats_path.exists():
                     continue
                 logger.info("[%s] %s: running pipeline stages…", config_name, name)
                 stats: dict = {"config": config_name, "models": models}

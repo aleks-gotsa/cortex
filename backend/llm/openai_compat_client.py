@@ -19,6 +19,11 @@ _TIMEOUT = httpx.Timeout(connect=10.0, read=1800.0, write=30.0, pool=10.0)
 # response body; strip it so callers only ever see the answer.
 _THINK_BLOCK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 
+# Total attempts for a JSON-expecting call() before giving up. Small local
+# models fail JSON non-deterministically, so a few extra attempts materially
+# lifts reliability. Raising this never changes a call that already succeeded.
+_MAX_JSON_ATTEMPTS = 3
+
 
 class OpenAICompatLLMClient(LLMClientBase):
     """Calls an OpenAI-compatible chat-completions endpoint and tracks cumulative token usage."""
@@ -57,25 +62,30 @@ class OpenAICompatLLMClient(LLMClientBase):
 
         JSON-expecting calls constrain decoding with
         ``response_format={"type": "json_object"}`` — small local models
-        need the grammar constraint far more than hosted ones do. On JSON
-        parse failure the request is retried **once** with an explicit
-        JSON-only instruction appended to the system prompt.
+        need the grammar constraint far more than hosted ones do. Small
+        models also fail JSON non-deterministically (a whole-document value
+        occasionally degenerates into a repetition loop or overruns the token
+        budget), so a parse failure is retried up to ``_MAX_JSON_ATTEMPTS``
+        times, the retries carrying an explicit JSON-only instruction.
         """
-        text = await self._send(system, user_message, model, max_tokens, json_mode=True)
+        last_error: Exception | None = None
+        for attempt in range(_MAX_JSON_ATTEMPTS):
+            attempt_system = system
+            if attempt > 0:
+                attempt_system = system + "\n\nRespond ONLY with valid JSON, no markdown fences."
+            text = await self._send(attempt_system, user_message, model, max_tokens, json_mode=True)
+            try:
+                return self._parse_json(text)
+            except (json.JSONDecodeError, ValueError) as exc:
+                last_error = exc
+                if attempt + 1 < _MAX_JSON_ATTEMPTS:
+                    self._json_retries += 1
+                    logger.warning(
+                        "JSON parse failed for model=%s (attempt %d/%d) — retrying",
+                        model, attempt + 1, _MAX_JSON_ATTEMPTS,
+                    )
 
-        try:
-            return self._parse_json(text)
-        except (json.JSONDecodeError, ValueError):
-            self._json_retries += 1
-            logger.warning(
-                "JSON parse failed for model=%s — retrying with JSON instruction",
-                model,
-            )
-
-        retry_system = system + "\n\nRespond ONLY with valid JSON, no markdown fences."
-        text = await self._send(retry_system, user_message, model, max_tokens, json_mode=True)
-
-        return self._parse_json(text)  # raises on second failure
+        raise last_error  # exhausted attempts
 
     def get_usage(self) -> dict[str, int]:
         return {

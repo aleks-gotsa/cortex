@@ -1,0 +1,143 @@
+{
+  "models": {
+    "small": "llama3.2:3b",
+    "decode": "qwen2.5:7b-instruct",
+    "judge": "llama3.1:8b"
+  },
+  "temperature": 0.0,
+  "seed": 42,
+  "pairwise_w_t_l": {
+    "routed": 1,
+    "tie": 13,
+    "mono": 0
+  },
+  "decode_model_tokens": {
+    "routed": 249562,
+    "mono": 277931
+  },
+  "decode_token_ratio_routed_over_mono": 0.8979,
+  "decode_tokens_moved_off_pct": 10.21,
+  "reliability": {
+    "routed": {
+      "planning": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "gap_detection": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "synthesis": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "verification": {
+        "json_retries": 2,
+        "failures": 5,
+        "calls": 22
+      }
+    },
+    "mono": {
+      "planning": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "gap_detection": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "synthesis": {
+        "json_retries": 0,
+        "failures": 0,
+        "calls": 20
+      },
+      "verification": {
+        "json_retries": 1,
+        "failures": 1,
+        "calls": 21
+      }
+    }
+  },
+  "frozen_search_note": "search is frozen to the corpus fixtures; plan differences flow only into the synthesis prompt, not into retrieval",
+  "per_query": [
+    {
+      "query": "q00"
+    },
+    {
+      "query": "q01"
+    },
+    {
+      "query": "q02",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q03",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q04"
+    },
+    {
+      "query": "q05",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q06",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q07",
+      "pairwise": "routed"
+    },
+    {
+      "query": "q08"
+    },
+    {
+      "query": "q09",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q10",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q11"
+    },
+    {
+      "query": "q12",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q13",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q14",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q15",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q16"
+    },
+    {
+      "query": "q17",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q18",
+      "pairwise": "tie"
+    },
+    {
+      "query": "q19",
+      "pairwise": "tie"
+    }
+  ]
+}

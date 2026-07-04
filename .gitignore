@@ -14,4 +14,5 @@ prompts/
 CLAUDE.md
 
 # Eval label files are filled in by a human and committed explicitly
-evals/labels/
+evals/labels/to_label.csv
+evals/labels/*.tmp

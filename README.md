@@ -45,6 +45,34 @@ graph TD
     DB[(SQLite<br/>History)] -.-> D
 ```
 
+## Two configurations
+
+Cortex runs in either of two documented configurations, selected by
+`LLM_BACKEND`.
+
+**Reference (Claude API)** — the product as built: Haiku plans, Sonnet handles
+gap detection, synthesis, and verification; bring your own key. This is the
+configuration the project was developed in and the default (`LLM_BACKEND=anthropic`).
+
+**Local (OpenAI-compatible / Ollama)** — zero API keys for inference. Every LLM
+call is served by a local endpoint; this is the configuration the committed
+evaluations (see [`docs/evaluation.md`](./docs/evaluation.md)) were run on and
+the demo below was recorded with. Setup is three `ollama pull`s plus
+`LLM_BACKEND=local`:
+
+```bash
+ollama pull llama3.2:3b          # planning + gap detection
+ollama pull qwen2.5:7b-instruct  # synthesis + verification
+ollama pull llama3.1:8b          # eval judge only
+export LLM_BACKEND=local
+```
+
+The local backend was added to make the evaluation reproducible and the demo
+free to run — the project was designed and developed Claude-first. Adding it
+took roughly 200 lines behind the existing `get_llm_client()` /
+`LLMClientBase` seam: a second backend dropped in without touching the
+pipeline, which is the strongest evidence the abstraction was worth having.
+
 ## Cortex-D: Disaggregated Inference
 
 Cortex-D is an optional inference layer that routes each pipeline stage to a specialized worker tier, in the style of NVIDIA Dynamo's prefill/decode split. The idea is that stages are not uniform: planning and gap detection are prefill-heavy — large inputs, short JSON outputs — while synthesis and verification are decode-heavy — moderate inputs, long document outputs. Sending both through one endpoint wastes GPU time; routing by stage characteristics lets each tier run on hardware and a model sized for its workload.
@@ -197,7 +225,7 @@ The `/research` endpoint streams these events in order:
 | Standard | 2 | ~$0.15-0.25 | ~60s |
 | Deep | 3 | ~$0.25-0.40 | ~90s |
 
-Costs depend on query complexity and source volume. Haiku handles planning at 1/4 the cost of Sonnet.
+Costs depend on query complexity and source volume. Haiku handles planning at 1/4 the cost of Sonnet. These dollar figures are development estimates, not benchmarked; the Local configuration runs at zero inference cost.
 
 ## Limitations
 
@@ -207,14 +235,34 @@ Costs depend on query complexity and source volume. Haiku handles planning at 1/
 - Cortex-D real mode: client code path validated against OpenAI-compatible local workers; deployment on actual NVIDIA Dynamo infrastructure remains untested
 - Gap detector's 0.6 coverage threshold is heuristic and not tuned against a reference dataset
 - Last end-to-end validation was performed during active development; no fresh validation has been run since April 22, 2026
+- Evaluation was performed on local open-weight models; findings validate the pipeline's mechanisms, not vendor-specific cost or quality figures
 
-## What I Learned
+## What I Learned (measured)
 
-- Verification pass catches more hallucinations than additional search passes prevent — rigor at synthesis time beats volume at gather time
-- Multi-model routing (Haiku/Sonnet) cuts cost 3-4x with no measurable quality loss on typical queries
-- Multi-pass latency compounds: even fast individual passes produce slow end-to-end UX, which is why I stopped using Cortex myself
-- Cross-session memory is more useful as an explicit recall tool than as automatic pipeline input
-- Deep research as a product category demands a waiting-page UX that conflicts with mobile-first quick-lookup usage
+Two claims were tested with a committed eval harness on local models; see
+[`docs/evaluation.md`](./docs/evaluation.md) for method, tables, and failure cases.
+
+- **Routing bounded stages to a small model preserves quality.** Sending
+  planning and gap detection to a 3B model (synthesis and verification
+  unchanged) produced final documents a blind, position-swapped judge rated
+  equivalent to the all-large-model config — 13 ties, 1 routed win, 0 losses
+  over 14 queries — while shifting 10.2% of tokens off the large model. The
+  original **3–4× Haiku/Sonnet cost figure is a development observation, not
+  benchmarked**; the measured local number is that token shift.
+- **Verification did not reduce overclaiming on local models.** Overclaiming
+  was essentially unchanged before vs. after the verification pass
+  (48.4% → 49.5%), the verifier confirmed unsupported claims about as often as
+  chance (precision 0.49), and it sometimes truncated or failed outright
+  (~15%). The original claim that *verification beats extra search for catching
+  hallucinations* is a **development observation, not benchmarked** — it did
+  not reproduce on 3B–8B models. Judge reliability is bounded by human
+  agreement (Cohen's kappa 0.33).
+- Multi-pass latency compounds: even fast individual passes produce slow
+  end-to-end UX. *Development observation, not benchmarked.*
+- Cross-session memory is more useful as an explicit recall tool than as
+  automatic pipeline input. *Development observation, not benchmarked.*
+- Deep research as a product category demands a waiting-page UX that conflicts
+  with mobile-first quick-lookup usage. *Development observation, not benchmarked.*
 
 ## Project Structure
 

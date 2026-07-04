@@ -1,0 +1,1335 @@
+"claim_id","claim","source_excerpt","my_label"
+"q17:verified:9","Techniques such as PagedAttention in vLLM help reduce memory fragmentation, allowing for larger batch sizes and more efficient GPU utilization [4].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q05:raw:0","These vectors enable efficient similarity searches by mapping data into a high-dimensional space where semantically similar items are closer together [1][4].","SOURCE [1] (Vector database — Wikipedia (part 1)):
+|  
+A **vector database** , **vector store** or **vector search engine** is a database that stores and retrieves embeddings ""Embedding \(machine learning\)"") of data in vector space.[[1]]( Vector databases typically implement approximate nearest neighbor algorithms so users can search for records semantically similar to a given input, unlike traditional databases which primarily look up records by exact match.[[2]]( Use-cases for vector databases include similarity search, semantic search, multi-modal search, recommendations engines, object detection, and retrieval-augmented generation (RAG).[[1]](
+Vector embeddings are mathematical representations of data in a high-dimensional space. In this space, each dimension corresponds to a feature ""Feature \(machine learning\)"") of the data, with the number of dimensions ranging from a few hundred to tens of thousands, depending on the complexity of the data being represented. Each data item is represented by one vector in this space. Words, phrases, or entire documents, as well as images, audio, and other types of data, can all be vectorized.[[1]](
+These feature vectors may be computed from the raw data using machine learning methods such as feature extraction algorithms, word embeddings[[4]]( or deep learning networks. The goal is that semantically similar data items receive feature vectors close to each other. 
+Vector retrieval can be combined with metadata filtering or lexical sea","supported"
+"q16:raw:4","It enables larger batch sizes and higher throughput, as demonstrated in the vLLM system, which achieves near-zero waste in KV cache memory and flexible sharing within and across requests [3].","SOURCE [3] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 4)):
+Managing this KV cache efficiently is a challenging endeavor. Growing linearly with batch size and sequence length, the memory requirement can quickly scale. Consequently, it limits the throughput that can be served, and poses challenges for long-context inputs. This is the motivation behind several optimizations featured in this post.
+## Scaling up LLMs with model parallelization
+One way to reduce the per-device memory footprint of the model weights is to distribute the model over several GPUs. Spreading the memory and compute footprint enables running larger models, or larger batches of inputs. Model parallelization is a necessity to train or infer on a model requiring more memory than available on a single device, and to make training times and inference measures (latency or throughput) suitable for certain use cases. There are several ways of parallelizing the model based on how the model weights are split. 
+Note that data parallelism is also a technique often mentioned in the same context as the others listed below. In this, weights of the model are copied over multiple devices, and the (global) batch size of inputs is sharded across each of the devices into microbatches. It reduces the overall execution time by processing larger batches. However, it is a training time optimization that is less relevant during inference.
+Note that any model-parallel techniques—including pipeli","supported"
+"q08:raw:3","**Experimentation with Structured Prompt Design**: Start by familiarizing yourself with different LLM APIs and their capabilities, then experiment with structured prompt design (Source [4]).","SOURCE [4] (LLMOps maturity model — Microsoft Learn (part 5)):
+## Level 1 - initial
+Tip
+Score from GenAIOps Maturity Model Assessment: initial (0-9).
+**Description:** Your organization is at the initial foundational stage of GenAIOps maturity. You're exploring the capabilities of LLMs but haven't yet developed structured practices or systematic approaches.
+Begin by familiarizing yourself with different LLM APIs and their capabilities. Next, start experimenting with structured prompt design and basic prompt engineering. Review _**Microsoft Learn**_ articles as a starting point. Taking what you've learned, discover how to introduce basic metrics for LLM application performance evaluation.
+
+### Suggested references for level 1 advancement
+  * Foundry model catalog
+  * Explore the Microsoft Foundry portal Model Catalog
+  * Introduction to Prompt Engineering
+  * Prompt Engineering Techniques
+  * System Message Framework
+  * Prompt Flow in Foundry portal
+  * Evaluate GenAI Applications with Foundry
+  * GenAI Evaluation and Monitoring Metrics with Foundry
+
+To better understand GenAIOps, consider available Microsoft Learning courses and","supported"
+"q05:verified:0","These vectors enable efficient similarity searches by mapping data into a high-dimensional space where semantically similar items are closer together [1][4].","SOURCE [1] (Vector database — Wikipedia (part 1)):
+|  
+A **vector database** , **vector store** or **vector search engine** is a database that stores and retrieves embeddings ""Embedding \(machine learning\)"") of data in vector space.[[1]]( Vector databases typically implement approximate nearest neighbor algorithms so users can search for records semantically similar to a given input, unlike traditional databases which primarily look up records by exact match.[[2]]( Use-cases for vector databases include similarity search, semantic search, multi-modal search, recommendations engines, object detection, and retrieval-augmented generation (RAG).[[1]](
+Vector embeddings are mathematical representations of data in a high-dimensional space. In this space, each dimension corresponds to a feature ""Feature \(machine learning\)"") of the data, with the number of dimensions ranging from a few hundred to tens of thousands, depending on the complexity of the data being represented. Each data item is represented by one vector in this space. Words, phrases, or entire documents, as well as images, audio, and other types of data, can all be vectorized.[[1]](
+These feature vectors may be computed from the raw data using machine learning methods such as feature extraction algorithms, word embeddings[[4]]( or deep learning networks. The goal is that semantically similar data items receive feature vectors close to each other. 
+Vector retrieval can be combined with metadata filtering or lexical sea","supported"
+"q05:verified:8","For example, Weaviate supports HNSW, Flat Index, Dynamic Index, and HFresh index [4][6].","SOURCE [4] (Vector indexing — Weaviate docs (part 1)):
+Copy page
+On this page
+# Vector Indexing
+What is vector indexing? It's a key component of vector databases that helps to significantly **increase the speed** of the search process of similarity search with only a minimal tradeoff in search accuracy (HNSW index), or efficiently store many subsets of data in a small memory footprint (flat index). The dynamic index can even start off as a flat index and then dynamically switch to the HNSW index as it scales past a threshold.
+Weaviate's vector-first storage system takes care of all storage operations with a vector index. Storing data in a vector-first manner not only allows for semantic or context-based search, but also makes it possible to store _very_ large amounts of data without decreasing performance (assuming scaled well horizontally or having sufficient shards for the indexes).
+Weaviate supports these vector index types:
+  * HNSW index: a more complex index that is slower to build, but it scales well to large datasets as queries have a logarithmic time complexity.
+  * Flat index: a simple, lightweight index that is designed for small datasets.
+  * Dynamic index: allows you to automatically switch from a flat index to an HNSW index as object count scales
+  * HFresh index: a cluster-based index that uses HNSW for the centroid index, providing strong memory efficiency by keeping most of the data on disk
+
+SOURCE [6] (Vector indexing — Weaviate docs (part 4)):
+tip
+You might","supported"
+"q14:raw:3","This makes it easier for users in mainland China to access the models (Source [8]).","SOURCE [8] (QwenLM/Qwen3 — GitHub README (part 7)):
+We strongly advise users especially those in mainland China to use ModelScope. ModelScope adopts a Python API similar to Transformers. The CLI tool `modelscope download` can help you solve issues concerning downloading checkpoints. For vLLM and SGLang, the environment variable `VLLM_USE_MODELSCOPE=true` and `SGLANG_USE_MODELSCOPE=true` can be used respectively.
+### llama.cpp
+
+`llama.cpp` enables LLM inference with minimal setup and state-of-the-art performance on a wide range of hardware. `llama.cpp>=b5401` is recommended for the full support of Qwen3.
+To use the CLI, run the following in a terminal:
+
+```
+./llama-cli -hf Qwen/Qwen3-8B-GGUF:Q8_0 --jinja --color -ngl 99 -fa -sm row --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0 -c 40960 -n 32768 --no-context-shift
+# CTRL+C to exit
+```
+
+To use the API server, run the following in a terminal:
+
+```
+./llama-server -hf Qwen/Qwen3-8B-GGUF:Q8_0 --jinja --reasoning-format deepseek -ngl 99 -fa -sm row --temp 0.6 --top-k 20 --top-p 0.95 --min-p 0 -c 40960 -n 32768 --no-context-shift --port 8080
+```
+
+A simple web front end will be at ` and an OpenAI-compatible API will be at `
+For additional guides, please refer to our documentation.
+Note
+llama.cpp adopts ""rotating context management"" and infinite generation is made possible by evicting earlier tokens. It could configured by parameters and the commands above effectively disable it. For more details, please refer to our documentation.
+### O","unsupported"
+"q02:raw:3","This led to a temporary injunction against the DoD's designation (Source [1]).","SOURCE [1] (Claude (language model) — Wikipedia):
+|  
+| License  | Proprietary  |  
+| Website  |  claude.ai   |  
+**Claude** is a series of large language models developed by American software company Anthropic. Claude was released as an AI-based chatbot in March 2023. It is also used in AI-assisted software development.
+Claude is trained using ""constitutional AI"", a technique developed by Anthropic to improve ethical and legal compliance (AI alignment). Since Claude 3, each generation has typically been released in three sizes, from least to most capable: Haiku, Sonnet, and Opus. An additional model named Claude Mythos was released to a handful of companies in 2026.
+US federal agencies started phasing out the use of Claude after Anthropic refused to remove contractual prohibitions on the use of Claude for mass domestic surveillance and fully-autonomous weapons.[[1]]( Following the refusal, the Department of Defense (DoD) designated the company a ""supply chain risk"" and barred all U.S. private military contractors, suppliers, and partners from doing business with the firm. On March 26, 2026, a federal judge issued a temporary injunction against the DoD's designation.[[3]](
+## Products
+[edit source&action=edit&section=1 ""Edit section's source code: Products"")]
+### Claude
+[edit source&action=edit&section=2 ""Edit section's source code: Claude"")]
+Claude is an AI chatbot similar to ChatGPT, capable of writing, coding, conducting research, and having conversations. In June 2024, An","supported"
+"q19:verified:1","The core idea behind PagedAttention is to partition the KV cache into logical blocks that are mapped to physical memory spaces in a non-contiguous manner [1][2].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q19:verified:0","PagedAttention is an attention algorithm designed to optimize the key-value cache (KV cache) management in LLMs [1][2].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q13:verified:5","MoE models offer faster inference times due to their sparse nature, where only a subset of experts is active for each token [1][4].","SOURCE [1] (Mixture of Experts Explained — Hugging Face blog (part 3)):
+Let’s dive in!
+##    What is a Mixture of Experts (MoE)? 
+The scale of a model is one of the most important axes for better model quality. Given a fixed computing budget, training a larger model for fewer steps is better than training a smaller model for more steps. 
+Mixture of Experts enable models to be pretrained with far less compute, which means you can dramatically scale up the model or dataset size with the same compute budget as a dense model. In particular, a MoE model should achieve the same quality as its dense counterpart much faster during pretraining. 
+So, what exactly is a MoE? In the context of transformer models, a MoE consists of two main elements:
+  * **Sparse MoE layers** are used instead of dense feed-forward network (FFN) layers. MoE layers have a certain number of “experts” (e.g. 8), where each expert is a neural network. In practice, the experts are FFNs, but they can also be more complex networks or even a MoE itself, leading to hierarchical MoEs!
+  * A **gate network or router** , that determines which tokens are sent to which expert. For example, in the image below, the token “More” is sent to the second expert, and the token ""Parameters” is sent to the first network. As we’ll explore later, we can send a token to more than one expert. How to route a token to an expert is one of the big decisions when working with MoEs - the router is composed of learned parameters and is pretra","unsupported"
+"q17:raw:9","Techniques such as PagedAttention in vLLM help reduce memory fragmentation, allowing for larger batch sizes and more efficient GPU utilization [4].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q02:verified:1","For instance, it can take images as input and respond with text or code (Sources [5], [6]).","SOURCE [5] (GPT-4 — Wikipedia (part 1)):
+|  
+OpenAI introduced the first GPT model (GPT-1) in 2018, publishing a paper called ""Improving Language Understanding by Generative Pre-Training"",[[7]]( which was based on the transformer architecture and trained on a large corpus of books.[[8]]( The next year, they introduced GPT-2, a larger model that could generate coherent text.[[9]]( In 2020, they introduced GPT-3, a model with over 100 times as many parameters as GPT-2.[[10]]( GPT-3 was further improved into GPT-3.5, which was used to create the chatbot product ChatGPT. 
+## Capabilities
+[edit]
+GPT-4 was released on March 14, 2023.[[1]]( The default version had a 8K context window, with a special version in the API supporting up to 32K tokens.[[11]]( Unlike its predecessors, GPT-4 is a multimodal model: it can take images as well as text as input.[[12]]( It can now interact with users through spoken words and respond to images, allowing the ability to provide suggestions or answers based on photo uploads.[[13]](
+GPT-4 can be prompted to interact with external interfaces. For example, the model could be told to enclose a query within `<search></search>` tags to perform a web search, the result of which would be inserted into the model's prompt to allow it to form a response. This allows the model to perform tasks beyond its normal text-prediction capabilities, such as using APIs, generating images, and accessing and summarizing webpages.[[14]](
+A 2023 article in _Nature ""Nature \(","supported"
+"q19:raw:1","The core idea behind PagedAttention is to partition the KV cache into logical blocks that are mapped to physical memory spaces in a non-contiguous manner [1][2].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q15:raw:6","**Model-Specific NIMs**: Include a model-specific manifest, curated weights, and optimal runtime configurations tailored to specific models like Llama 3 [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","unsupported"
+"q17:raw:7","8x throughput improvement compared to Hugging Face’s text-generation-inference and Ray Serve [2].","SOURCE [2] (Continuous batching in LLM inference — Anyscale blog (part 6)):
+Our continuous batching frameworks are:
+  * **_Hugging Face’s text-generation-inference_****.** This is the inference server Hugging Face uses to power their LLM live-inference APIs. It _implements_ continuous batching.
+  * _**Continuous batching on Ray Serve**_**.** _Ray Serve_ leverages Ray’s serverless capabilities to provide seamless autoscaling, high-availability, and support for complex DAGs. We wanted to understand how continuous batching works, so we re-implemented text-generation-inference’s core continuous batching logic in pure-Python on Ray Serve. As you will see in our results, our implementation achieves the same performance as text-generation-inference, which validates our understanding.
+  * **_vLLM_****.** This is an open-source project recently released by folks at UC Berkeley (_GitHub_). It builds upon Orca’s continuous batching design by taking full control of dynamic memory allocations, allowing it to significantly reduce different forms of GPU memory fragmentation. We test this framework because it shows the impact of further optimizations made possible by iteration-level scheduling and continuous batching.","partial"
+"q02:verified:5","These issues were attributed to the model’s context length limitations (Source [2]).","SOURCE [2] (GPT-4 — Wikipedia (part 2)):
+## Reception
+[edit]
+In January 2023, Sam Altman, CEO of OpenAI, visited Congress to demonstrate GPT-4 and its improved ""security controls"" compared to other AI models, according to U.S. Representatives Don Beyer and Ted Lieu quoted in _The New York Times_.[[61]](
+In March 2023, it ""impressed observers with its markedly improved performance across reasoning, retention, and coding"", according to _Vox ""Vox \(website\)"")_ ,[[62]]( while _Mashable_ judged that GPT-4 was generally an improvement over its predecessor, with some exceptions.[[63]](
+Microsoft researchers with early access to the model wrote that ""it could reasonably be viewed as an early (yet still incomplete) version of an artificial general intelligence (AGI) system"".[[14]](
+### Concerns
+[edit]
+Before being fine-tuned ""Fine-tuning \(machine learning\)"") and aligned by reinforcement learning from human feedback (RLHF), suggestions to assassinate people on a list were elicited from the base model by a red team investigator hired by OpenAI, Nathan Labenz.[[64]](
+During extended conversations with Microsoft's Bing Chat (powered by GPT-4), Kevin Roose documented the system making romantic advances, suggesting he divorce his wife, and expressing desires to harm one of its developers.[[65]]( Microsoft later stated that this behavior resulted from the prolonged length of context, which confused the model on what questions it was answering.[[67]](
+In March 2023, a model with enabled re","partial"
+"q02:raw:2","**Ethical Alignment**: Claude is developed using ""constitutional AI"" to improve ethical compliance, whereas GPT-4's development does not explicitly mention such a technique (Source [1], Source [3]).","SOURCE [1] (Claude (language model) — Wikipedia):
+|  
+| License  | Proprietary  |  
+| Website  |  claude.ai   |  
+**Claude** is a series of large language models developed by American software company Anthropic. Claude was released as an AI-based chatbot in March 2023. It is also used in AI-assisted software development.
+Claude is trained using ""constitutional AI"", a technique developed by Anthropic to improve ethical and legal compliance (AI alignment). Since Claude 3, each generation has typically been released in three sizes, from least to most capable: Haiku, Sonnet, and Opus. An additional model named Claude Mythos was released to a handful of companies in 2026.
+US federal agencies started phasing out the use of Claude after Anthropic refused to remove contractual prohibitions on the use of Claude for mass domestic surveillance and fully-autonomous weapons.[[1]]( Following the refusal, the Department of Defense (DoD) designated the company a ""supply chain risk"" and barred all U.S. private military contractors, suppliers, and partners from doing business with the firm. On March 26, 2026, a federal judge issued a temporary injunction against the DoD's designation.[[3]](
+## Products
+[edit source&action=edit&section=1 ""Edit section's source code: Products"")]
+### Claude
+[edit source&action=edit&section=2 ""Edit section's source code: Claude"")]
+Claude is an AI chatbot similar to ChatGPT, capable of writing, coding, conducting research, and having conversations. In June 2024, An","partial"
+"q04:raw:4","This technique is particularly useful for training and inference workflows that require more memory than available on a single device [1].","SOURCE [1] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 4)):
+Managing this KV cache efficiently is a challenging endeavor. Growing linearly with batch size and sequence length, the memory requirement can quickly scale. Consequently, it limits the throughput that can be served, and poses challenges for long-context inputs. This is the motivation behind several optimizations featured in this post.
+## Scaling up LLMs with model parallelization
+One way to reduce the per-device memory footprint of the model weights is to distribute the model over several GPUs. Spreading the memory and compute footprint enables running larger models, or larger batches of inputs. Model parallelization is a necessity to train or infer on a model requiring more memory than available on a single device, and to make training times and inference measures (latency or throughput) suitable for certain use cases. There are several ways of parallelizing the model based on how the model weights are split. 
+Note that data parallelism is also a technique often mentioned in the same context as the others listed below. In this, weights of the model are copied over multiple devices, and the (global) batch size of inputs is sharded across each of the devices into microbatches. It reduces the overall execution time by processing larger batches. However, it is a training time optimization that is less relevant during inference.
+Note that any model-parallel techniques—including pipeli","supported"
+"q03:raw:3","NVIDIA Dynamo Planner continuously monitors GPU capacity metrics in distributed inference environments (Source [1]).","SOURCE [1] (Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 4)):
+__Figure 3. NVIDIA Dynamo architecture__
+## NVIDIA Dynamo Planner: Optimizing GPU resources for distributed inference 
+In large-scale distributed and disaggregated-serving inference systems, efficiently managing GPU resources is essential to maximize throughput and minimize latency. While disaggregated serving can significantly enhance inference throughput and efficiency, it might not always be the most effective solution for every incoming request. 
+Imagine a scenario where a surge of summarization requests with long input sequence lengths (ISLs) but short output sequence lengths (OSLs) overwhelms the prefill GPUs. While the decode GPUs remain underutilized, the prefill GPUs become a bottleneck. In this case, allowing decode GPUs to perform both prefill and decode tasks in a traditional aggregated manner, or shifting decode GPUs to perform prefill tasks, might be more efficient. This approach can help balance the load, alleviate pressure on the prefill GPUs, and ultimately improve overall throughput.
+Deciding between disaggregated and aggregated serving or how many GPUs should be assigned to each phase requires careful consideration of several factors. These factors include the time needed to transfer the KV cache between the prefill and decode GPUs, the GPUs’ queue wait times for incoming requests, and the estimated processing times for both disaggregated and aggregated configurations. In large-scale e","supported"
+"q17:raw:1","**Memory Management**: Techniques like PagedAttention in vLLM reduce memory fragmentation, allowing for more efficient use of GPU resources and higher batch sizes [4].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q04:verified:6","**StaticCache**: Pre-allocates a fixed maximum cache size, enabling efficient just-in-time optimizations but potentially leading to token wastage in attention computation [6].","SOURCE [6] (KV cache strategies — Hugging Face Transformers docs (part 3)):
+##   Fixed-size cache
+The default DynamicCache prevents you from taking advantage of most just-in-time (JIT) optimizations because the cache size isn’t fixed. JIT optimizations enable you to minimize latency at the expense of memory usage. All of the following cache types are compatible with JIT optimizations like torch.compile to accelerate generation.
+A fixed-size cache (StaticCache) pre-allocates a specific maximum cache size for the kv pairs. You can generate up to the maximum cache size without needing to modify it. However, having a fixed (usually large) size for the key/value states means that while generating, a lot of tokens will actually be masked as they should not take part in the attention. So this trick allows to easily `compile` the decoding stage, but it incurs a waste of tokens in the attention computation. As all things, it’s then a trade-off which should be very good if you generate with several sequence of more or less the same lengths, but may be sub-optimal if you have for example 1 very large sequence, and then only short sequences (as the fix cache size would be large, a lot would be wasted for the short sequences). Make sure you understand the impact if you use it!
+As for DynamicCache, note that for models using sliding window attention (Mistral, Gemma2,…) or chunked attention (Llama4), the cache will never be larger than the sliding window/chunk size on layers using these typ","supported"
+"q06:raw:3","Efficient management of the KV cache is critical for LLM inference due to its significant memory footprint [3][4].","SOURCE [3] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 2)):
+AI-generated content may summarize information incompletely. Verify important information. Learn more
+Stacking transformer layers to create large models results in better accuracies, few-shot learning capabilities, and even near-human emergent abilities on a wide range of language tasks. These foundation models are expensive to train, and they can be memory- and compute-intensive during inference (a recurring cost). The most popular large language models (LLMs) today can reach tens to hundreds of billions of parameters in size and, depending on the use case, may require ingesting long inputs (or contexts), which can also add expense. For example, retrieval-augmented generation (RAG) pipelines require putting large amounts of information into the input of the model, greatly increasing the amount of processing work the LLM has to do.
+This post discusses the most pressing challenges in LLM inference, along with some practical solutions. Readers should have a basic understanding of transformer architecture and the attention mechanism in general. 
+Developers can also explore these inference optimization techniques using open NVIDIA and community models—such as the Nemotron 3 family of open models—running on the open-source TensorRT-LLM library, available on GitHub. This makes it possible to experiment with real-world inference tradeoffs using production-grade code rather than abstract e","partial"
+"q16:verified:3","Techniques like FlashAttention minimize memory movement costs, improving performance [1].","SOURCE [1] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 1)):
+DEVELOPER
+  * Home
+  * Blog
+  * Forums
+  * Docs
+  * Downloads
+  * Training
+
+*   *  Join 
+  *
+
+Technical Blog
+ Subscribe 
+ Related Resources 
+Agentic AI / Generative AI
+English 日本語
+# Mastering LLM Techniques: Inference Optimization
+
+Nov 17, 2023 
+By Shashank Verma and Neal Vaidya
++327
+Like 
+ Discuss (0) 
+  * L
+  * T
+  * F
+  * R
+  * E
+
+AI-Generated Summary
+Like
+Dislike
+  * Large language models (LLMs) are memory- and compute-intensive during inference, with costs associated with processing long inputs or contexts, such as in retrieval-augmented generation (RAG) pipelines.
+  * The LLM inference process involves two phases: the prefill phase, which processes input tokens in a highly parallelized manner, and the decode phase, which generates output tokens autoregressively one at a time, underutilizing GPU compute ability.
+  * Key-value (KV) caching is a common optimization for the decode phase, caching intermediate states to avoid recomputation, but it can lead to memory issues, especially with large batch sizes or sequence lengths.
+  * Model parallelization techniques, such as pipeline parallelism, tensor parallelism, and sequence parallelism, can reduce the per-device memory footprint of LLMs, enabling larger models or batches to be processed.
+  * Optimizations to the attention mechanism, including multi-query attention (MQA) and grouped-query attention (GQA), reduce memory required b","unsupported"
+"q05:raw:8","For example, Weaviate supports HNSW, Flat Index, Dynamic Index, and HFresh index [4][6].","SOURCE [4] (Vector indexing — Weaviate docs (part 1)):
+Copy page
+On this page
+# Vector Indexing
+What is vector indexing? It's a key component of vector databases that helps to significantly **increase the speed** of the search process of similarity search with only a minimal tradeoff in search accuracy (HNSW index), or efficiently store many subsets of data in a small memory footprint (flat index). The dynamic index can even start off as a flat index and then dynamically switch to the HNSW index as it scales past a threshold.
+Weaviate's vector-first storage system takes care of all storage operations with a vector index. Storing data in a vector-first manner not only allows for semantic or context-based search, but also makes it possible to store _very_ large amounts of data without decreasing performance (assuming scaled well horizontally or having sufficient shards for the indexes).
+Weaviate supports these vector index types:
+  * HNSW index: a more complex index that is slower to build, but it scales well to large datasets as queries have a logarithmic time complexity.
+  * Flat index: a simple, lightweight index that is designed for small datasets.
+  * Dynamic index: allows you to automatically switch from a flat index to an HNSW index as object count scales
+  * HFresh index: a cluster-based index that uses HNSW for the centroid index, providing strong memory efficiency by keeping most of the data on disk
+
+SOURCE [6] (Vector indexing — Weaviate docs (part 4)):
+tip
+You might","supported"
+"q14:verified:4","**Training Costs and Efficiency**: While DeepSeek-V3 has achieved significant training efficiency through FP8 mixed precision training, the exact costs and detailed methodologies are not fully documented (Source [9], [10]).","SOURCE [9] (deepseek-ai/DeepSeek-V3 — GitHub README (part 7)):
+The MindIE framework from the Huawei Ascend community has successfully adapted the BF16 version of DeepSeek-V3. For step-by-step guidance on Ascend NPUs, please follow the instructions here.
+## 7. License
+
+This code repository is licensed under the MIT License. The use of DeepSeek-V3 Base/Chat models is subject to the Model License. DeepSeek-V3 series (including Base and Chat) supports commercial use.
+## 8. Citation
+
+```
+@misc{deepseekai2024deepseekv3technicalreport,
+      title={DeepSeek-V3 Technical Report}, 
+      author={DeepSeek-AI},
+      year={2024},
+      eprint={2412.19437},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={ 
+}
+
+```
+
+## 9. Contact
+
+If you have any questions, please raise an issue or contact us at service@deepseek.com.
+## About
+No description, website, or topics provided. 
+### Resources
+ Readme 
+### License
+MIT, Unknown licenses found 
+### Licenses found
+ MIT LICENSE-CODE   Unknown LICENSE-MODEL 
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+ Activity
+ Custom properties
+### Stars
+ **104k** stars
+### Watchers
+ **749** watching
+### Forks
+ **16.7k** forks
+ Report repository 
+##  Releases 1
+ v1.0.0 Latest  Jun 27, 2025 
+##  Packages 0
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+##  Contributors
+###  Uh oh! 
+There was an error while loading. Please relo","unsupported"
+"q03:raw:1","Dynamo leverages NIXL to transfer the KV cache directly from VRAM of the prefill GPU to that of the decode GPU (Source [4]).","SOURCE [4] (Disaggregated Serving — NVIDIA Dynamo design docs (part 2)):
+The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions.
+## Efficient KV Transfer
+The key to high-performance disaggregation is efficient KV transfer. Dynamo leverages NIXL to transfer KV cache directly from the VRAM of the prefill engine to the VRAM of the decode engine. The KV transfer is non-blocking, allowing GPU forward passes to continue serving other requests during the transfer.
+### Router Orchestration
+The disaggregated serving flow is orchestrated by the `PrefillRouter`:
+  1. **Worker Selection** : The router selects a prefill worker using KV-aware routing (based on cache overlap scores and load) or simple load balancing.
+  2. **Prefill Execution** : The router sends the prefill request to the selected prefill worker. The prefill worker computes the KV cache and returns `disaggregated_params` containing backend-specific transfer metadata.
+  3. **Decode Routing** : The router injects the prefill result into the decode request, th","supported"
+"q04:raw:6","**StaticCache**: Pre-allocates a fixed maximum cache size, enabling efficient just-in-time optimizations but potentially leading to token wastage in attention computation [6].","SOURCE [6] (KV cache strategies — Hugging Face Transformers docs (part 3)):
+##   Fixed-size cache
+The default DynamicCache prevents you from taking advantage of most just-in-time (JIT) optimizations because the cache size isn’t fixed. JIT optimizations enable you to minimize latency at the expense of memory usage. All of the following cache types are compatible with JIT optimizations like torch.compile to accelerate generation.
+A fixed-size cache (StaticCache) pre-allocates a specific maximum cache size for the kv pairs. You can generate up to the maximum cache size without needing to modify it. However, having a fixed (usually large) size for the key/value states means that while generating, a lot of tokens will actually be masked as they should not take part in the attention. So this trick allows to easily `compile` the decoding stage, but it incurs a waste of tokens in the attention computation. As all things, it’s then a trade-off which should be very good if you generate with several sequence of more or less the same lengths, but may be sub-optimal if you have for example 1 very large sequence, and then only short sequences (as the fix cache size would be large, a lot would be wasted for the short sequences). Make sure you understand the impact if you use it!
+As for DynamicCache, note that for models using sliding window attention (Mistral, Gemma2,…) or chunked attention (Llama4), the cache will never be larger than the sliding window/chunk size on layers using these typ","supported"
+"q05:verified:2","It scales well with large datasets and has logarithmic time complexity for queries [7][10].","SOURCE [7] (Qdrant documentation overview (part 2)):
+While dense vectors excel at capturing context, they can sometimes miss specific technical terms or unique identifiers. To bridge this gap, Qdrant also utilizes **sparse vectors** designed to capture precise **lexical matches** for specific keywords. Learn more in this guide.
+The process of generating embeddings from unstructured data is called inference. On Qdrant Cloud, you can use Cloud Inference to let Qdrant generate embeddings on the server side. Alternatively, you can use a library like FastEmbed to generate embeddings on the client side.
+The search process itself revolves into the concept of **Top-K** retrieval. When a user submits a request, it is instantly transformed into a **query vector**. The engine then calculates the similarity between this query vector and document vectors, returning the “Top-K” closest matches, where K is a user-defined number representing the desired volume of results. This allows developers to fine-tune the balance between the breadth of the search and the precision of the answers.
+
+To deliver the most robust search experience, Qdrant enables **Hybrid Retrieval** with semantic and lexical search, which you can learn more about here.
+##  Architecture
+Qdrants operates in a client-server architecture, providing official client libraries for Python, JavaScript/TypeScript, Rust, Go, .NET, and Java. However, Qdrant exposes HTTP and gRPC interfaces to facilitate integration with virtually any p","unsupported"
+"q13:raw:0","A MoE model comprises two main components: experts and a gating network or router [1][2].","SOURCE [1] (Mixture of Experts Explained — Hugging Face blog (part 3)):
+Let’s dive in!
+##    What is a Mixture of Experts (MoE)? 
+The scale of a model is one of the most important axes for better model quality. Given a fixed computing budget, training a larger model for fewer steps is better than training a smaller model for more steps. 
+Mixture of Experts enable models to be pretrained with far less compute, which means you can dramatically scale up the model or dataset size with the same compute budget as a dense model. In particular, a MoE model should achieve the same quality as its dense counterpart much faster during pretraining. 
+So, what exactly is a MoE? In the context of transformer models, a MoE consists of two main elements:
+  * **Sparse MoE layers** are used instead of dense feed-forward network (FFN) layers. MoE layers have a certain number of “experts” (e.g. 8), where each expert is a neural network. In practice, the experts are FFNs, but they can also be more complex networks or even a MoE itself, leading to hierarchical MoEs!
+  * A **gate network or router** , that determines which tokens are sent to which expert. For example, in the image below, the token “More” is sent to the second expert, and the token ""Parameters” is sent to the first network. As we’ll explore later, we can send a token to more than one expert. How to route a token to an expert is one of the big decisions when working with MoEs - the router is composed of learned parameters and is pretra","supported"
+"q02:verified:3","This led to a temporary injunction against the DoD's designation (Source [1]).","SOURCE [1] (Claude (language model) — Wikipedia):
+|  
+| License  | Proprietary  |  
+| Website  |  claude.ai   |  
+**Claude** is a series of large language models developed by American software company Anthropic. Claude was released as an AI-based chatbot in March 2023. It is also used in AI-assisted software development.
+Claude is trained using ""constitutional AI"", a technique developed by Anthropic to improve ethical and legal compliance (AI alignment). Since Claude 3, each generation has typically been released in three sizes, from least to most capable: Haiku, Sonnet, and Opus. An additional model named Claude Mythos was released to a handful of companies in 2026.
+US federal agencies started phasing out the use of Claude after Anthropic refused to remove contractual prohibitions on the use of Claude for mass domestic surveillance and fully-autonomous weapons.[[1]]( Following the refusal, the Department of Defense (DoD) designated the company a ""supply chain risk"" and barred all U.S. private military contractors, suppliers, and partners from doing business with the firm. On March 26, 2026, a federal judge issued a temporary injunction against the DoD's designation.[[3]](
+## Products
+[edit source&action=edit&section=1 ""Edit section's source code: Products"")]
+### Claude
+[edit source&action=edit&section=2 ""Edit section's source code: Claude"")]
+Claude is an AI chatbot similar to ChatGPT, capable of writing, coding, conducting research, and having conversations. In June 2024, An","supported"
+"q07:raw:2","Schedulers can be customized for different needs [1][2].","SOURCE [1] (Triton Inference Server — NVIDIA user guide index):
+# NVIDIA Triton Inference Server#
+Triton Inference Server is an open source inference serving software that streamlines AI inferencing. Triton Inference Server enables teams to deploy any AI model from multiple deep learning and machine learning frameworks, including TensorRT, PyTorch, ONNX, OpenVINO, Python, RAPIDS FIL, and more. Triton supports inference across cloud, data center, edge and embedded devices on NVIDIA GPUs, x86 and ARM CPU, or AWS Inferentia. Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.
+## Triton Architecture#
+The following figure shows the Triton Inference Server high-level architecture. The model repository is a file-system based repository of the models that Triton will make available for inferencing. Inference requests arrive at the server via either HTTP/REST or GRPC or by the [C API](
+
+SOURCE [2] (Triton architecture — NVIDIA Triton user guide):
+# Triton Architecture#
+The following figure shows the Triton Inference Server high-level architecture. The model repository is a file-system based repository of the models that Triton will make available for inferencing. Inference requests arrive at the server via either","unsupported"
+"q19:raw:2","PagedAttention operates by dividing the KV cache into blocks that do not need to be contiguous in physical memory [1][2].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q03:verified:3","NVIDIA Dynamo Planner continuously monitors GPU capacity metrics in distributed inference environments (Source [1]).","SOURCE [1] (Introducing NVIDIA Dynamo — NVIDIA Developer Blog (part 4)):
+__Figure 3. NVIDIA Dynamo architecture__
+## NVIDIA Dynamo Planner: Optimizing GPU resources for distributed inference 
+In large-scale distributed and disaggregated-serving inference systems, efficiently managing GPU resources is essential to maximize throughput and minimize latency. While disaggregated serving can significantly enhance inference throughput and efficiency, it might not always be the most effective solution for every incoming request. 
+Imagine a scenario where a surge of summarization requests with long input sequence lengths (ISLs) but short output sequence lengths (OSLs) overwhelms the prefill GPUs. While the decode GPUs remain underutilized, the prefill GPUs become a bottleneck. In this case, allowing decode GPUs to perform both prefill and decode tasks in a traditional aggregated manner, or shifting decode GPUs to perform prefill tasks, might be more efficient. This approach can help balance the load, alleviate pressure on the prefill GPUs, and ultimately improve overall throughput.
+Deciding between disaggregated and aggregated serving or how many GPUs should be assigned to each phase requires careful consideration of several factors. These factors include the time needed to transfer the KV cache between the prefill and decode GPUs, the GPUs’ queue wait times for incoming requests, and the estimated processing times for both disaggregated and aggregated configurations. In large-scale e","supported"
+"q03:raw:0","NVIDIA Dynamo disaggregates the prefill and decode stages of LLM requests, allowing for specialized hardware allocation to optimize performance (Source [4], Source [8]).","SOURCE [4] (Disaggregated Serving — NVIDIA Dynamo design docs (part 2)):
+The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions.
+## Efficient KV Transfer
+The key to high-performance disaggregation is efficient KV transfer. Dynamo leverages NIXL to transfer KV cache directly from the VRAM of the prefill engine to the VRAM of the decode engine. The KV transfer is non-blocking, allowing GPU forward passes to continue serving other requests during the transfer.
+### Router Orchestration
+The disaggregated serving flow is orchestrated by the `PrefillRouter`:
+  1. **Worker Selection** : The router selects a prefill worker using KV-aware routing (based on cache overlap scores and load) or simple load balancing.
+  2. **Prefill Execution** : The router sends the prefill request to the selected prefill worker. The prefill worker computes the KV cache and returns `disaggregated_params` containing backend-specific transfer metadata.
+  3. **Decode Routing** : The router injects the prefill result into the decode request, th
+
+SOURCE [8] (Disaggregated Serving — NVIDIA Dynamo design docs (part 1)):
+Digest
+Light
+On this page
+  * Efficient KV Transfer
+  * Router Orchestration
+  * Backend-Specific Transfer Metadata
+  * Runtime-Reconfigurable xPyD
+
+Scroll to top
+Design Docs
+# Disaggregated Serving
+Ask a question|Copy page|View as Markdown|More actions
+
+The prefill and decode phases of LLM requests have different computation cha","partial"
+"q15:verified:0","NVIDIA NIM for Large Language Models (LLMs) is a comprehensive solution designed to simplify the deployment of advanced AI models in enterprise environments [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","supported"
+"q04:verified:0","The memory requirement for the KV cache grows linearly with batch size and sequence length [3].","SOURCE [3] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 3)):
+With batching, the KV cache of each of the requests in the batch must still be allocated separately, and can have a large memory footprint. The formula below delineates the size of the KV cache, applicable to most common LLM architectures today.
+**Size of KV cache per token in bytes = 2 * (num_layers) * (num_heads * dim_head) * precision_in_bytes**
+The first factor of 2 accounts for the K and V matrices. Commonly, the value of (num_heads * dim_head) is the same as the hidden_size (or dimension of the model, d_model) of the transformer. These model attributes are commonly found in model cards or associated config files.
+This memory size is required for each token in the input sequence, across the batch of inputs. Assuming half-precision, the total size of KV cache is given by the formula below.
+**Total size of KV cache in bytes = (batch_size) * (sequence_length) * 2 * (num_layers) * (hidden_size) * sizeof(FP16)**
+For example, with a Llama 2 7B model in 16-bit precision and a batch size of 1, the size of the KV cache will be 1 * 4096 * 2 * 32 * 4096 * 2 bytes, which is ~2 GB.","supported"
+"q17:verified:2","**Token Generation**: The model generates additional tokens until a stop token is reached or a maximum length is exceeded [3].","SOURCE [3] (Continuous batching in LLM inference — Anyscale blog (part 1)):
+Ray Summit returns Aug 24–26, 2026. Save 50% on your pass now!
+Anyscale
+Product
+Use Cases
+Developers
+Customers
+Pricing
+Log inGet Started with $100 Credit
+HomeBlogBlog Detail
+# How continuous batching enables 23x throughput in LLM inference while reducing p50 latency
+By Cade Daniel, Chen Shen, Eric Liang and Richard Liaw| June 22, 2023
+In this blog, we’ll cover the basics of large language model (LLM) inference and highlight inefficiencies in traditional batching policies. We’ll introduce **continuous batching** and discuss benchmark results for existing batching systems such as HuggingFace’s text-generation-inference and vLLM. By leveraging vLLM, users can achieve 23x LLM inference throughput while reducing p50 latency.  
+  
+Due to the large GPU memory footprint and compute cost of LLMs, serving dominates the compute cost for most real world applications. ML engineers often treat LLMs like ""black boxes"" that can only be optimized with internal changes such as quantization and custom CUDA kernels. However, this is not entirely the case. Because LLMs iteratively generate their output, and because LLM inference is often memory and not compute bound, there are surprising _system-level_ batching optimizations that make 10x or more differences in real-world workloads.
+One recent such proposed optimization is **continuous batching** , also known as **dynamic batching** , or batching with **iteration-level sc","unsupported"
+"q16:raw:2","Pipeline parallelism involves sharding the model vertically into chunks, where each chunk is executed on a separate device [2].","SOURCE [2] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 2)):
+AI-generated content may summarize information incompletely. Verify important information. Learn more
+Stacking transformer layers to create large models results in better accuracies, few-shot learning capabilities, and even near-human emergent abilities on a wide range of language tasks. These foundation models are expensive to train, and they can be memory- and compute-intensive during inference (a recurring cost). The most popular large language models (LLMs) today can reach tens to hundreds of billions of parameters in size and, depending on the use case, may require ingesting long inputs (or contexts), which can also add expense. For example, retrieval-augmented generation (RAG) pipelines require putting large amounts of information into the input of the model, greatly increasing the amount of processing work the LLM has to do.
+This post discusses the most pressing challenges in LLM inference, along with some practical solutions. Readers should have a basic understanding of transformer architecture and the attention mechanism in general. 
+Developers can also explore these inference optimization techniques using open NVIDIA and community models—such as the Nemotron 3 family of open models—running on the open-source TensorRT-LLM library, available on GitHub. This makes it possible to experiment with real-world inference tradeoffs using production-grade code rather than abstract e","unsupported"
+"q05:raw:2","It scales well with large datasets and has logarithmic time complexity for queries [7][10].","SOURCE [7] (Qdrant documentation overview (part 2)):
+While dense vectors excel at capturing context, they can sometimes miss specific technical terms or unique identifiers. To bridge this gap, Qdrant also utilizes **sparse vectors** designed to capture precise **lexical matches** for specific keywords. Learn more in this guide.
+The process of generating embeddings from unstructured data is called inference. On Qdrant Cloud, you can use Cloud Inference to let Qdrant generate embeddings on the server side. Alternatively, you can use a library like FastEmbed to generate embeddings on the client side.
+The search process itself revolves into the concept of **Top-K** retrieval. When a user submits a request, it is instantly transformed into a **query vector**. The engine then calculates the similarity between this query vector and document vectors, returning the “Top-K” closest matches, where K is a user-defined number representing the desired volume of results. This allows developers to fine-tune the balance between the breadth of the search and the precision of the answers.
+
+To deliver the most robust search experience, Qdrant enables **Hybrid Retrieval** with semantic and lexical search, which you can learn more about here.
+##  Architecture
+Qdrants operates in a client-server architecture, providing official client libraries for Python, JavaScript/TypeScript, Rust, Go, .NET, and Java. However, Qdrant exposes HTTP and gRPC interfaces to facilitate integration with virtually any p","unsupported"
+"q19:raw:0","PagedAttention is an attention algorithm designed to optimize the key-value cache (KV cache) management in LLMs [1][2].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q05:raw:5","While they offer lower search accuracy compared to graph-based indexes, they are more memory-efficient [4].","SOURCE [4] (Vector indexing — Weaviate docs (part 1)):
+Copy page
+On this page
+# Vector Indexing
+What is vector indexing? It's a key component of vector databases that helps to significantly **increase the speed** of the search process of similarity search with only a minimal tradeoff in search accuracy (HNSW index), or efficiently store many subsets of data in a small memory footprint (flat index). The dynamic index can even start off as a flat index and then dynamically switch to the HNSW index as it scales past a threshold.
+Weaviate's vector-first storage system takes care of all storage operations with a vector index. Storing data in a vector-first manner not only allows for semantic or context-based search, but also makes it possible to store _very_ large amounts of data without decreasing performance (assuming scaled well horizontally or having sufficient shards for the indexes).
+Weaviate supports these vector index types:
+  * HNSW index: a more complex index that is slower to build, but it scales well to large datasets as queries have a logarithmic time complexity.
+  * Flat index: a simple, lightweight index that is designed for small datasets.
+  * Dynamic index: allows you to automatically switch from a flat index to an HNSW index as object count scales
+  * HFresh index: a cluster-based index that uses HNSW for the centroid index, providing strong memory efficiency by keeping most of the data on disk","unsupported"
+"q13:verified:2","Later research explored MoEs as components in deeper networks and conditional computation techniques [8].","SOURCE [8] (Outrageously Large Neural Networks (sparse MoE) — arXiv (part 2)):
+Full-text links:
+## Access Paper:
+View a PDF of the paper titled Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer, by Noam Shazeer and 6 other authors
+  * View PDF
+  * TeX Source
+
+view license
+### Current browse context:
+cs.LG
+< prev"") |  next >"")
+
+new |  recent | 2017-01
+Change to browse by: 
+cs  
+cs.CL  
+cs.NE  
+stat  
+stat.ML
+
+### References & Citations
+  * NASA ADS
+  * Google Scholar
+  * Semantic Scholar
+
+###  4 blog links
+(what is this?) 
+###  DBLP - CS Bibliography
+listing | bibtex
+Noam Shazeer  
+Azalia Mirhoseini  
+Krzysztof Maziarz  
+Andy Davis  
+Quoc V. Le
+…
+export BibTeX citation Loading...
+## BibTeX formatted citation
+×
+loading...
+Data provided by: 
+### Bookmark
+     
+Bibliographic Tools
+# Bibliographic and Citation Tools
+Bibliographic Explorer Toggle
+Bibliographic Explorer _(What is the Explorer?)_
+Connected Papers Toggle
+Connected Papers _(What is Connected Papers?)_
+Litmaps Toggle
+Litmaps _(What is Litmaps?)_
+scite.ai Toggle
+scite Smart Citations _(What are Smart Citations?)_
+Code, Data, Media
+# Code, Data and Media Associated with this Article
+alphaXiv Toggle
+alphaXiv _(What is alphaXiv?)_
+Links to Code Toggle
+CatalyzeX Code Finder for Papers _(What is CatalyzeX?)_
+DagsHub Toggle
+DagsHub _(What is DagsHub?)_
+GotitPub Toggle
+Gotit.pub _(What is GotitPub?)_
+Huggingface Toggle
+Hugging Face _(What is Huggingface?)_
+ScienceCast Toggle
+ScienceCast _(What is S","flag"
+"q06:verified:5","The transformer architecture, as described in Wikipedia [6][7], involves tokenization and contextualization through a multi-head attention mechanism.","SOURCE [6] (Transformer (deep learning architecture) — Wikipedia (part 2)):
+|  
+In deep learning, the **transformer** is a family of artificial neural network architectures based on the multi-head attention ""Attention \(machine learning\)"") mechanism, in which text is converted to numerical representations called tokens, and each token is converted into a vector via lookup from a word embedding table.[[1]]( At each layer, each token ""Tokenization \(lexical analysis\)"") is then contextualized ""Contextualization \(computer science\)"") within the scope of the context window with other (unmasked) tokens via a parallel multi-head attention mechanism, allowing the signal for key tokens to be amplified and less important tokens to be diminished. Because self-attention alone is permutation-invariant, transformers inject positional information, typically through positional encodings or learned positional embeddings, so token order can affect the output.[[1]](
+Transformers have the advantage of having no recurrent units, therefore requiring less training time than earlier recurrent neural architectures (RNNs) such as long short-term memory (LSTM).[[2]]( Later variations have been widely adopted for training large language models (LLMs) on large (language) datasets.[[3]]( Modern transformer designs are commonly grouped into encoder-only, decoder-only, and encoder-decoder variants, depending on whether they are optimized for representation learning, autoregressive generation, or conditio","partial"
+"q16:verified:0","LLMs are memory- and compute-intensive during inference, particularly due to the high memory footprint of key-value (KV) caches used in the decode phase [1][3].","SOURCE [1] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 1)):
+DEVELOPER
+  * Home
+  * Blog
+  * Forums
+  * Docs
+  * Downloads
+  * Training
+
+*   *  Join 
+  *
+
+Technical Blog
+ Subscribe 
+ Related Resources 
+Agentic AI / Generative AI
+English 日本語
+# Mastering LLM Techniques: Inference Optimization
+
+Nov 17, 2023 
+By Shashank Verma and Neal Vaidya
++327
+Like 
+ Discuss (0) 
+  * L
+  * T
+  * F
+  * R
+  * E
+
+AI-Generated Summary
+Like
+Dislike
+  * Large language models (LLMs) are memory- and compute-intensive during inference, with costs associated with processing long inputs or contexts, such as in retrieval-augmented generation (RAG) pipelines.
+  * The LLM inference process involves two phases: the prefill phase, which processes input tokens in a highly parallelized manner, and the decode phase, which generates output tokens autoregressively one at a time, underutilizing GPU compute ability.
+  * Key-value (KV) caching is a common optimization for the decode phase, caching intermediate states to avoid recomputation, but it can lead to memory issues, especially with large batch sizes or sequence lengths.
+  * Model parallelization techniques, such as pipeline parallelism, tensor parallelism, and sequence parallelism, can reduce the per-device memory footprint of LLMs, enabling larger models or batches to be processed.
+  * Optimizations to the attention mechanism, including multi-query attention (MQA) and grouped-query attention (GQA), reduce memory required b","supported"
+"q14:raw:4","**Training Costs and Efficiency**: While DeepSeek-V3 has achieved significant training efficiency through FP8 mixed precision training, the exact costs and detailed methodologies are not fully documented (Source [9], [10]).","SOURCE [9] (deepseek-ai/DeepSeek-V3 — GitHub README (part 7)):
+The MindIE framework from the Huawei Ascend community has successfully adapted the BF16 version of DeepSeek-V3. For step-by-step guidance on Ascend NPUs, please follow the instructions here.
+## 7. License
+
+This code repository is licensed under the MIT License. The use of DeepSeek-V3 Base/Chat models is subject to the Model License. DeepSeek-V3 series (including Base and Chat) supports commercial use.
+## 8. Citation
+
+```
+@misc{deepseekai2024deepseekv3technicalreport,
+      title={DeepSeek-V3 Technical Report}, 
+      author={DeepSeek-AI},
+      year={2024},
+      eprint={2412.19437},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={ 
+}
+
+```
+
+## 9. Contact
+
+If you have any questions, please raise an issue or contact us at service@deepseek.com.
+## About
+No description, website, or topics provided. 
+### Resources
+ Readme 
+### License
+MIT, Unknown licenses found 
+### Licenses found
+ MIT LICENSE-CODE   Unknown LICENSE-MODEL 
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+ Activity
+ Custom properties
+### Stars
+ **104k** stars
+### Watchers
+ **749** watching
+### Forks
+ **16.7k** forks
+ Report repository 
+##  Releases 1
+ v1.0.0 Latest  Jun 27, 2025 
+##  Packages 0
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+###  Uh oh! 
+There was an error while loading. Please reload this page.
+##  Contributors
+###  Uh oh! 
+There was an error while loading. Please relo","unsupported"
+"q05:verified:7","When a user query is received, the system computes an embedding for the query and retrieves relevant documents based on semantic similarity [12].","","flag"
+"q17:raw:6","Up to 23x throughput improvement over naive batching methods using vLLM [1].","SOURCE [1] (Continuous batching in LLM inference — Anyscale blog (part 2)):
+You can try out continuous batching today: see _this example to run vLLM on Ray Serve_.
+The remainder of this blog is structured as follows:
+  * We’ll cover the basics of how LLM inference works and highlight inefficiencies in traditional request-based dynamic batching policies.
+  * We’ll introduce continuous batching and how it answers many of the inefficiencies of request-based dynamic batching. 
+  * We then discuss our benchmarks and the implications this has on how to serve LLM models cost-effectively.
+
+* * *
+##  LinkThe basics of LLM inference
+There is a lot to know about LLM inference, and we refer users to __Efficient Inference on a Single GPU__and __Optimization story: Bloom inference__ for more detail. However, at a high level, LLM inference is pretty straightforward.
+For each request:
+  1. You start with a sequence of tokens (called the ""prefix"" or ""prompt"").
+  2. The LLM produces a sequence of completion tokens, stopping only after producing a stop token or reaching a maximum sequence length.","unsupported"
+"q18:verified:2","For instance, an 8.3 billion parameter GPT-2 model was trained with a sustained performance of 15.1 PetaFLOPs across the entire application [1].","SOURCE [1] (Megatron-LM: Training Multi-Billion Parameter Models — arXiv):
+Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
+Authors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro
+View a PDF of the paper titled Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism, by Mohammad Shoeybi and 5 other authors
+View PDF
+> Abstract:Recent work in language modeling demonstrates that training large transformer models advances the state of the art in Natural Language Processing applications. However, very large models can be quite difficult to train due to memory constraints. In this work, we present our techniques for training very large transformer models and implement a simple, efficient intra-layer model parallel approach that enables training transformer models with billions of parameters. Our approach does not require a new compiler or library changes, is orthogonal and complimentary to pipeline model parallelism, and can be fully implemented with the insertion of a few communication operations in native PyTorch. We illustrate this approach by converging transformer based models up to 8.3 billion parameters using 512 GPUs. We sustain 15.1 PetaFLOPs across the entire application with 76% scaling efficiency when compared to a strong single GPU baseline that sustains 39 TeraFLOPs, which is 30% of peak FLOPs. To demonstrate that large language models can further advance ","unsupported"
+"q06:verified:0","Disaggregated serving, as described by NVIDIA's user guide [1], separates these phases into independent worker pools for better scalability and resource management.","SOURCE [1] (Disaggregated serving — NVIDIA Dynamo user guide):
+Digest
+Light
+On this page
+  * When It Helps
+  * Mental Model
+  * KV Transfer Is the Critical Path
+  * Deploying Disaggregated with RDMA
+  * Deployment Paths
+  * Backend Examples
+  * Operational Notes
+  * Next Steps
+
+Scroll to top
+Feature Guides
+# Disaggregated Serving
+Split prefill and decode into independently scalable worker pools
+Ask a question|Copy page|View as Markdown|More actions
+Disaggregated serving separates the two main phases of LLM inference:  
+| Phase  | What it does  | Scaling pressure  |  
+| --- | --- | --- |  
+| Prefill  | Processes the prompt and produces the initial KV cache.  | Input length, prompt reuse, context size  |  
+| Decode  | Generates output tokens using the KV cache.  | Concurrency, output length, active KV memory  |  
+In an aggregated deployment, each worker does both phases. In a disaggregated deployment, prefill workers and decode workers are separate pools. Dynamo routes each request through prefill first, transfers or exposes the KV cache state to decode, and streams the response from the decode worker.
+## When It Helps
+Disaggregated serving is most useful when prefill and decode need different resource shapes:
+  * long prompts or retrieval-heavy traffic make prefill expensive
+  * long generations or high concurrency make decode the bottleneck
+  * you want to scale prefill and decode replicas independently
+  * you want to pair prefill/decode separation with KV-aware routing
+  * ","supported"
+"q16:verified:1","This can limit the throughput that can be served, especially for long-context inputs [4][5].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","unsupported"
+"q17:raw:8","4x throughput improvement with optimized model implementations like NVIDIA’s FasterTransformer [1].","SOURCE [1] (Continuous batching in LLM inference — Anyscale blog (part 2)):
+You can try out continuous batching today: see _this example to run vLLM on Ray Serve_.
+The remainder of this blog is structured as follows:
+  * We’ll cover the basics of how LLM inference works and highlight inefficiencies in traditional request-based dynamic batching policies.
+  * We’ll introduce continuous batching and how it answers many of the inefficiencies of request-based dynamic batching. 
+  * We then discuss our benchmarks and the implications this has on how to serve LLM models cost-effectively.
+
+* * *
+##  LinkThe basics of LLM inference
+There is a lot to know about LLM inference, and we refer users to __Efficient Inference on a Single GPU__and __Optimization story: Bloom inference__ for more detail. However, at a high level, LLM inference is pretty straightforward.
+For each request:
+  1. You start with a sequence of tokens (called the ""prefix"" or ""prompt"").
+  2. The LLM produces a sequence of completion tokens, stopping only after producing a stop token or reaching a maximum sequence length.","unsupported"
+"q17:verified:5","**vLLM**: An open-source project by UC Berkeley that builds upon Orca’s design to further optimize memory management and batch processing [4].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q04:verified:5","**DynamicCache**: Allows the cache size to grow dynamically, making it suitable for models using sliding window attention or chunked attention [4].","SOURCE [4] (KV cache strategies — Hugging Face Transformers docs (part 1)):
+Join the Hugging Face community
+and get access to the augmented documentation experience
+Collaborate on models, datasets and Spaces
+Faster examples with accelerated inference
+Switch between documentation themes
+Sign Up
+to get started
+Copy page
+#   Cache strategies
+The key-value (KV) vectors are used to calculate attention scores. For autoregressive models, KV scores are calculated _every_ time because the model predicts one token at a time. Each prediction depends on the previous tokens, which means the model performs the same computations each time.
+A KV _cache_ stores these calculations so they can be reused without recomputing them. Efficient caching is crucial for optimizing model performance because it reduces computation time and improves response rates. Refer to the Caching doc for a more detailed explanation about how a cache works.
+Transformers offers several Cache classes that implement different caching mechanisms. Some of these Cache classes are optimized to save memory while others are designed to maximize generation speed. Refer to the table below to compare cache types and use it to help you select the best cache for your use case.  
+| Cache Type  | Supports sliding layers  | Supports offloading  | Supports torch.compile()  | Expected memory usage  |  
+| --- | --- | --- | --- | --- |  
+| Dynamic Cache  | Yes  | Yes  | No  | Medium  |  
+| Static Cache  | Yes  | Yes  | Yes  | High  |  
+| ","unsupported"
+"q07:verified:3","Each backend handles the specific model type and optimizes its performance according to the configured parameters [4][5].","SOURCE [4] (triton-inference-server/server — GitHub README (part 1)):
+* README
+  * Contributing
+  * BSD-3-Clause license
+  * Security
+
+More items
+
+Warning
+You are currently on the `main` branch which tracks under-development progress towards the next release. The current release is version 2.70.0 and corresponds to the 26.06 container release on NVIDIA GPU Cloud (NGC).
+# Triton Inference Server
+
+Triton Inference Server is an open source inference serving software that streamlines AI inferencing. Triton enables teams to deploy any AI model from multiple deep learning and machine learning frameworks, including TensorRT, PyTorch, ONNX, OpenVINO, Python, RAPIDS FIL, and more. Triton Inference Server supports inference across cloud, data center, edge and embedded devices on NVIDIA GPUs, x86 and ARM CPU, or AWS Inferentia. Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.
+Major features include:
+  * Supports multiple deep learning frameworks
+  * Supports multiple machine learning frameworks
+  * Concurrent model execution
+  * Dynamic batching
+  * Sequence batching and implicit state management for stateful models
+  * Provides Backend API that allows adding custom backends and pre/post processing operations
+  ","supported"
+"q04:raw:3","Pipeline parallelism involves sharding the model vertically into chunks, where each chunk comprises a subset of layers executed on separate devices [1].","SOURCE [1] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 4)):
+Managing this KV cache efficiently is a challenging endeavor. Growing linearly with batch size and sequence length, the memory requirement can quickly scale. Consequently, it limits the throughput that can be served, and poses challenges for long-context inputs. This is the motivation behind several optimizations featured in this post.
+## Scaling up LLMs with model parallelization
+One way to reduce the per-device memory footprint of the model weights is to distribute the model over several GPUs. Spreading the memory and compute footprint enables running larger models, or larger batches of inputs. Model parallelization is a necessity to train or infer on a model requiring more memory than available on a single device, and to make training times and inference measures (latency or throughput) suitable for certain use cases. There are several ways of parallelizing the model based on how the model weights are split. 
+Note that data parallelism is also a technique often mentioned in the same context as the others listed below. In this, weights of the model are copied over multiple devices, and the (global) batch size of inputs is sharded across each of the devices into microbatches. It reduces the overall execution time by processing larger batches. However, it is a training time optimization that is less relevant during inference.
+Note that any model-parallel techniques—including pipeli","partial"
+"q17:raw:2","**Token Generation**: The model generates additional tokens until a stop token is reached or a maximum length is exceeded [3].","SOURCE [3] (Continuous batching in LLM inference — Anyscale blog (part 1)):
+Ray Summit returns Aug 24–26, 2026. Save 50% on your pass now!
+Anyscale
+Product
+Use Cases
+Developers
+Customers
+Pricing
+Log inGet Started with $100 Credit
+HomeBlogBlog Detail
+# How continuous batching enables 23x throughput in LLM inference while reducing p50 latency
+By Cade Daniel, Chen Shen, Eric Liang and Richard Liaw| June 22, 2023
+In this blog, we’ll cover the basics of large language model (LLM) inference and highlight inefficiencies in traditional batching policies. We’ll introduce **continuous batching** and discuss benchmark results for existing batching systems such as HuggingFace’s text-generation-inference and vLLM. By leveraging vLLM, users can achieve 23x LLM inference throughput while reducing p50 latency.  
+  
+Due to the large GPU memory footprint and compute cost of LLMs, serving dominates the compute cost for most real world applications. ML engineers often treat LLMs like ""black boxes"" that can only be optimized with internal changes such as quantization and custom CUDA kernels. However, this is not entirely the case. Because LLMs iteratively generate their output, and because LLM inference is often memory and not compute bound, there are surprising _system-level_ batching optimizations that make 10x or more differences in real-world workloads.
+One recent such proposed optimization is **continuous batching** , also known as **dynamic batching** , or batching with **iteration-level sc","unsupported"
+"q02:verified:2","**Ethical Alignment**: Claude is developed using 'constitutional AI' to improve ethical compliance, whereas GPT-4's development does not explicitly mention such a technique (Sources [1], [3]).","SOURCE [1] (Claude (language model) — Wikipedia):
+|  
+| License  | Proprietary  |  
+| Website  |  claude.ai   |  
+**Claude** is a series of large language models developed by American software company Anthropic. Claude was released as an AI-based chatbot in March 2023. It is also used in AI-assisted software development.
+Claude is trained using ""constitutional AI"", a technique developed by Anthropic to improve ethical and legal compliance (AI alignment). Since Claude 3, each generation has typically been released in three sizes, from least to most capable: Haiku, Sonnet, and Opus. An additional model named Claude Mythos was released to a handful of companies in 2026.
+US federal agencies started phasing out the use of Claude after Anthropic refused to remove contractual prohibitions on the use of Claude for mass domestic surveillance and fully-autonomous weapons.[[1]]( Following the refusal, the Department of Defense (DoD) designated the company a ""supply chain risk"" and barred all U.S. private military contractors, suppliers, and partners from doing business with the firm. On March 26, 2026, a federal judge issued a temporary injunction against the DoD's designation.[[3]](
+## Products
+[edit source&action=edit&section=1 ""Edit section's source code: Products"")]
+### Claude
+[edit source&action=edit&section=2 ""Edit section's source code: Claude"")]
+Claude is an AI chatbot similar to ChatGPT, capable of writing, coding, conducting research, and having conversations. In June 2024, An","unsupported"
+"q18:raw:2","For instance, an 8.3 billion parameter GPT-2 model was trained with a sustained performance of 15.1 PetaFLOPs across the entire application [1].","SOURCE [1] (Megatron-LM: Training Multi-Billion Parameter Models — arXiv):
+Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
+Authors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro
+View a PDF of the paper titled Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism, by Mohammad Shoeybi and 5 other authors
+View PDF
+> Abstract:Recent work in language modeling demonstrates that training large transformer models advances the state of the art in Natural Language Processing applications. However, very large models can be quite difficult to train due to memory constraints. In this work, we present our techniques for training very large transformer models and implement a simple, efficient intra-layer model parallel approach that enables training transformer models with billions of parameters. Our approach does not require a new compiler or library changes, is orthogonal and complimentary to pipeline model parallelism, and can be fully implemented with the insertion of a few communication operations in native PyTorch. We illustrate this approach by converging transformer based models up to 8.3 billion parameters using 512 GPUs. We sustain 15.1 PetaFLOPs across the entire application with 76% scaling efficiency when compared to a strong single GPU baseline that sustains 39 TeraFLOPs, which is 30% of peak FLOPs. To demonstrate that large language models can further advance ","unsupported"
+"q04:raw:0","The memory requirement for the KV cache grows linearly with batch size and sequence length [3].","SOURCE [3] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 3)):
+With batching, the KV cache of each of the requests in the batch must still be allocated separately, and can have a large memory footprint. The formula below delineates the size of the KV cache, applicable to most common LLM architectures today.
+**Size of KV cache per token in bytes = 2 * (num_layers) * (num_heads * dim_head) * precision_in_bytes**
+The first factor of 2 accounts for the K and V matrices. Commonly, the value of (num_heads * dim_head) is the same as the hidden_size (or dimension of the model, d_model) of the transformer. These model attributes are commonly found in model cards or associated config files.
+This memory size is required for each token in the input sequence, across the batch of inputs. Assuming half-precision, the total size of KV cache is given by the formula below.
+**Total size of KV cache in bytes = (batch_size) * (sequence_length) * 2 * (num_layers) * (hidden_size) * sizeof(FP16)**
+For example, with a Llama 2 7B model in 16-bit precision and a batch size of 1, the size of the KV cache will be 1 * 4096 * 2 * 32 * 4096 * 2 bytes, which is ~2 GB.","supported"
+"q03:raw:2","The disaggregated serving flow is orchestrated by the `PrefillRouter`, which selects a prefill worker based on KV-aware routing or simple load balancing (Source [4]).","SOURCE [4] (Disaggregated Serving — NVIDIA Dynamo design docs (part 2)):
+The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions.
+## Efficient KV Transfer
+The key to high-performance disaggregation is efficient KV transfer. Dynamo leverages NIXL to transfer KV cache directly from the VRAM of the prefill engine to the VRAM of the decode engine. The KV transfer is non-blocking, allowing GPU forward passes to continue serving other requests during the transfer.
+### Router Orchestration
+The disaggregated serving flow is orchestrated by the `PrefillRouter`:
+  1. **Worker Selection** : The router selects a prefill worker using KV-aware routing (based on cache overlap scores and load) or simple load balancing.
+  2. **Prefill Execution** : The router sends the prefill request to the selected prefill worker. The prefill worker computes the KV cache and returns `disaggregated_params` containing backend-specific transfer metadata.
+  3. **Decode Routing** : The router injects the prefill result into the decode request, th","supported"
+"q05:verified:1","Techniques like word embeddings and deep learning networks generate these vectors [1][3].","SOURCE [1] (Vector database — Wikipedia (part 1)):
+|  
+A **vector database** , **vector store** or **vector search engine** is a database that stores and retrieves embeddings ""Embedding \(machine learning\)"") of data in vector space.[[1]]( Vector databases typically implement approximate nearest neighbor algorithms so users can search for records semantically similar to a given input, unlike traditional databases which primarily look up records by exact match.[[2]]( Use-cases for vector databases include similarity search, semantic search, multi-modal search, recommendations engines, object detection, and retrieval-augmented generation (RAG).[[1]](
+Vector embeddings are mathematical representations of data in a high-dimensional space. In this space, each dimension corresponds to a feature ""Feature \(machine learning\)"") of the data, with the number of dimensions ranging from a few hundred to tens of thousands, depending on the complexity of the data being represented. Each data item is represented by one vector in this space. Words, phrases, or entire documents, as well as images, audio, and other types of data, can all be vectorized.[[1]](
+These feature vectors may be computed from the raw data using machine learning methods such as feature extraction algorithms, word embeddings[[4]]( or deep learning networks. The goal is that semantically similar data items receive feature vectors close to each other. 
+Vector retrieval can be combined with metadata filtering or lexical sea","unsupported"
+"q02:verified:0","Anthropic**: GPT-4 is developed by OpenAI, while Claude is part of the Anthropic suite of AI models (Source [2], Source [3]).","SOURCE [2] (GPT-4 — Wikipedia (part 2)):
+## Reception
+[edit]
+In January 2023, Sam Altman, CEO of OpenAI, visited Congress to demonstrate GPT-4 and its improved ""security controls"" compared to other AI models, according to U.S. Representatives Don Beyer and Ted Lieu quoted in _The New York Times_.[[61]](
+In March 2023, it ""impressed observers with its markedly improved performance across reasoning, retention, and coding"", according to _Vox ""Vox \(website\)"")_ ,[[62]]( while _Mashable_ judged that GPT-4 was generally an improvement over its predecessor, with some exceptions.[[63]](
+Microsoft researchers with early access to the model wrote that ""it could reasonably be viewed as an early (yet still incomplete) version of an artificial general intelligence (AGI) system"".[[14]](
+### Concerns
+[edit]
+Before being fine-tuned ""Fine-tuning \(machine learning\)"") and aligned by reinforcement learning from human feedback (RLHF), suggestions to assassinate people on a list were elicited from the base model by a red team investigator hired by OpenAI, Nathan Labenz.[[64]](
+During extended conversations with Microsoft's Bing Chat (powered by GPT-4), Kevin Roose documented the system making romantic advances, suggesting he divorce his wife, and expressing desires to harm one of its developers.[[65]]( Microsoft later stated that this behavior resulted from the prolonged length of context, which confused the model on what questions it was answering.[[67]](
+In March 2023, a model with enabled re","unsupported"
+"q17:verified:1","**Memory Management**: Techniques like PagedAttention in vLLM reduce memory fragmentation, allowing for more efficient use of GPU resources and higher batch sizes [4].","SOURCE [4] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q08:verified:1","**Model Parallelism** (Source [7]):","SOURCE [7] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 4)):
+Managing this KV cache efficiently is a challenging endeavor. Growing linearly with batch size and sequence length, the memory requirement can quickly scale. Consequently, it limits the throughput that can be served, and poses challenges for long-context inputs. This is the motivation behind several optimizations featured in this post.
+## Scaling up LLMs with model parallelization
+One way to reduce the per-device memory footprint of the model weights is to distribute the model over several GPUs. Spreading the memory and compute footprint enables running larger models, or larger batches of inputs. Model parallelization is a necessity to train or infer on a model requiring more memory than available on a single device, and to make training times and inference measures (latency or throughput) suitable for certain use cases. There are several ways of parallelizing the model based on how the model weights are split. 
+Note that data parallelism is also a technique often mentioned in the same context as the others listed below. In this, weights of the model are copied over multiple devices, and the (global) batch size of inputs is sharded across each of the devices into microbatches. It reduces the overall execution time by processing larger batches. However, it is a training time optimization that is less relevant during inference.
+Note that any model-parallel techniques—including pipeli","supported"
+"q08:verified:3","**Experimentation with Structured Prompt Design**: Start by familiarizing yourself with different LLM APIs and their capabilities, then experiment with structured prompt design (Source [4]).","SOURCE [4] (LLMOps maturity model — Microsoft Learn (part 5)):
+## Level 1 - initial
+Tip
+Score from GenAIOps Maturity Model Assessment: initial (0-9).
+**Description:** Your organization is at the initial foundational stage of GenAIOps maturity. You're exploring the capabilities of LLMs but haven't yet developed structured practices or systematic approaches.
+Begin by familiarizing yourself with different LLM APIs and their capabilities. Next, start experimenting with structured prompt design and basic prompt engineering. Review _**Microsoft Learn**_ articles as a starting point. Taking what you've learned, discover how to introduce basic metrics for LLM application performance evaluation.
+
+### Suggested references for level 1 advancement
+  * Foundry model catalog
+  * Explore the Microsoft Foundry portal Model Catalog
+  * Introduction to Prompt Engineering
+  * Prompt Engineering Techniques
+  * System Message Framework
+  * Prompt Flow in Foundry portal
+  * Evaluate GenAI Applications with Foundry
+  * GenAI Evaluation and Monitoring Metrics with Foundry
+
+To better understand GenAIOps, consider available Microsoft Learning courses and","supported"
+"q15:verified:1","**NIM Day 0**: Provides fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","supported"
+"q17:raw:0","**Throughput Improvement**: Continuous batching can achieve up to 23x improvement in LLM inference throughput over naive batching methods [1][2].","SOURCE [1] (Continuous batching in LLM inference — Anyscale blog (part 2)):
+You can try out continuous batching today: see _this example to run vLLM on Ray Serve_.
+The remainder of this blog is structured as follows:
+  * We’ll cover the basics of how LLM inference works and highlight inefficiencies in traditional request-based dynamic batching policies.
+  * We’ll introduce continuous batching and how it answers many of the inefficiencies of request-based dynamic batching. 
+  * We then discuss our benchmarks and the implications this has on how to serve LLM models cost-effectively.
+
+* * *
+##  LinkThe basics of LLM inference
+There is a lot to know about LLM inference, and we refer users to __Efficient Inference on a Single GPU__and __Optimization story: Bloom inference__ for more detail. However, at a high level, LLM inference is pretty straightforward.
+For each request:
+  1. You start with a sequence of tokens (called the ""prefix"" or ""prompt"").
+  2. The LLM produces a sequence of completion tokens, stopping only after producing a stop token or reaching a maximum sequence length.
+
+SOURCE [2] (Continuous batching in LLM inference — Anyscale blog (part 6)):
+Our continuous batching frameworks are:
+  * **_Hugging Face’s text-generation-inference_****.** This is the inference server Hugging Face uses to power their LLM live-inference APIs. It _implements_ continuous batching.
+  * _**Continuous batching on Ray Serve**_**.** _Ray Serve_ leverages Ray’s serverless capabilities to provi","partial"
+"q05:raw:1","Techniques like word embeddings and deep learning networks generate these vectors [1][3].","SOURCE [1] (Vector database — Wikipedia (part 1)):
+|  
+A **vector database** , **vector store** or **vector search engine** is a database that stores and retrieves embeddings ""Embedding \(machine learning\)"") of data in vector space.[[1]]( Vector databases typically implement approximate nearest neighbor algorithms so users can search for records semantically similar to a given input, unlike traditional databases which primarily look up records by exact match.[[2]]( Use-cases for vector databases include similarity search, semantic search, multi-modal search, recommendations engines, object detection, and retrieval-augmented generation (RAG).[[1]](
+Vector embeddings are mathematical representations of data in a high-dimensional space. In this space, each dimension corresponds to a feature ""Feature \(machine learning\)"") of the data, with the number of dimensions ranging from a few hundred to tens of thousands, depending on the complexity of the data being represented. Each data item is represented by one vector in this space. Words, phrases, or entire documents, as well as images, audio, and other types of data, can all be vectorized.[[1]](
+These feature vectors may be computed from the raw data using machine learning methods such as feature extraction algorithms, word embeddings[[4]]( or deep learning networks. The goal is that semantically similar data items receive feature vectors close to each other. 
+Vector retrieval can be combined with metadata filtering or lexical sea","unsupported"
+"q15:verified:4","**Uncompromised Performance**: Direct access to raw vLLM capabilities without latency from abstraction layers [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","partial"
+"q18:verified:1","This method is orthogonal and complimentary to pipeline model parallelism, allowing for flexible scaling of training across multiple GPUs [1].","SOURCE [1] (Megatron-LM: Training Multi-Billion Parameter Models — arXiv):
+Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
+Authors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro
+View a PDF of the paper titled Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism, by Mohammad Shoeybi and 5 other authors
+View PDF
+> Abstract:Recent work in language modeling demonstrates that training large transformer models advances the state of the art in Natural Language Processing applications. However, very large models can be quite difficult to train due to memory constraints. In this work, we present our techniques for training very large transformer models and implement a simple, efficient intra-layer model parallel approach that enables training transformer models with billions of parameters. Our approach does not require a new compiler or library changes, is orthogonal and complimentary to pipeline model parallelism, and can be fully implemented with the insertion of a few communication operations in native PyTorch. We illustrate this approach by converging transformer based models up to 8.3 billion parameters using 512 GPUs. We sustain 15.1 PetaFLOPs across the entire application with 76% scaling efficiency when compared to a strong single GPU baseline that sustains 39 TeraFLOPs, which is 30% of peak FLOPs. To demonstrate that large language models can further advance ","supported"
+"q04:raw:7","PagedAttention is a novel approach that efficiently manages KV cache pages, reducing memory wastage and enabling larger batch sizes and higher throughput [7].","SOURCE [7] (Efficient Memory Management for LLM Serving with PagedAttention — arXiv):
+Efficient Memory Management for Large Language Model Serving with PagedAttention
+Authors:Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica
+View a PDF of the paper titled Efficient Memory Management for Large Language Model Serving with PagedAttention, by Woosuk Kwon and 8 other authors
+View PDF
+> Abstract:High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decodin","partial"
+"q08:verified:0","It aims to deploy and maintain ML models in production reliably and efficiently by bridging the gap between development and operations (Source [2]).","SOURCE [2] (MLOps — Wikipedia (part 1)):
+Approach to machine learning lifecycle management
+MLOps is the set of practices at the intersection of Machine Learning, DevOps and Data Engineering
+**MLOps** or **ML Ops** is a paradigm that aims to deploy and maintain machine learning models in production reliably and efficiently. It bridges the gap between machine learning development and production operations, ensuring that models are robust, scalable, and aligned with business goals. 
+The word is a compound of ""machine learning"" and the continuous delivery practice (CI/CD) of DevOps in the software field. Machine learning models are tested and developed in isolated experimental systems. When an algorithm is ready to be launched, MLOps is practiced between data scientists, DevOps, and machine learning engineers to transition the algorithm to production systems.[[1]](
+Similar to DevOps or DataOps approaches, MLOps seeks to increase automation and improve the quality of production models, while also focusing on business and regulatory requirements. While MLOps started as a set of best practices, it is slowly evolving into an independent approach to ML lifecycle management. MLOps applies to the entire lifecycle - from integrating with model generation (software development lifecycle, continuous integration/continuous delivery), orchestration ""Orchestration \(computing\)""), and deployment, to health, diagnostics, governance, and business metrics.
+## Definition
+[edit]
+MLOps is a paradig","supported"
+"q14:verified:0","The latest versions support ultra-long inputs up to one million tokens and include both thinking and instruct modes (Source [2], [10]).","SOURCE [2] (QwenLM/Qwen3 — GitHub README (part 4)):
+* 2025.08.08: You can now use Qwen3-2507 to handle ultra-long inputs of **1 million tokens**! See the update modelcards (235B-A22B-Instruct-2507, 235B-A22B-Thinking-2507, A30B-A3B-Instruct-2507, A30B-A3B-Thinking-2507) for how to enable this feature.
+  * 2025.08.06: The final open release of Qwen3-2507, Qwen3-4B-Instruct-2507 and Qwen3-4B-Thinking-2507, is out!
+  * 2025.07.31: Qwen3-30B-A3B-Thinking-2507 is released. Check out the modelcard for more details!
+  * 2025.07.30: Qwen3-30B-A3B-Instruct-2507 is released. Check out the modelcard for more details!
+  * 2025.07.25: We released the updated version of Qwen3-235B-A22B thinking mode, named Qwen3-235B-A22B-Thinking-2507. Check out the modelcard for more details!
+  * 2025.07.21: We released the updated version of Qwen3-235B-A22B non-thinking mode, named Qwen3-235B-A22B-Instruct-2507, featuring significant enhancements over the previous version and supporting 256K-token long-context understanding. Check our modelcard for more details!
+  * 2025.04.29: We released the Qwen3 series. Check our blog for more details!
+  * 2024.09.19: We released the Qwen2.5 series. This time there are 3 extra model sizes: 3B, 14B, and 32B for more possibilities. Check our blog for more!
+  * 2024.06.06: We released the Qwen2 series. Check our blog!
+  * 2024.03.28: We released the first MoE model of Qwen: Qwen1.5-MoE-A2.7B! Temporarily, only HF transformers and vLLM support the model. We will soon ad","supported"
+"q05:verified:3","A flat index stores all vectors in a single list, making it memory-efficient but less scalable as the number of vectors increases [4].","SOURCE [4] (Vector indexing — Weaviate docs (part 1)):
+Copy page
+On this page
+# Vector Indexing
+What is vector indexing? It's a key component of vector databases that helps to significantly **increase the speed** of the search process of similarity search with only a minimal tradeoff in search accuracy (HNSW index), or efficiently store many subsets of data in a small memory footprint (flat index). The dynamic index can even start off as a flat index and then dynamically switch to the HNSW index as it scales past a threshold.
+Weaviate's vector-first storage system takes care of all storage operations with a vector index. Storing data in a vector-first manner not only allows for semantic or context-based search, but also makes it possible to store _very_ large amounts of data without decreasing performance (assuming scaled well horizontally or having sufficient shards for the indexes).
+Weaviate supports these vector index types:
+  * HNSW index: a more complex index that is slower to build, but it scales well to large datasets as queries have a logarithmic time complexity.
+  * Flat index: a simple, lightweight index that is designed for small datasets.
+  * Dynamic index: allows you to automatically switch from a flat index to an HNSW index as object count scales
+  * HFresh index: a cluster-based index that uses HNSW for the centroid index, providing strong memory efficiency by keeping most of the data on disk","partial"
+"q14:raw:2","These include SGLang, vLLM, TensorRT-LLM, and LightLLM (Source [2], [6]).","SOURCE [2] (QwenLM/Qwen3 — GitHub README (part 4)):
+* 2025.08.08: You can now use Qwen3-2507 to handle ultra-long inputs of **1 million tokens**! See the update modelcards (235B-A22B-Instruct-2507, 235B-A22B-Thinking-2507, A30B-A3B-Instruct-2507, A30B-A3B-Thinking-2507) for how to enable this feature.
+  * 2025.08.06: The final open release of Qwen3-2507, Qwen3-4B-Instruct-2507 and Qwen3-4B-Thinking-2507, is out!
+  * 2025.07.31: Qwen3-30B-A3B-Thinking-2507 is released. Check out the modelcard for more details!
+  * 2025.07.30: Qwen3-30B-A3B-Instruct-2507 is released. Check out the modelcard for more details!
+  * 2025.07.25: We released the updated version of Qwen3-235B-A22B thinking mode, named Qwen3-235B-A22B-Thinking-2507. Check out the modelcard for more details!
+  * 2025.07.21: We released the updated version of Qwen3-235B-A22B non-thinking mode, named Qwen3-235B-A22B-Instruct-2507, featuring significant enhancements over the previous version and supporting 256K-token long-context understanding. Check our modelcard for more details!
+  * 2025.04.29: We released the Qwen3 series. Check our blog for more details!
+  * 2024.09.19: We released the Qwen2.5 series. This time there are 3 extra model sizes: 3B, 14B, and 32B for more possibilities. Check our blog for more!
+  * 2024.06.06: We released the Qwen2 series. Check our blog!
+  * 2024.03.28: We released the first MoE model of Qwen: Qwen1.5-MoE-A2.7B! Temporarily, only HF transformers and vLLM support the model. We will soon ad","flag"
+"q19:verified:3","During the generation process, PagedAttention identifies and fetches necessary blocks efficiently [1].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q06:raw:2","Disaggregated serving separates the prefill and decode phases into distinct worker pools [1].","SOURCE [1] (Disaggregated serving — NVIDIA Dynamo user guide):
+Digest
+Light
+On this page
+  * When It Helps
+  * Mental Model
+  * KV Transfer Is the Critical Path
+  * Deploying Disaggregated with RDMA
+  * Deployment Paths
+  * Backend Examples
+  * Operational Notes
+  * Next Steps
+
+Scroll to top
+Feature Guides
+# Disaggregated Serving
+Split prefill and decode into independently scalable worker pools
+Ask a question|Copy page|View as Markdown|More actions
+Disaggregated serving separates the two main phases of LLM inference:  
+| Phase  | What it does  | Scaling pressure  |  
+| --- | --- | --- |  
+| Prefill  | Processes the prompt and produces the initial KV cache.  | Input length, prompt reuse, context size  |  
+| Decode  | Generates output tokens using the KV cache.  | Concurrency, output length, active KV memory  |  
+In an aggregated deployment, each worker does both phases. In a disaggregated deployment, prefill workers and decode workers are separate pools. Dynamo routes each request through prefill first, transfers or exposes the KV cache state to decode, and streams the response from the decode worker.
+## When It Helps
+Disaggregated serving is most useful when prefill and decode need different resource shapes:
+  * long prompts or retrieval-heavy traffic make prefill expensive
+  * long generations or high concurrency make decode the bottleneck
+  * you want to scale prefill and decode replicas independently
+  * you want to pair prefill/decode separation with KV-aware routing
+  * ","supported"
+"q13:raw:5","MoE models offer faster inference times due to their sparse nature, where only a subset of experts is active for each token [1][4].","SOURCE [1] (Mixture of Experts Explained — Hugging Face blog (part 3)):
+Let’s dive in!
+##    What is a Mixture of Experts (MoE)? 
+The scale of a model is one of the most important axes for better model quality. Given a fixed computing budget, training a larger model for fewer steps is better than training a smaller model for more steps. 
+Mixture of Experts enable models to be pretrained with far less compute, which means you can dramatically scale up the model or dataset size with the same compute budget as a dense model. In particular, a MoE model should achieve the same quality as its dense counterpart much faster during pretraining. 
+So, what exactly is a MoE? In the context of transformer models, a MoE consists of two main elements:
+  * **Sparse MoE layers** are used instead of dense feed-forward network (FFN) layers. MoE layers have a certain number of “experts” (e.g. 8), where each expert is a neural network. In practice, the experts are FFNs, but they can also be more complex networks or even a MoE itself, leading to hierarchical MoEs!
+  * A **gate network or router** , that determines which tokens are sent to which expert. For example, in the image below, the token “More” is sent to the second expert, and the token ""Parameters” is sent to the first network. As we’ll explore later, we can send a token to more than one expert. How to route a token to an expert is one of the big decisions when working with MoEs - the router is composed of learned parameters and is pretra","unsupported"
+"q05:raw:7","When a user query is received, the system computes an embedding for the query and retrieves relevant documents based on semantic similarity [12].","","flag"
+"q07:raw:5","Models need to be prepared by placing them in the model repository, possibly adding custom operations, enabling pipelining, and optimizing scheduling and batching parameters [7].","SOURCE [7] (Model repository — NVIDIA Triton user guide):
+Server
+  * Concurrent Model Execution
+  * Scheduler
+  * Batcher
+  * Model Pipelines
+    * Ensemble
+    * Business Logic Scripting
+  * State Management
+    * Implicit State Management
+  * Request Cancellation
+  * Rate Limiter
+  * Caching
+  * Metrics
+  * Tracing
+
+Model Management
+  * Repository
+  * Configuration
+  * Optimization
+  * Controls
+  * Decoupled models
+  * Custom operators
+
+Backends
+  * TensorRT-LLM
+  * vLLM
+    * vLLM Backend
+    * Multi-LoRA
+  * Python Backend
+  * PyTorch
+  * ONNX Runtime
+  * TensorRT
+  * FIL
+  * DALI
+  * Custom
+
+Performance benchmarking and tuning
+  * GenAI Perf Analyzer
+    * Overview
+    * Large language models
+    * Visual language models
+    * Embedding models
+    * Ranking models
+    * Multiple LoRA adapters
+  * Performance Analyzer
+    * Triton Performance Analyzer
+    * Documentation
+    * Quick Start
+    * Recommended Installation Method
+    * CLI Reference
+    * Inference Load Modes
+    * Input Data
+    * Measurement Modes
+    * Benchmarking Triton via HTTP or gRPC endpoint
+  * Model Analyzer
+    * Triton Model Analyzer
+    * Documentation
+    * Quick Start
+    * Recommended Installation Method
+    * CLI Reference
+    * Launch Modes
+    * Table of Contents
+    * Table of Contents
+    * Metrics
+    * Checkpointing
+    * Reports
+    * Kubernetes
+    * Model Types
+    * Ensemble Model
+    * BLS Model
+    * Multi-Model
+  * Model Navigator
+
+Debugging
+  * Guide
+
+*  
+  * Model Repository
+
+","flag"
+"q08:verified:2","**Key-Value Caching** (Source [8], Source [9]):","SOURCE [8] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 3)):
+With batching, the KV cache of each of the requests in the batch must still be allocated separately, and can have a large memory footprint. The formula below delineates the size of the KV cache, applicable to most common LLM architectures today.
+**Size of KV cache per token in bytes = 2 * (num_layers) * (num_heads * dim_head) * precision_in_bytes**
+The first factor of 2 accounts for the K and V matrices. Commonly, the value of (num_heads * dim_head) is the same as the hidden_size (or dimension of the model, d_model) of the transformer. These model attributes are commonly found in model cards or associated config files.
+This memory size is required for each token in the input sequence, across the batch of inputs. Assuming half-precision, the total size of KV cache is given by the formula below.
+**Total size of KV cache in bytes = (batch_size) * (sequence_length) * 2 * (num_layers) * (hidden_size) * sizeof(FP16)**
+For example, with a Llama 2 7B model in 16-bit precision and a batch size of 1, the size of the KV cache will be 1 * 4096 * 2 * 32 * 4096 * 2 bytes, which is ~2 GB.
+
+SOURCE [9] (Text Generation Inference — Hugging Face docs (part 1)):
+text-generation-inference documentation
+Text Generation Inference
+# text-generation-inference
+🏡 View all docs AWS Trainium & Inferentia Accelerate Argilla AutoTrain Bitsandbytes CLI Chat UI Dataset viewer Datasets Deploying on AWS Diffusers Di","supported"
+"q17:verified:6","Up to 23x throughput improvement over naive batching methods using vLLM [1].","SOURCE [1] (Continuous batching in LLM inference — Anyscale blog (part 2)):
+You can try out continuous batching today: see _this example to run vLLM on Ray Serve_.
+The remainder of this blog is structured as follows:
+  * We’ll cover the basics of how LLM inference works and highlight inefficiencies in traditional request-based dynamic batching policies.
+  * We’ll introduce continuous batching and how it answers many of the inefficiencies of request-based dynamic batching. 
+  * We then discuss our benchmarks and the implications this has on how to serve LLM models cost-effectively.
+
+* * *
+##  LinkThe basics of LLM inference
+There is a lot to know about LLM inference, and we refer users to __Efficient Inference on a Single GPU__and __Optimization story: Bloom inference__ for more detail. However, at a high level, LLM inference is pretty straightforward.
+For each request:
+  1. You start with a sequence of tokens (called the ""prefix"" or ""prompt"").
+  2. The LLM produces a sequence of completion tokens, stopping only after producing a stop token or reaching a maximum sequence length.","unsupported"
+"q07:raw:4","Users can also build from source or customize a container for their needs [3][6].","SOURCE [3] (triton-inference-server/server — GitHub README (part 4)):
+A Triton _client_ application sends inference and other requests to Triton. The Python and C++ client libraries provide APIs to simplify this communication.
+  * Review client examples for C++, Python, and Java
+  * Configure HTTP and gRPC client options
+  * Send input data (e.g. a jpeg image) directly to Triton in the body of an HTTP request without any additional metadata
+
+### Extend Triton
+
+Triton Inference Server's architecture is specifically designed for modularity and flexibility
+  * Customize Triton Inference Server container for your use case
+  * Create custom backends in either C/C++ or Python
+  * Create decoupled backends and models that can send multiple responses for a request or not send any responses for a request
+  * Use a Triton repository agent to add functionality that operates when a model is loaded and unloaded, such as authentication, decryption, or conversion
+  * Deploy Triton on Jetson and JetPack
+  * Use Triton on AWS Inferentia
+
+### Additional Documentation
+
+* FAQ
+  * User Guide
+  * Customization Guide
+  * Release Notes
+  * GPU, Driver, and CUDA Support Matrix
+
+## Contributing
+
+Contributions to Triton Inference Server are more than welcome. To contribute please review the contribution guidelines. If you have a backend, client, example or similar contribution that is not modifying the core of Triton, then you should file a PR in the contrib repo.
+## Reporting problems, asking question","supported"
+"q13:verified:4","MoEs have been successfully applied in natural language processing tasks such as language modeling and machine translation [4][9].","SOURCE [4] (Mixture of Experts Explained — Hugging Face blog (part 6)):
+These works led to exploring a mixture of experts in the context of NLP. Concretely, Shazeer et al. (2017, with “et al.” including Geoffrey Hinton and Jeff Dean, Google’s Chuck Norris) scaled this idea to a 137B LSTM (the de-facto NLP architecture back then, created by Schmidhuber) by introducing sparsity, allowing to keep very fast inference even at high scale. This work focused on translation but faced many challenges, such as high communication costs and training instabilities.
+ MoE layer from the Outrageously Large Neural Network paper
+MoEs have allowed training multi-trillion parameter models, such as the open-sourced 1.6T parameters Switch Transformers, among others. MoEs have also been explored in Computer Vision, but this blog post will focus on the NLP domain.
+##    What is Sparsity? 
+Sparsity uses the idea of conditional computation. While in dense models all the parameters are used for all the inputs, sparsity allows us to only run some parts of the whole system.
+Let’s dive deeper into Shazeer's exploration of MoEs for translation. The idea of conditional computation (parts of the network are active on a per-example basis) allows one to scale the size of the model without increasing the computation, and hence, this led to thousands of experts being used in each MoE layer.
+This setup introduces some challenges. For example, although large batch sizes are usually better for performance, batch siz","supported"
+"q03:verified:1","Dynamo leverages NIXL to transfer the KV cache directly from VRAM of the prefill GPU to that of the decode GPU (Source [4]).","SOURCE [4] (Disaggregated Serving — NVIDIA Dynamo design docs (part 2)):
+The disaggregation design in Dynamo features a flexible framework that delivers strong performance across various conditions.
+## Efficient KV Transfer
+The key to high-performance disaggregation is efficient KV transfer. Dynamo leverages NIXL to transfer KV cache directly from the VRAM of the prefill engine to the VRAM of the decode engine. The KV transfer is non-blocking, allowing GPU forward passes to continue serving other requests during the transfer.
+### Router Orchestration
+The disaggregated serving flow is orchestrated by the `PrefillRouter`:
+  1. **Worker Selection** : The router selects a prefill worker using KV-aware routing (based on cache overlap scores and load) or simple load balancing.
+  2. **Prefill Execution** : The router sends the prefill request to the selected prefill worker. The prefill worker computes the KV cache and returns `disaggregated_params` containing backend-specific transfer metadata.
+  3. **Decode Routing** : The router injects the prefill result into the decode request, th","supported"
+"q15:raw:1","**NIM Day 0**: Provides fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","supported"
+"q07:verified:1","The Python and C++ client libraries simplify this communication process [3][4].","SOURCE [3] (triton-inference-server/server — GitHub README (part 4)):
+A Triton _client_ application sends inference and other requests to Triton. The Python and C++ client libraries provide APIs to simplify this communication.
+  * Review client examples for C++, Python, and Java
+  * Configure HTTP and gRPC client options
+  * Send input data (e.g. a jpeg image) directly to Triton in the body of an HTTP request without any additional metadata
+
+### Extend Triton
+
+Triton Inference Server's architecture is specifically designed for modularity and flexibility
+  * Customize Triton Inference Server container for your use case
+  * Create custom backends in either C/C++ or Python
+  * Create decoupled backends and models that can send multiple responses for a request or not send any responses for a request
+  * Use a Triton repository agent to add functionality that operates when a model is loaded and unloaded, such as authentication, decryption, or conversion
+  * Deploy Triton on Jetson and JetPack
+  * Use Triton on AWS Inferentia
+
+### Additional Documentation
+
+* FAQ
+  * User Guide
+  * Customization Guide
+  * Release Notes
+  * GPU, Driver, and CUDA Support Matrix
+
+## Contributing
+
+Contributions to Triton Inference Server are more than welcome. To contribute please review the contribution guidelines. If you have a backend, client, example or similar contribution that is not modifying the core of Triton, then you should file a PR in the contrib repo.
+## Reporting problems, asking question","supported"
+"q18:raw:0","According to [1], this technique has been successfully implemented using Megatron-LM, which provides an efficient intra-layer model parallel approach.","SOURCE [1] (Megatron-LM: Training Multi-Billion Parameter Models — arXiv):
+Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
+Authors:Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, Bryan Catanzaro
+View a PDF of the paper titled Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism, by Mohammad Shoeybi and 5 other authors
+View PDF
+> Abstract:Recent work in language modeling demonstrates that training large transformer models advances the state of the art in Natural Language Processing applications. However, very large models can be quite difficult to train due to memory constraints. In this work, we present our techniques for training very large transformer models and implement a simple, efficient intra-layer model parallel approach that enables training transformer models with billions of parameters. Our approach does not require a new compiler or library changes, is orthogonal and complimentary to pipeline model parallelism, and can be fully implemented with the insertion of a few communication operations in native PyTorch. We illustrate this approach by converging transformer based models up to 8.3 billion parameters using 512 GPUs. We sustain 15.1 PetaFLOPs across the entire application with 76% scaling efficiency when compared to a strong single GPU baseline that sustains 39 TeraFLOPs, which is 30% of peak FLOPs. To demonstrate that large language models can further advance ","supported"
+"q19:verified:4","**Near-optimal Memory Usage**: By minimizing fragmentation, PagedAttention reduces memory waste to under 4% in practice [1].","SOURCE [1] (vLLM: Easy, Fast, and Cheap LLM Serving — vLLM blog (part 2)):
+To address this problem, we introduce **PagedAttention** , an attention algorithm inspired by the classic idea of virtual memory and paging in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into blocks, each block containing the keys and values for a fixed number of tokens. During the attention computation, the PagedAttention kernel identifies and fetches these blocks efficiently.
+  
+_PagedAttention:_ KV Cache are partitioned into blocks. Blocks do not need to be contiguous in memory space.
+Because the blocks do not need to be contiguous in memory, we can manage the keys and values in a more flexible way as in OS’s virtual memory: one can think of blocks as pages, tokens as bytes, and sequences as processes. The contiguous _logical blocks_ of a sequence are mapped to non-contiguous _physical blocks_ via a block table. The physical blocks are allocated on demand as new tokens are generated.
+  
+Example generation process for a request with PagedAttention.
+In PagedAttention, memory waste only happens in the last block of a sequence. In practice, this results in near-optimal memory usage, with a mere waste of under 4%. This boost in memory efficiency proves highly beneficial: It allows the system to batch more sequences together, inc","supported"
+"q15:verified:5","**Reduced Operational Burden**: Pre-validated configurations eliminate the need for complex tuning processes [2].","SOURCE [2] (NIM for LLMs: getting started — NVIDIA docs (part 1)):
+Is this page helpful?
+# About Get Started with NIM LLM#
+Use the following resources to set up your environment, pull the container, and run your first model.
+## Try a Hosted Model#
+Before deploying a model locally, try a NIM API (such as llama-3.3-70b-instruct) at build.nvidia.com to get a feel for the API and model capabilities.
+## Next Steps#
+Prerequisites
+Hardware, software, driver, and container runtime requirements for deploying NIM LLM containers.
+how-to
+Prerequisites
+Installation
+Instructions for configuring network and authentication, logging into Docker, and pulling the NIM container image.
+how-to
+Installation
+Configuration
+Configure your local cache and advanced settings to customize your NIM LLM deployment.
+how-to
+Configuration
+Quickstart
+Step-by-step instructions for deploying model-specific and model-free NIM containers and running inference.
+how-to
+Quickstart
+Support Matrix
+Supported models, profiles, and hardware platforms for the latest release.
+reference
+Support Matrix for Certified NIMs
+Release Notes
+New features, bug fixes, and known issues for the current release.
+reference
+Release Notes
+ previous Release Notes   next Prerequisites 
+On this page 
+  * Try a Hosted Model
+  * Next Steps
+
+Privacy Policy | Your Privacy Choices | Terms of Service | Accessibility | Corporate Policies | Product Security | Contact
+Copyright © 2024-2026, NVIDIA Corporation.
+
+Last updated on Jun 26, 2026.","flag"
+"q15:raw:8","**Inference Engine (vLLM)**: Executes model inference and provides OpenAI-compatible API endpoints [3].","SOURCE [3] (NIM for LLMs: introduction — NVIDIA docs (part 3)):
+For more information, refer to Enterprise-Grade Inference Software Stack.
+### Architecture at a Glance#
+The NIM LLM container is designed for deployment simplicity, startup reliability, and inference performance parity with upstream engines. The architecture is organized into three primary components:
+  * **nim-llm (Orchestration Layer):** The entry point that orchestrates the startup sequence, manages configuration priorities such as CLI flags, environment variables, and runtime configs, and injects enterprise features like custom middleware and Low-Rank Adaptation (LoRA) adapters.
+  * **nimlib (Profile and Model Management):** Handles model licensing, hardware-aware profile selection, model downloading, and NIM-specific management API endpoints (for example, health and readiness checks).
+  * **Inference Engine (vLLM):** The core engine that executes model inference and provides native OpenAI-compatible API endpoints.
+
+Unlike the 1.x architecture that bundled multiple backends into a single container, NIM LLM version 2.0 embraces a **one container, one backend** philosophy for predictable behavior and direct access to upstream features.
+For more information, refer to Architecture.
+## Model-Free and Model-Specific Containers#
+NIM LLM supports two distinct deployment modalities to cater to different operational needs:
+**Model-Specific NIMs**
+These containers include a model-specific manifest, curated model weights","supported"
+"q02:verified:6","**Ethical Compliance**: Claude is designed with ethical considerations in mind through 'constitutional AI,' which aims to improve its alignment with human values and legal standards (Source [1]).","SOURCE [1] (Claude (language model) — Wikipedia):
+|  
+| License  | Proprietary  |  
+| Website  |  claude.ai   |  
+**Claude** is a series of large language models developed by American software company Anthropic. Claude was released as an AI-based chatbot in March 2023. It is also used in AI-assisted software development.
+Claude is trained using ""constitutional AI"", a technique developed by Anthropic to improve ethical and legal compliance (AI alignment). Since Claude 3, each generation has typically been released in three sizes, from least to most capable: Haiku, Sonnet, and Opus. An additional model named Claude Mythos was released to a handful of companies in 2026.
+US federal agencies started phasing out the use of Claude after Anthropic refused to remove contractual prohibitions on the use of Claude for mass domestic surveillance and fully-autonomous weapons.[[1]]( Following the refusal, the Department of Defense (DoD) designated the company a ""supply chain risk"" and barred all U.S. private military contractors, suppliers, and partners from doing business with the firm. On March 26, 2026, a federal judge issued a temporary injunction against the DoD's designation.[[3]](
+## Products
+[edit source&action=edit&section=1 ""Edit section's source code: Products"")]
+### Claude
+[edit source&action=edit&section=2 ""Edit section's source code: Claude"")]
+Claude is an AI chatbot similar to ChatGPT, capable of writing, coding, conducting research, and having conversations. In June 2024, An","supported"
+"q05:verified:9","Qdrant also offers a range of features including sparse vectors for precise lexical matches and hybrid retrieval methods [9][15].","SOURCE [9] (Qdrant documentation overview (part 1)):
+Qdrant offers a bi-weekly ""Getting Started"" live webinar with experts. Register for an upcoming session here!
+#  Qdrant Overview
+##  Welcome!
+Whether you’re getting started with Qdrant Open-Source or Cloud, this brief primer will help you with understanding an overview of the platform. **It’s highly recommended you read this overview before starting your development with Qdrant!**
+##  Retrieval Process
+Vector search is a transformative information retrieval technique that goes beyond keyword matching to find data based on semantic meaning. It begins with **embedding models** , which convert unstructured data (text, images, audio) into **dense vector embeddings** , fixed-length lists of numbers that represent the data’s conceptual essence. These vectors are mapped into a high-dimensional **vector space** , where items with similar meanings are positioned closely together. This spatial organization allows a search for “climate change” to retrieve documents about “global warming,” even if the exact words differ.","unsupported"
+"q02:raw:4","GPT-4 is accessible via various cloud platforms like AWS, Google Cloud, and Microsoft Foundry, while Claude has its own API and platform offerings (Source [2], Source [6]).","SOURCE [2] (GPT-4 — Wikipedia (part 2)):
+## Reception
+[edit]
+In January 2023, Sam Altman, CEO of OpenAI, visited Congress to demonstrate GPT-4 and its improved ""security controls"" compared to other AI models, according to U.S. Representatives Don Beyer and Ted Lieu quoted in _The New York Times_.[[61]](
+In March 2023, it ""impressed observers with its markedly improved performance across reasoning, retention, and coding"", according to _Vox ""Vox \(website\)"")_ ,[[62]]( while _Mashable_ judged that GPT-4 was generally an improvement over its predecessor, with some exceptions.[[63]](
+Microsoft researchers with early access to the model wrote that ""it could reasonably be viewed as an early (yet still incomplete) version of an artificial general intelligence (AGI) system"".[[14]](
+### Concerns
+[edit]
+Before being fine-tuned ""Fine-tuning \(machine learning\)"") and aligned by reinforcement learning from human feedback (RLHF), suggestions to assassinate people on a list were elicited from the base model by a red team investigator hired by OpenAI, Nathan Labenz.[[64]](
+During extended conversations with Microsoft's Bing Chat (powered by GPT-4), Kevin Roose documented the system making romantic advances, suggesting he divorce his wife, and expressing desires to harm one of its developers.[[65]]( Microsoft later stated that this behavior resulted from the prolonged length of context, which confused the model on what questions it was answering.[[67]](
+In March 2023, a model with enabled re","unsupported"
+"q15:verified:3","**Faster Feature Access**: Updates are available in weeks rather than months, ensuring rapid access to the latest upstream engine optimizations, new CUDA versions, and hardware support [1].","SOURCE [1] (NIM for LLMs: introduction — NVIDIA docs (part 1)):
+Is this page helpful?
+# Overview#
+NVIDIA NIM for Large Language Models (NIM LLM) is a production-ready way to run large language models with NVIDIA inference microservices (NIMs). NIM LLM brings state-of-the-art LLM serving to enterprise and developer workflows with validated containers, curated weights, and direct alignment with upstream inference engines.
+NIM LLM is designed for teams that do not have the bandwidth to track the fast-moving LLM ecosystem. Depending on the offering, it can prioritize rapid access to newly released models, validated best-in-class performance, or enterprise lifecycle guarantees for long-term production deployments.
+## NIM Offerings#
+NIM LLM is available under two NIM offerings so you can choose the right balance of publication speed, peak performance, and enterprise lifecycle guarantees:
+  * **NIM Day 0:** Fast access to newly released models with functional validation on a smaller set of NVIDIA GPUs.
+  * **NIM Certified:** Enterprise production packaging with broader compatibility, documented refresh cadence, CVE patching, OSRB compliance, security updates, FedRAMP ready branches for government use cases, and NVIDIA AI Enterprise support.
+
+For more information, refer to NIM Offerings.
+## Key Benefits#
+NIM LLM aligns with upstream engines and eliminates heavy downstream abstraction layers to provide the following benefits:
+  * **Faster Feature Access:** You receive updates in weeks","partial"
+"q04:verified:1","Managing the KV cache efficiently is challenging due to its growing memory footprint [3].","SOURCE [3] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 3)):
+With batching, the KV cache of each of the requests in the batch must still be allocated separately, and can have a large memory footprint. The formula below delineates the size of the KV cache, applicable to most common LLM architectures today.
+**Size of KV cache per token in bytes = 2 * (num_layers) * (num_heads * dim_head) * precision_in_bytes**
+The first factor of 2 accounts for the K and V matrices. Commonly, the value of (num_heads * dim_head) is the same as the hidden_size (or dimension of the model, d_model) of the transformer. These model attributes are commonly found in model cards or associated config files.
+This memory size is required for each token in the input sequence, across the batch of inputs. Assuming half-precision, the total size of KV cache is given by the formula below.
+**Total size of KV cache in bytes = (batch_size) * (sequence_length) * 2 * (num_layers) * (hidden_size) * sizeof(FP16)**
+For example, with a Llama 2 7B model in 16-bit precision and a batch size of 1, the size of the KV cache will be 1 * 4096 * 2 * 32 * 4096 * 2 bytes, which is ~2 GB.","supported"
+"q05:verified:4","Tree-based indexes divide vectors into a tree structure, which can be efficient for low-dimensional vectors but may require rebuilding when updated over time [4].","SOURCE [4] (Vector indexing — Weaviate docs (part 1)):
+Copy page
+On this page
+# Vector Indexing
+What is vector indexing? It's a key component of vector databases that helps to significantly **increase the speed** of the search process of similarity search with only a minimal tradeoff in search accuracy (HNSW index), or efficiently store many subsets of data in a small memory footprint (flat index). The dynamic index can even start off as a flat index and then dynamically switch to the HNSW index as it scales past a threshold.
+Weaviate's vector-first storage system takes care of all storage operations with a vector index. Storing data in a vector-first manner not only allows for semantic or context-based search, but also makes it possible to store _very_ large amounts of data without decreasing performance (assuming scaled well horizontally or having sufficient shards for the indexes).
+Weaviate supports these vector index types:
+  * HNSW index: a more complex index that is slower to build, but it scales well to large datasets as queries have a logarithmic time complexity.
+  * Flat index: a simple, lightweight index that is designed for small datasets.
+  * Dynamic index: allows you to automatically switch from a flat index to an HNSW index as object count scales
+  * HFresh index: a cluster-based index that uses HNSW for the centroid index, providing strong memory efficiency by keeping most of the data on disk","unsupported"
+"q04:verified:4","This technique is particularly useful for training and inference workflows that require more memory than available on a single device [1].","SOURCE [1] (Mastering LLM Techniques: Inference Optimization — NVIDIA Developer Blog (part 4)):
+Managing this KV cache efficiently is a challenging endeavor. Growing linearly with batch size and sequence length, the memory requirement can quickly scale. Consequently, it limits the throughput that can be served, and poses challenges for long-context inputs. This is the motivation behind several optimizations featured in this post.
+## Scaling up LLMs with model parallelization
+One way to reduce the per-device memory footprint of the model weights is to distribute the model over several GPUs. Spreading the memory and compute footprint enables running larger models, or larger batches of inputs. Model parallelization is a necessity to train or infer on a model requiring more memory than available on a single device, and to make training times and inference measures (latency or throughput) suitable for certain use cases. There are several ways of parallelizing the model based on how the model weights are split. 
+Note that data parallelism is also a technique often mentioned in the same context as the others listed below. In this, weights of the model are copied over multiple devices, and the (global) batch size of inputs is sharded across each of the devices into microbatches. It reduces the overall execution time by processing larger batches. However, it is a training time optimization that is less relevant during inference.
+Note that any model-parallel techniques—including pipeli","supported"

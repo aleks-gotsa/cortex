@@ -1,0 +1,42 @@
+{
+  "config": "routed",
+  "models": {
+    "PLANNING": "llama3.2:3b",
+    "GAP_DETECTION": "llama3.2:3b",
+    "SYNTHESIS": "qwen2.5:7b-instruct",
+    "VERIFICATION": "qwen2.5:7b-instruct"
+  },
+  "planning": {
+    "model": "llama3.2:3b",
+    "input_tokens": 175,
+    "output_tokens": 219,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "plan_fallback": false,
+  "gap_detection": {
+    "model": "llama3.2:3b",
+    "input_tokens": 2252,
+    "output_tokens": 191,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "synthesis": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 4553,
+    "output_tokens": 841,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  },
+  "verification": {
+    "model": "qwen2.5:7b-instruct",
+    "input_tokens": 5408,
+    "output_tokens": 638,
+    "calls": 1,
+    "json_retries": 0,
+    "failed": false
+  }
+}
